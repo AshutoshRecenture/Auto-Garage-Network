@@ -1,0 +1,878 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: rgba(99, 102, 241, 0.75) #050816;
+  scrollbar-width: auto;
+}
+
+html, body, #root {
+  background-color: #050816;
+  color: #ffffff;
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  position: relative;
+}
+
+/* Premium Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #050816;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.75);
+  border-radius: 9999px;
+  border: 2px solid #050816;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.95);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Professional Light/Dark Mode Styling System                                */
+/* -------------------------------------------------------------------------- */
+
+/* Base style overrides for root element when Light Mode is active */
+.light {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Background Color Mappings */
+.light .bg-\[\#050816\] {
+  background-color: #f8fafc !important;
+}
+.light .bg-\[\#050816\]\/90 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+}
+.light .bg-\[\#050816\]\/95 {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+}
+.light .bg-\[\#050816\]\/70 {
+  background-color: rgba(248, 250, 252, 0.7) !important;
+}
+.light .bg-\[\#050816\]\/30 {
+  background-color: rgba(248, 250, 252, 0.3) !important;
+}
+
+.light .bg-\[\#0c1222\] {
+  background-color: #ffffff !important;
+}
+.light .bg-\[\#0c1222\]\/85 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+.light .bg-\[\#0c1222\]\/90 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.light .bg-\[\#070b18\] {
+  background-color: #f1f5f9 !important;
+}
+.light .bg-\[\#0b1021\] {
+  background-color: #f1f5f9 !important;
+}
+.light .bg-\[\#0b1021\]\/60 {
+  background-color: rgba(241, 245, 249, 0.6) !important;
+}
+
+.light .bg-\[\#030611\] {
+  background-color: #f8fafc !important;
+}
+.light .bg-\[\#060a17\] {
+  background-color: #e2e8f0 !important;
+}
+.light .bg-\[\#060a17\]\/80 {
+  background-color: rgba(226, 232, 240, 0.8) !important;
+}
+.light .bg-\[\#060a17\]\/60 {
+  background-color: rgba(226, 232, 240, 0.6) !important;
+}
+
+.light .bg-\[\#070c18\] {
+  background-color: #ffffff !important;
+}
+.light .bg-\[\#0d1324\] {
+  background-color: #ffffff !important;
+}
+.light .bg-\[\#0d1324\]\/98 {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+}
+
+.light .bg-\[\#0d1226\] {
+  background-color: #ffffff !important;
+}
+.light .bg-\[\#0d1226\]\/50 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow:
+    0 10px 30px -10px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+  border-color: rgba(15, 23, 42, 0.06) !important;
+}
+.light .bg-gradient-to-br.from-indigo-950\/90.to-purple-950\/90 {
+  background-image: linear-gradient(
+    to bottom right,
+    #e0e7ff,
+    #f3e8ff
+  ) !important;
+}
+.light .from-indigo-950\/90 .text-white {
+  color: #0f172a !important;
+}
+.light .from-indigo-950\/90 .text-indigo-200 {
+  color: #312e81 !important;
+}
+.light .from-indigo-950\/90 .text-indigo-300 {
+  color: #3730a3 !important;
+}
+.light .from-indigo-950\/90 .bg-indigo-600\/30 {
+  background-color: rgba(79, 70, 229, 0.15) !important;
+  border-color: rgba(79, 70, 229, 0.3) !important;
+}
+
+.light .bg-\[\#0a0f24\] {
+  background-color: #f8fafc !important;
+}
+.light .bg-\[\#0a0f24\]\/90 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+}
+.light .bg-\[\#090b16\]\/90 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+}
+.light .bg-\[\#0a0615\]\/95 {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+}
+.light .bg-\[\#0a0f24\]\/30 {
+  background-color: rgba(248, 250, 252, 0.3) !important;
+}
+.light .bg-\[\#0a0f24\]\/20 {
+  background-color: rgba(15, 23, 42, 0.03) !important;
+}
+.light .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+.light .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+}
+.light .bg-white\/20 {
+  background-color: rgba(15, 23, 42, 0.15) !important;
+}
+.light .bg-white\/30 {
+  background-color: rgba(15, 23, 42, 0.25) !important;
+}
+
+.light .bg-\[\#111827\] {
+  background-color: #f1f5f9 !important;
+}
+.light .bg-\[\#111827\]\/80 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+}
+
+/* Invert default grey/slate backgrounds */
+.light .bg-slate-900 {
+  background-color: #f1f5f9 !important;
+}
+.light .bg-slate-950 {
+  background-color: #f8fafc !important;
+}
+.light .bg-slate-800 {
+  background-color: #e2e8f0 !important;
+}
+.light .bg-gray-900 {
+  background-color: #f1f5f9 !important;
+}
+
+/* Gradient backgrounds mapping */
+.light .bg-gradient-to-b.from-\[\#050816\].to-\[\#0c1222\] {
+  background-image: linear-gradient(to bottom, #f8fafc, #ffffff) !important;
+}
+.light .bg-gradient-to-br.from-\[\#111827\].to-\[\#0c1222\] {
+  background-image: linear-gradient(
+    to bottom right,
+    #ffffff,
+    #f1f5f9
+  ) !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+.light .from-\[\#111827\].to-\[\#0c1222\] .text-white {
+  color: #0f172a !important;
+}
+.light .from-\[\#111827\].to-\[\#0c1222\] button.bg-transparent {
+  color: #1e293b !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
+.light .from-\[\#111827\].to-\[\#0c1222\] button.bg-transparent:hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+.light .bg-gradient-to-b.from-\[\#050816\].to-\[\#060a17\] {
+  background-image: linear-gradient(to bottom, #f8fafc, #e2e8f0) !important;
+}
+
+/* Gradient stops mappings (e.g. PartnerLogos, Testimonials transitions) */
+.light .from-\[\#050816\] {
+  --tw-gradient-from: #f8fafc !important;
+  --tw-gradient-to: rgba(248, 250, 252, 0) !important;
+  --tw-gradient-stops:
+    var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.light .to-\[\#050816\] {
+  --tw-gradient-to: #f8fafc !important;
+}
+.light .from-\[\#0c1222\] {
+  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-to: rgba(255, 255, 255, 0) !important;
+  --tw-gradient-stops:
+    var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.light .to-\[\#0c1222\] {
+  --tw-gradient-to: #ffffff !important;
+}
+
+/* Text Color Mappings */
+.light .text-white {
+  color: #0f172a !important;
+}
+.light .text-gray-100 {
+  color: #0f172a !important;
+}
+.light .text-gray-200 {
+  color: #1e293b !important;
+}
+.light .text-gray-300 {
+  color: #334155 !important;
+}
+.light .text-gray-400 {
+  color: #475569 !important;
+}
+.light .text-gray-500 {
+  color: #64748b !important;
+}
+.light .text-slate-100 {
+  color: #0f172a !important;
+}
+.light .text-slate-200 {
+  color: #1e293b !important;
+}
+.light .text-slate-300 {
+  color: #334155 !important;
+}
+.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+/* Contrast enhancers for color accents in Light Mode */
+.light .text-indigo-200 {
+  color: #312e81 !important;
+}
+.light .text-indigo-300 {
+  color: #3730a3 !important;
+}
+.light .text-indigo-400 {
+  color: #4f46e5 !important;
+}
+.light .text-blue-400 {
+  color: #2563eb !important;
+}
+.light .text-cyan-400 {
+  color: #0891b2 !important;
+}
+.light .text-emerald-400 {
+  color: #047857 !important;
+}
+.light .bg-emerald-500\/5 {
+  background-color: #f0fdf4 !important;
+}
+.light .border-emerald-500\/20 {
+  border-color: rgba(4, 120, 87, 0.2) !important;
+}
+.light .hover\:bg-emerald-500\/10:hover {
+  background-color: rgba(4, 120, 87, 0.1) !important;
+}
+.light .hover\:border-emerald-500\/40:hover {
+  border-color: rgba(4, 120, 87, 0.4) !important;
+}
+
+.light .text-rose-400 {
+  color: #be123c !important;
+}
+.light .bg-rose-500\/5 {
+  background-color: #fff1f2 !important;
+}
+.light .border-rose-500\/20 {
+  border-color: rgba(190, 18, 60, 0.2) !important;
+}
+.light .hover\:bg-rose-500\/10:hover {
+  background-color: rgba(190, 18, 60, 0.1) !important;
+}
+.light .hover\:border-rose-500\/40:hover {
+  border-color: rgba(190, 18, 60, 0.4) !important;
+}
+
+/* Hover Color Mappings */
+.light .hover\:text-white:hover {
+  color: #0f172a !important;
+}
+.light .hover\:bg-white\/5:hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+.light .group:hover .group-hover\:text-white {
+  color: #0f172a !important;
+}
+
+/* Border Mappings */
+.light .border-white\/5 {
+  border-color: rgba(15, 23, 42, 0.06) !important;
+}
+.light .border-white\/10 {
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+.light .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
+.light .border-slate-800 {
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+.light .border-slate-700 {
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+/* Form inputs styling */
+.light input::placeholder,
+.light textarea::placeholder,
+.light select::placeholder {
+  color: #64748b !important;
+}
+.light input,
+.light textarea,
+.light select {
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(250%);
+  }
+}
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* SVG grid lines adjustments */
+.light svg line[stroke="rgba(255,255,255,0.03)"],
+.light svg line[stroke="rgba(255,255,255,0.05)"],
+.light svg path[stroke="rgba(255,255,255,0.03)"],
+.light svg path[stroke="rgba(255,255,255,0.05)"] {
+  stroke: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Ensure shadow effects are visible in light mode */
+.light .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Prevent inversion of text inside buttons/gradients/brand-colored areas */
+.light .no-invert,
+.light .no-invert .text-white,
+.light button .text-white,
+.light button .text-gray-300,
+.light .bg-indigo-600 .text-white,
+.light .bg-gradient-to-r .text-white,
+.light .bg-gradient-to-tr .text-white,
+.light .bg-gradient-to-br .text-white,
+.light [class*="from-indigo-"] .text-white,
+.light [class*="from-indigo-"] .text-indigo-200,
+.light [class*="from-blue-"] .text-white,
+.light [class*="from-purple-"] .text-white,
+.light [class*="from-pink-"] .text-white,
+.light [class*="from-rose-"] .text-white,
+.light [class*="from-emerald-"] .text-white,
+.light [class*="from-emerald-"] .text-emerald-400,
+.light [class*="bg-indigo-"] .text-white,
+.light [class*="bg-indigo-"] .text-indigo-200,
+.light [class*="bg-blue-"] .text-white,
+.light [class*="bg-green-"] .text-white,
+.light [class*="bg-emerald-"] .text-white,
+.light [class*="bg-rose-"] .text-white {
+  color: #ffffff !important;
+}
+
+/* Since logo-color.png has black text, we apply invert filter in Dark Mode to make the text white and visible */
+.logo-img {
+  filter: invert(1) hue-rotate(180deg) brightness(1.5) contrast(1.2);
+  transition:
+    filter 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* In Light Mode, we display it as-is (with black text) so it is visible on the light background */
+.light .logo-img {
+  filter: none !important;
+}
+
+/* Custom Dropdown overrides for Light Mode */
+.light .nav-dropdown {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  box-shadow:
+    0 15px 40px -10px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+  border-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Phone Mockup Theme Preservation - Keeps mobile screen elements dark and visible in Light Mode */
+.light .phone-mockup {
+  background-color: #050816 !important;
+  border-color: #0c1222 !important;
+  color: #ffffff !important;
+}
+.light .phone-mockup * {
+  color: inherit;
+}
+.light .phone-mockup .text-white {
+  color: #ffffff !important;
+}
+.light .phone-mockup .text-gray-300 {
+  color: #d1d5db !important;
+}
+.light .phone-mockup .text-gray-400 {
+  color: #9ca3af !important;
+}
+.light .phone-mockup .text-gray-500 {
+  color: #6b7280 !important;
+}
+.light .phone-mockup .text-cyan-400 {
+  color: #22d3ee !important;
+}
+.light .phone-mockup .text-blue-400 {
+  color: #60a5fa !important;
+}
+.light .phone-mockup .bg-\[\#050816\] {
+  background-color: #050816 !important;
+}
+.light .phone-mockup .bg-\[\#111827\] {
+  background-color: #111827 !important;
+}
+.light .phone-mockup .bg-\[\#0c1222\] {
+  background-color: #0c1222 !important;
+}
+.light .phone-mockup .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .phone-mockup .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .phone-mockup .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+.light .phone-mockup .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .phone-mockup .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .phone-mockup .bg-white\/20 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+.light .phone-mockup .bg-blue-500\/10 {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+.light .phone-mockup .bg-amber-500\/10 {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+.light .phone-mockup .bg-green-500\/10 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+.light .phone-mockup .bg-red-500\/10 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+.light .phone-mockup .bg-blue-600 {
+  background-color: #2563eb !important;
+}
+.light .phone-mockup .bg-blue-500\/20 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+.light .phone-mockup .text-white\/50 {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.light .phone-mockup button {
+  color: #ffffff !important;
+}
+.light .phone-mockup select {
+  color: #ffffff !important;
+  background-color: #070b18 !important;
+}
+.light .phone-mockup input {
+  color: #ffffff !important;
+  background-color: #050816 !important;
+}
+
+/* Redesigned Footer Theme Preservation - Keeps background black and layout high contrast in Light Mode */
+.light .footer-no-invert {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+.light .footer-no-invert a {
+  color: #9ca3af !important;
+}
+.light .footer-no-invert .text-white {
+  color: #ffffff !important;
+}
+.light .footer-no-invert .text-gray-300 {
+  color: #d1d5db !important;
+}
+.light .footer-no-invert .text-gray-400 {
+  color: #9ca3af !important;
+}
+.light .footer-no-invert .text-gray-500 {
+  color: #6b7280 !important;
+}
+.light .footer-no-invert a:hover {
+  color: #ffffff !important;
+}
+.copyright-text.copy_txt,
+.light .footer-no-invert .copyright-text.copy_txt {
+  border-top: solid 1px #686868 !important;
+  padding: 15px 0 !important;
+  text-align: center !important;
+  margin-top: 2% !important;
+  font-size: 11px !important;
+  color: #9ca3af !important;
+}
+.light .footer-no-invert .border-t {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .footer-no-invert .bg-\[\#1e73be\] {
+  background-color: #1e73be !important;
+}
+.light .footer-no-invert .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .footer-no-invert .hover\:bg-\[\#1877F2\]:hover {
+  background-color: #1877f2 !important;
+}
+.light .footer-no-invert .hover\:bg-\[\#E1306C\]:hover {
+  background-color: #e1306c !important;
+}
+.light .footer-no-invert .hover\:bg-\[\#1DA1F2\]:hover {
+  background-color: #1da1f2 !important;
+}
+.light .footer-no-invert .hover\:bg-\[\#0A66C2\]:hover {
+  background-color: #0a66c2 !important;
+}
+.light .footer-no-invert .hover\:bg-\[\#FF0000\]:hover {
+  background-color: #ff0000 !important;
+}
+
+/* ========================================================================== */
+/* Dashboard Mockup Theme Preservation (Light Mode Overrides)                 */
+/* ========================================================================== */
+
+.light .dashboard-mockup {
+  background-color: rgba(4, 8, 29, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+.light .dashboard-mockup * {
+  color: inherit;
+}
+.light .dashboard-mockup .bg-\[\#04060f\] {
+  background-color: #04060f !important;
+}
+.light .dashboard-mockup .bg-\[\#070b18\]\/90 {
+  background-color: rgba(7, 11, 24, 0.9) !important;
+}
+.light .dashboard-mockup .bg-\[\#0a0f1d\]\/60 {
+  background-color: rgba(10, 15, 29, 0.6) !important;
+}
+.light .dashboard-mockup .bg-\[\#0a0f1d\] {
+  background-color: #0a0f1d !important;
+}
+.light .dashboard-mockup .bg-\[\#0b0f19\] {
+  background-color: #0b0f19 !important;
+}
+.light .dashboard-mockup .bg-\[\#030611\]\/90 {
+  background-color: rgba(3, 6, 17, 0.9) !important;
+}
+.light .dashboard-mockup .bg-\[\#060a17\]\/60 {
+  background-color: rgba(6, 10, 23, 0.6) !important;
+}
+.light .dashboard-mockup .bg-\[\#0b1021\]\/60 {
+  background-color: rgba(11, 16, 33, 0.6) !important;
+}
+.light .dashboard-mockup .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .dashboard-mockup .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .dashboard-mockup .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+.light .dashboard-mockup .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .dashboard-mockup .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .dashboard-mockup .text-white {
+  color: #ffffff !important;
+}
+.light .dashboard-mockup .text-gray-100 {
+  color: #f3f4f6 !important;
+}
+.light .dashboard-mockup .text-gray-200 {
+  color: #e5e7eb !important;
+}
+.light .dashboard-mockup .text-gray-300 {
+  color: #d1d5db !important;
+}
+.light .dashboard-mockup .text-gray-400 {
+  color: #9ca3af !important;
+}
+.light .dashboard-mockup .text-gray-500 {
+  color: #6b7280 !important;
+}
+.light .dashboard-mockup .text-indigo-400 {
+  color: #818cf8 !important;
+}
+.light .dashboard-mockup .text-blue-400 {
+  color: #60a5fa !important;
+}
+.light .dashboard-mockup .text-green-400 {
+  color: #34d399 !important;
+}
+.light .dashboard-mockup .text-red-400 {
+  color: #f87171 !important;
+}
+.light .dashboard-mockup .text-yellow-400 {
+  color: #fbbf24 !important;
+}
+.light .dashboard-mockup .bg-green-500\/10 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+.light .dashboard-mockup .border-green-500\/20 {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+.light .dashboard-mockup .bg-indigo-500\/10 {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+}
+.light .dashboard-mockup .border-indigo-500\/20 {
+  border-color: rgba(99, 102, 241, 0.2) !important;
+}
+.light .dashboard-mockup .bg-red-500\/10 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+.light .dashboard-mockup .border-red-500\/20 {
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+.light .dashboard-mockup .bg-blue-500\/10 {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+.light .dashboard-mockup .border-blue-500\/20 {
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* ROI Panel Theme Preservation - Keeps ROI panel dark and high contrast in Light Mode */
+.light .roi-panel-preserve {
+  background-color: #0c1222 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+.light .roi-panel-preserve .text-white {
+  color: #ffffff !important;
+}
+.light .roi-panel-preserve .text-gray-400 {
+  color: #9ca3af !important;
+}
+.light .roi-panel-preserve .text-gray-500 {
+  color: #94a3b8 !important;
+}
+.light .roi-panel-preserve .text-cyan-400 {
+  color: #22d3ee !important;
+}
+.light .roi-panel-preserve .text-emerald-400 {
+  color: #34d399 !important;
+}
+.light .roi-panel-preserve .text-indigo-400 {
+  color: #818cf8 !important;
+}
+.light .roi-panel-preserve .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .roi-panel-preserve .bg-indigo-500\/15 {
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+.light .roi-panel-preserve .border-indigo-500\/30 {
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+.light .roi-panel-preserve .bg-emerald-500\/10 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+.light .roi-panel-preserve .border-emerald-500\/25 {
+  border-color: rgba(16, 185, 129, 0.25) !important;
+}
+.light .roi-panel-preserve .bg-cyan-500\/10 {
+  background-color: rgba(6, 182, 212, 0.1) !important;
+}
+.light .roi-panel-preserve .border-cyan-500\/20 {
+  border-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+/* Fix header overlap by increasing top padding on main layout content container (excluding homepage) */
+main.flex-grow:not(.home-main) {
+  padding-top: 7rem; /* 112px on mobile to clear navbar exactly */
+}
+
+@media (min-width: 1024px) {
+  main.flex-grow:not(.home-main) {
+    padding-top: 8.5rem; /* 136px on desktop to clear navbar exactly */
+  }
+}
+
+/* ========================================================================== */
+/* Website For Garages Light Mode overrides                                   */
+/* ========================================================================== */
+
+.light .bg-\[\#0c1222\]\/60 {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    0 10px 30px -10px rgba(15, 23, 42, 0.05),
+    0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.light .bg-\[\#0c1222\]\/80 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+/* Theme Preservation for selective dark sections in Light Mode */
+.light .dark-card-preserve {
+  background-image: none !important;
+  background-color: #0c1222 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+.light .dark-card-preserve * {
+  color: inherit !important;
+}
+.light .dark-card-preserve .text-blue-400 {
+  color: #60a5fa !important;
+}
+.light .dark-card-preserve .text-indigo-400 {
+  color: #818cf8 !important;
+}
+.light .dark-card-preserve .text-gray-400 {
+  color: #94a3b8 !important;
+}
+.light .dark-card-preserve a {
+  color: #ffffff !important;
+}
+.light .dark-card-preserve span {
+  color: #94a3b8 !important;
+}
+
+/* Garage Website Hero Banner text color and gradient preservation in Light Mode */
+.light .garage-hero-banner {
+  background-color: #050816 !important;
+}
+.light .garage-hero-banner h1 {
+  color: #ffffff !important;
+}
+.light .garage-hero-banner .to-\[\#050816\] {
+  --tw-gradient-to: #050816 !important;
+}
+
+/* Explicit Light Mode rules for GMS Feature Cards */
+.light .gms-feature-card {
+  background-image: none !important;
+  background-color: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  border-bottom-color: rgba(15, 23, 42, 0.15) !important;
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.06) !important;
+}
+
+.light .gms-feature-card h4,
+.light .gms-feature-card .text-white {
+  color: #0f172a !important;
+}
+
+.light .gms-feature-card p,
+.light .gms-feature-card .text-gray-400,
+.light .gms-feature-card .text-gray-500 {
+  color: #475569 !important;
+}
+
+/* ========================================================================== */
+/* Mobile Scroll Performance & Lag Optimizations                             */
+/* ========================================================================== */
+
+@media (max-width: 767px) {
+  /* Disable expensive backdrop filters on mobile devices to prevent GPU rendering lag */
+  .backdrop-blur,
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Map semi-transparent backgrounds to solid colors to keep text readable without blur */
+  .bg-\[\#050816\]\/90,
+  .bg-\[\#050816\]\/95,
+  .bg-\[\#050816\]\/70,
+  .bg-\[\#050816\]\/30 {
+    background-color: #050816 !important;
+  }
+  
+  .light .bg-\[\#050816\]\/90,
+  .light .bg-\[\#050816\]\/95,
+  .light .bg-\[\#050816\]\/70,
+  .light .bg-\[\#050816\]\/30 {
+    background-color: #f8fafc !important;
+  }
+
+  .bg-\[\#0c1222\]\/85,
+  .bg-\[\#0c1222\]\/90,
+  .bg-\[\#0c1222\]\/95 {
+    background-color: #0c1222 !important;
+  }
+
+  .light .bg-\[\#0c1222\]\/85,
+  .light .bg-\[\#0c1222\]\/90,
+  .light .bg-\[\#0c1222\]\/95 {
+    background-color: #ffffff !important;
+  }
+
+  .bg-\[\#070b16\]\/98 {
+    background-color: #070b16 !important;
+  }
+
+  .light .bg-\[\#070b16\]\/98 {
+    background-color: #f1f5f9 !important;
+  }
+
+  /* Disable 3D tilt effects on mobile to prevent paint storm reflows */
+  .three-d {
+    perspective: none !important;
+    transform-style: flat !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .three-d:hover {
+    transform: none !important;
+  }
+
+  /* Smooth touch scrolling with simplified layers */
+  html, body {
+    overflow-x: hidden;
+    scroll-behavior: auto !important; /* Better touch kinetic response on iOS/Android */
+  }
+}
