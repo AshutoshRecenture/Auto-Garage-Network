@@ -99,6 +99,10 @@ const BlogModal = ({ post, onClose }) => {
             src={post.image}
             alt={post.title}
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+            width="600"
+            height="300"
           />
           <button
             onClick={onClose}
@@ -202,6 +206,10 @@ const BlogCard = ({ post, onReadMore }) => {
           src={post.image}
           alt={post.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          decoding="async"
+          width="600"
+          height="300"
         />
         <div
           className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${post.color} border border-current/10 shrink-0 z-10`}

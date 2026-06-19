@@ -452,6 +452,10 @@ const Footer = () => {
                   src="/logo-color.png"
                   alt="Auto Garage Network Logo"
                   className="h-10 lg:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                  width="120"
+                  height="48"
                   style={{
                     filter: "invert(1) hue-rotate(180deg) brightness(1.5) contrast(1.2)"
                   }}

@@ -307,7 +307,7 @@ const DashboardSection = () => {
         }
         return next;
       });
-    }, 4500);
+    }, 8000);
 
     return () => clearInterval(simulationInterval);
   }, []);

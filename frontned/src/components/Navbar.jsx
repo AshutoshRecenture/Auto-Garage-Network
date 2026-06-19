@@ -324,6 +324,9 @@ const Navbar = () => {
                 src="/logo-color.png"
                 alt="AG Network Logo"
                 className="logo-img h-10 lg:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105"
+                width="120"
+                height="48"
+                fetchPriority="high"
               />
             </Link>
 
