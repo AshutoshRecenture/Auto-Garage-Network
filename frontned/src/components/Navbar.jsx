@@ -113,7 +113,10 @@ const Navbar = () => {
 
   // Theme state and storage hook
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") || "dark";
+    if (typeof window !== "undefined" && window.localStorage) {
+      return localStorage.getItem("theme") || "dark";
+    }
+    return "dark";
   });
 
   useEffect(() => {

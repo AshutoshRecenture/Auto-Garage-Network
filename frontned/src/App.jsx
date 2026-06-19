@@ -1,5 +1,5 @@
 import React, { useEffect, lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import Home from "./pages/Home.jsx";
 import PageTransition from "./components/PageTransition.jsx";
@@ -191,12 +191,12 @@ const AnimatedRoutes = () => {
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <>
       <ScrollToTop />
       <MotionConfig reducedMotion="always">
         <AnimatedRoutes />
       </MotionConfig>
-    </BrowserRouter>
+    </>
   );
 };
 
