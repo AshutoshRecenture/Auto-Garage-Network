@@ -7,7 +7,7 @@ const SEOHeader = ({
   keywords,
   canonicalPath = "",
   type = "website",
-  image = "/logo-color.png"
+  image = "/logo-color.png",
 }) => {
   const siteUrl = "https://autogaragenetwork.com";
   const canonicalUrl = `${siteUrl}${canonicalPath}`;
@@ -15,7 +15,11 @@ const SEOHeader = ({
   return (
     <Helmet>
       {/* Base SEO Tags */}
-      <title>{title ? `${title} | Auto Garage Network` : "Auto Garage Network | Premium Garage Management Suite"}</title>
+      <title>
+        {title
+          ? `${title} | Auto Garage Network`
+          : "Auto Garage Network | Premium Garage Management Suite"}
+      </title>
       {description && <meta name="description" content={description} />}
       {keywords && <meta name="keywords" content={keywords} />}
       <link rel="canonical" href={canonicalUrl} />
