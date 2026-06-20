@@ -43,7 +43,7 @@ async function run() {
     const { helmet } = helmetContext;
 
     // Inject server-rendered HTML into placeholder
-    let html = template.replace("<!--ssr-outlet-->", appHtml);
+    let html = template.replace(/<!--\s*ssr[- ]*outlet\s*-->/, appHtml);
 
     // Inject SEO tags from react-helmet-async if available
     if (helmet) {
