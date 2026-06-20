@@ -101,7 +101,7 @@ const StatsSection = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div
           ref={ref}
-          className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 text-center"
         >
           {stats.map((stat, idx) => (
             <motion.div
@@ -109,9 +109,9 @@ const StatsSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="flex flex-col space-y-3 p-6 rounded-2xl bg-[#111827] border border-white/5 hover:border-indigo-500/30 transition-colors group"
+              className="flex flex-col space-y-2 md:space-y-3 p-3 md:p-6 rounded-2xl bg-[#111827] border border-white/5 hover:border-indigo-500/30 transition-colors group"
             >
-              <div className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-purple-500 group-hover:scale-110 transition-transform">
+              <div className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-purple-500 group-hover:scale-110 transition-transform">
                 <AnimatedCounter
                   end={stat.value}
                   inView={inView}

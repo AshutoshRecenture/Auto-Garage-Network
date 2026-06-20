@@ -138,6 +138,8 @@ const getFeatureLogoOrIcon = (name, idx) => {
         <img
           src={logoSrc}
           alt={name}
+          loading="lazy" 
+          decoding="async"
           className="h-8 object-contain max-w-[125px] select-none"
         />
       </div>
@@ -526,8 +528,8 @@ const GarageManagementSystem = () => {
         ══════════════════════════════════════════ */}
         <section className="relative py-16 md:py-24 px-6 md:px-12 overflow-hidden border-b border-white/5">
           {/* background glows */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className="hidden md:block absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
+          <div className="hidden md:block absolute bottom-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-start relative z-10">
             {/* Left Column: Heading, intro & bullet points */}
@@ -852,7 +854,7 @@ const GarageManagementSystem = () => {
             DETAILED FEATURE COMPARISON TABLE
         ══════════════════════════════════════════ */}
         <section className="py-20 px-6 md:px-12 relative overflow-hidden border-b border-white/5">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
+          <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto space-y-12">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
@@ -1027,7 +1029,7 @@ const GarageManagementSystem = () => {
               viewport={{ once: true }}
               className="bg-gradient-to-br from-[#0c1222]/95 via-[#0c1222]/95 to-indigo-950/20 border border-white/10 rounded-[28px] p-6 md:p-10 shadow-2xl relative overflow-hidden dark-card-preserve"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none" />
+              <div className="hidden md:block absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none" />
 
               <div className="relative z-10 space-y-6 text-left">
                 <div className="flex items-center gap-2 text-indigo-400 font-bold uppercase text-xs tracking-wider">
@@ -1072,7 +1074,7 @@ const GarageManagementSystem = () => {
             CORE GMS FEATURES GRID (36 CARDS)
         ══════════════════════════════════════════ */}
         <section className="py-20 px-6 md:px-12 bg-[#0a0f24]/20 border-t border-white/5 relative overflow-hidden">
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none" />
+          <div className="hidden md:block absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto space-y-16">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
