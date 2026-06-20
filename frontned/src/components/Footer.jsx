@@ -456,9 +456,6 @@ const Footer = () => {
                   decoding="async"
                   width="120"
                   height="48"
-                  style={{
-                    filter: "invert(1) hue-rotate(180deg) brightness(1.5) contrast(1.2)"
-                  }}
                 />
               </Link>
               <p className="text-gray-400 text-xs leading-relaxed font-semibold">
