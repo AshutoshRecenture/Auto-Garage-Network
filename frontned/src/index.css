@@ -202,6 +202,9 @@ html:not(.light)::-webkit-scrollbar-thumb:hover {
 .light .bg-\[\#111827\]\/80 {
   background-color: rgba(241, 245, 249, 0.8) !important;
 }
+.light .bg-\[\#111827\]\/85 {
+  background-color: rgba(241, 245, 249, 0.85) !important;
+}
 
 /* Invert default grey/slate backgrounds */
 .light .bg-slate-900 {
