@@ -114,19 +114,29 @@ const Navbar = () => {
   // Theme state and storage hook
   const [theme, setTheme] = useState(() => {
     if (typeof window !== "undefined" && window.localStorage) {
-      return localStorage.getItem("theme") || "dark";
+      return localStorage.getItem("theme") || "light";
     }
-    return "dark";
+    return "light";
   });
 
   useEffect(() => {
     const root = document.documentElement;
+    root.classList.add("no-transitions");
+
     if (theme === "light") {
       root.classList.add("light");
     } else {
       root.classList.remove("light");
     }
     localStorage.setItem("theme", theme);
+
+    // Force reflow
+    window.getComputedStyle(root).opacity;
+
+    const timer = setTimeout(() => {
+      root.classList.remove("no-transitions");
+    }, 0);
+    return () => clearTimeout(timer);
   }, [theme]);
 
   const toggleTheme = () => {

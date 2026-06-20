@@ -134,9 +134,27 @@ const BlogModal = ({ post, onClose }) => {
           </p>
 
           <div className="space-y-3.5 text-gray-300 text-xs md:text-sm leading-relaxed">
-            <p>{p1}</p>
-            <p>{p2}</p>
-            <p>{p3}</p>
+            {post.content ? (
+              post.content.map((item, idx) => {
+                if (item.type === "heading") {
+                  return (
+                    <h3
+                      key={idx}
+                      className="text-sm md:text-base font-extrabold text-white pt-2.5"
+                    >
+                      {item.value}
+                    </h3>
+                  );
+                }
+                return <p key={idx}>{item.value}</p>;
+              })
+            ) : (
+              <>
+                <p>{p1}</p>
+                <p>{p2}</p>
+                <p>{p3}</p>
+              </>
+            )}
           </div>
         </div>
 
@@ -268,6 +286,72 @@ const BlogSection = ({ limit }) => {
         "Running a garage can be a very daunting and tough task, especially if you are doing it without any technical help. A modern workshop management system resolves scheduling bottlenecks and streamlines parts ordering.",
       color: "bg-blue-500/10 text-blue-400",
       image: workshopImg,
+      content: [
+        {
+          type: "text",
+          value:
+            "Running a garage can be a very daunting and tough task, especially if you are doing it without any technical help. You need to do many things in one go, and you also need to manage many tasks at once. You must care for the cars, help customers, keep the tools in order, and ensure everything runs on time. These things might get messy and confusing. Garage Software has been introduced to ease workflow and simultaneously manage all tasks.",
+        },
+        {
+          type: "text",
+          value:
+            "This helps garages stay organised, work faster, and give better services to customers. Garage management software is a special computer tool made for auto repair shops. It manages all the tough tasks of garages at one stop. You can use this tool for many tasks, see which car is coming for which problem, and whether it gets fixed. This software has proven to be a competent help running the garage smoothly. Read this blog to get the information.",
+        },
+        {
+          type: "heading",
+          value: "Keeps Track of All Jobs",
+        },
+        {
+          type: "text",
+          value:
+            "Sometimes garages don’t correctly note what they need for their cars. By opting for this software, garages can analyse the procedure for what is going on with the vehicle. This system lets you track the car coming to the garage, what it needs, and how you fix it. You don’t need to look at a paper for records, and you don’t need to ask many people to get the details of the car and the work the car needs. The software shows everything on your computer screen and how the work is being completed. This helps the workers focus on their jobs, and they don’t have to waste time searching for information.",
+        },
+        {
+          type: "heading",
+          value: "Easy Scheduling",
+        },
+        {
+          type: "text",
+          value:
+            "This software eases the scheduling process a lot. Customers just need to call or come in to book a service. This software lets people set appointments according to their schedule and needs using their phones and computers. When customers book an appointment and add the time slot, the software automatically adds it to the garage calendar. This allows the garage owners to access the appointments independently and serve their customers. You don’t have to book an appointment for two cars at the same time by mistake. Workers can easily see what jobs are coming up. The garage stays ready on time to fix the car.",
+        },
+        {
+          type: "heading",
+          value: "Saves Time on Paperwork",
+        },
+        {
+          type: "text",
+          value:
+            "Writing everything can take longer, especially when filling out forms or bills. But not anymore, the garage management software is also designed to help you with the paperwork. This software makes the workflow easy by generating bills for you. This software also tells you about the parts used to fix the car and their cost. You don’t need to keep big stacks of paper to write down everything. This makes everything sorted in your computer quickly by saving time and keeping the records safe.",
+        },
+        {
+          type: "heading",
+          value: "Helps with Inventory Control",
+        },
+        {
+          type: "text",
+          value:
+            "The garage uses many parts, like oils, filters, and tyres, but keeping a manual record of everything can be very tough. This inventory work involves what you have and need to buy for your garage. This software keeps a list of everything, along with the restocking. When you use something, the number just goes down and automatically goes to restocking. If you are running low, the software reminds you to order that item. You don’t have to rush for the parts at the end time while performing the repair work. This helps the garage manage its workflow without any delays.",
+        },
+        {
+          type: "heading",
+          value: "Keeps the Team Organised",
+        },
+        {
+          type: "text",
+          value:
+            "Every person in the garage has to do something and has a lot of work as well. Some need to fix the engine, some need to look at restocking the parts, some need to change the oil in the vehicle, and some need to look at administrative work. The software makes the staff workflow more efficient, and they can focus on their other work without worrying about it. This software assigns the work according to their capabilities. This software allows you to give tasks to the right person and set deadlines accordingly. If someone does their job early, they don’t have to sit idle. They can check what the next thing is that they need to do. This keeps the staff busy and helps the garage finish the work on time every day.",
+        },
+        {
+          type: "heading",
+          value: "Final Thoughts",
+        },
+        {
+          type: "text",
+          value:
+            "Garage management software has proven to be a big help to garages and workshops. It eases the garage's workflow and helps them manage their other tasks. This keeps the garage clean, saves time and ensures that the job is done correctly. This helps you to remember all the essential things and keeps the team on track. When the garage runs better, the customers will notice everything. The customers see the positive side of the garage and will return. If the garage still uses paper and simple tools, it may be time to switch to this software. This makes the workflow more manageable and helps the business to grow.",
+        },
+      ],
     },
     {
       category: "Industry News",
@@ -278,6 +362,43 @@ const BlogSection = ({ limit }) => {
         "Bond International, an established name in the UK tyre industry, has acquired Worcester-based Tyresoft Ltd., expanding its digital ecosystem and capabilities for garages nationwide.",
       color: "bg-indigo-500/10 text-indigo-400",
       image: tyreSoftwareImg,
+      content: [
+        {
+          type: "text",
+          value:
+            "Bond International, an established name in the UK tyre industry, has acquired Worcester-based Tyresoft Ltd., one of the country's most recognised tyre software providers. The deal effectuates Bond's foothold in the UK's tyre software market.",
+        },
+        {
+          type: "text",
+          value:
+            'Founded in 2011, Tyresoft Ltd. quickly rose to eminence because of its unique business approach, which offered an "all-purpose complete management system" to the tyre and automobile industries. Marcus Hathaway, the company’s founder, provided groundbreaking solutions to harmonise tyre sales, systematise tyre stock, and strengthen overall tyre business operations.',
+        },
+        {
+          type: "text",
+          value:
+            "The acquisition strongly indicates Bond’s tactical focus on top-notch infrastructure after escalating its delivery and warehouse capabilities to cover 96% of the UK with same-day service. Bond International's CEO, Charlie Bond, described the deal as “historic” in the company's long-term growth strategy.",
+        },
+        {
+          type: "text",
+          value:
+            "Bond talked about his company's significant achievement in building a nationwide delivery network; he also added that his company's vision is to gain success in the system development sector, where Tyresoft, as a partner, will play a vital role in upscaling its operations.",
+        },
+        {
+          type: "text",
+          value:
+            "Hathaway, too, lauded the agreement between the two organisations. He exemplified the new journey as a \"thrilling opportunity\" for the customers. Marcus Hathaway praised Bond International's commitment to quality and innovation and added that the company's values synchronise perfectly with Tyresoft’s ambitions.",
+        },
+        {
+          type: "text",
+          value:
+            "As part of the accord, Hathaway will soon join Bond International’s Board of Directors as the Director of Systems Development. He will also continue to guide Tyresoft’s software management and direction. On the other hand, Oliver Russell will join Tyresoft as its Managing Director.",
+        },
+        {
+          type: "text",
+          value:
+            "Last month, Bond International acquired yet another leading tyre brand: Tyrescope. This undoubtedly signals Bond’s business strategy to incorporate high-end digital solutions into the core of its tyre-related operations. By affiliating with giant market leaders in the tyre software space, Bond is diversifying its operations to optimise business efficiency, customer value, and new-age innovation.",
+        },
+      ],
     },
     {
       category: "Automation",
@@ -594,22 +715,22 @@ const BlogSection = ({ limit }) => {
       <div className="absolute top-1/2 left-1/4 w-[450px] h-[450px] bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="max-w-2xl text-left"
-          >
-            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
-              Latest Insights
-            </h2>
-            <p className="text-gray-400 text-lg">
-              Tips, news, and product updates from the Auto Garage Network team.
-            </p>
-          </motion.div>
+        {limit && (
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="max-w-2xl text-left"
+            >
+              <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
+                Latest Insights
+              </h2>
+              <p className="text-gray-400 text-lg">
+                Tips, news, and product updates from the Auto Garage Network team.
+              </p>
+            </motion.div>
 
-          {limit && (
             <Link to="/blog">
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -622,8 +743,8 @@ const BlogSection = ({ limit }) => {
                 <FiArrowRight />
               </motion.div>
             </Link>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="flex flex-wrap justify-center gap-8">
           {currentPosts.map((post, idx) => (
