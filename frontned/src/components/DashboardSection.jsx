@@ -487,9 +487,9 @@ const DashboardSection = () => {
                   <h3 className="text-[8px] md:text-[9px] font-black text-gray-500 tracking-widest uppercase">
                     VEHICLE MANAGEMENT SYSTEM
                   </h3>
-                  <h1 className="text-lg md:text-2xl font-black text-white mt-1">
+                  <h2 className="text-lg md:text-2xl font-black text-white mt-1">
                     Live Workshop Operations
-                  </h1>
+                  </h2>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="hidden lg:flex items-center space-x-2 bg-[#0a0f1d] border border-white/5 rounded-full px-3 py-1 text-[9px] text-gray-400 font-bold">

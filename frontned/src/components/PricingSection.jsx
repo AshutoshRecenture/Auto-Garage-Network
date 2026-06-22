@@ -1,51 +1,51 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FiCheck, FiPercent, FiTrendingUp, FiClock } from 'react-icons/fi';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { FiCheck, FiPercent, FiTrendingUp, FiClock } from "react-icons/fi";
 
 const PricingSection = () => {
   const plans = [
     {
-      name: 'Elite Workshop',
-      price: '135',
-      desc: 'Perfect for small to medium independent garages.',
+      name: "Elite Workshop",
+      price: "135",
+      desc: "Perfect for small to medium independent garages.",
       features: [
-        'Up to 3 Users',
-        'Unlimited Invoices & Quotes',
-        'MOT & Service Reminders',
-        'Customer Database (CRM)',
-        'Basic Reporting',
-        'Email Support'
-      ]
+        "Up to 3 Users",
+        "Unlimited Invoices & Quotes",
+        "MOT & Service Reminders",
+        "Customer Database (CRM)",
+        "Basic Reporting",
+        "Email Support",
+      ],
     },
     {
-      name: 'Elite ProMax',
-      price: '235',
-      desc: 'Everything you need to scale your garage operations.',
+      name: "Elite ProMax",
+      price: "235",
+      desc: "Everything you need to scale your garage operations.",
       isPopular: true,
       features: [
-        'Up to 10 Users',
-        'Everything in Workshop',
-        'Autodata & TecRMI Integration',
-        'Xero/QuickBooks/Sage Sync',
-        'Parts Ordering (GSF/Partslink24)',
-        'Advanced Analytics',
-        'Priority Phone Support'
-      ]
+        "Up to 10 Users",
+        "Everything in Workshop",
+        "Autodata & TecRMI Integration",
+        "Xero/QuickBooks/Sage Sync",
+        "Parts Ordering (GSF/Partslink24)",
+        "Advanced Analytics",
+        "Priority Phone Support",
+      ],
     },
     {
-      name: 'Elite ProMax Plus',
-      price: '375',
-      desc: 'For large multi-site operations and franchises.',
+      name: "Elite ProMax Plus",
+      price: "375",
+      desc: "For large multi-site operations and franchises.",
       features: [
-        'Unlimited Users',
-        'Everything in ProMax',
-        'Multi-Site Management',
-        'Custom API Access',
-        'Dedicated Account Manager',
-        'On-site Training',
-        '24/7 Premium Support'
-      ]
-    }
+        "Unlimited Users",
+        "Everything in ProMax",
+        "Multi-Site Management",
+        "Custom API Access",
+        "Dedicated Account Manager",
+        "On-site Training",
+        "24/7 Premium Support",
+      ],
+    },
   ];
 
   // ROI Calculator states
@@ -55,33 +55,44 @@ const PricingSection = () => {
 
   // Calculations:
   // - Admin hours reduced by 40% + 0.1 hours saved per job (auto-lookups, parts link)
-  const monthlyHoursSaved = Math.round((adminHours * 0.4 + dailyJobs * 0.1) * 22);
+  const monthlyHoursSaved = Math.round(
+    (adminHours * 0.4 + dailyJobs * 0.1) * 22,
+  );
   // - 6% more jobs recovered using automated reminders (average invoice value)
   const extraJobsRecovered = Math.round(dailyJobs * 0.06 * 22);
-  const monthlyRevenueGain = Math.round((extraJobsRecovered * avgInvoice) + (monthlyHoursSaved * 25)); // assuming technician cost of £25/hr
+  const monthlyRevenueGain = Math.round(
+    extraJobsRecovered * avgInvoice + monthlyHoursSaved * 25,
+  ); // assuming technician cost of £25/hr
   const yearlySavings = monthlyRevenueGain * 12;
   const roiMultiplier = (monthlyRevenueGain / 135).toFixed(1);
 
   return (
-    <section id="pricing" className="py-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden">
+    <section
+      id="pricing"
+      className="py-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold text-white mb-6 font-sans"
           >
-            Simple, Transparent <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 font-sans">Pricing</span>
+            Simple, Transparent{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 font-sans">
+              Pricing
+            </span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-gray-400 text-lg font-sans"
+            className="text-gray-300 text-lg font-sans"
           >
-            No hidden fees. No long-term contracts. Choose the plan that fits your garage.
+            No hidden fees. No long-term contracts. Choose the plan that fits
+            your garage.
           </motion.p>
         </div>
 
@@ -96,9 +107,9 @@ const PricingSection = () => {
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ y: -10 }}
               className={`relative bg-[#0c1222]/80 backdrop-blur-md rounded-3xl p-8 flex flex-col transition-all duration-300 border ${
-                plan.isPopular 
-                  ? 'border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.25)]' 
-                  : 'border-white/5 hover:border-indigo-500/25 shadow-lg'
+                plan.isPopular
+                  ? "border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.25)]"
+                  : "border-white/5 hover:border-indigo-500/25 shadow-lg"
               }`}
             >
               {plan.isPopular && (
@@ -108,13 +119,17 @@ const PricingSection = () => {
                   </div>
                 </div>
               )}
-              
+
               <div className="mb-8 select-none">
-                <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {plan.name}
+                </h3>
                 <p className="text-xs text-gray-400 h-10">{plan.desc}</p>
                 <div className="mt-6 flex items-baseline text-white">
                   <span className="text-3xl font-bold">£</span>
-                  <span className="text-5xl font-extrabold tracking-tight">{plan.price}</span>
+                  <span className="text-5xl font-extrabold tracking-tight">
+                    {plan.price}
+                  </span>
                   <span className="text-gray-400 ml-2 font-medium">/month</span>
                 </div>
               </div>
@@ -132,11 +147,13 @@ const PricingSection = () => {
                 </ul>
               </div>
 
-              <button className={`w-full py-4 rounded-xl font-bold transition-all cursor-pointer ${
-                plan.isPopular 
-                  ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20' 
-                  : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
-              }`}>
+              <button
+                className={`w-full py-4 rounded-xl font-bold transition-all cursor-pointer ${
+                  plan.isPopular
+                    ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20"
+                    : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                }`}
+              >
                 Get Started
               </button>
             </motion.div>
@@ -161,7 +178,8 @@ const PricingSection = () => {
               <span>GMS ROI & Savings Calculator</span>
             </h3>
             <p className="text-xs md:text-sm text-gray-400 mb-10 select-none">
-              Adjust the sliders below to calculate how much time and money the AGN Garage Management System can save your workshop.
+              Adjust the sliders below to calculate how much time and money the
+              AGN Garage Management System can save your workshop.
             </p>
 
             <div className="grid lg:grid-cols-12 gap-10">
@@ -171,7 +189,9 @@ const PricingSection = () => {
                 <div className="space-y-2.5">
                   <div className="flex justify-between items-center text-xs font-bold uppercase select-none">
                     <span className="text-gray-400">Daily Bookings / Jobs</span>
-                    <span className="text-indigo-400 bg-indigo-500/10 border border-indigo-500/25 px-2 py-0.5 rounded">{dailyJobs} Jobs/day</span>
+                    <span className="text-indigo-400 bg-indigo-500/10 border border-indigo-500/25 px-2 py-0.5 rounded">
+                      {dailyJobs} Jobs/day
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -191,7 +211,9 @@ const PricingSection = () => {
                 <div className="space-y-2.5">
                   <div className="flex justify-between items-center text-xs font-bold uppercase select-none">
                     <span className="text-gray-400">Average Invoice Value</span>
-                    <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded">£{avgInvoice} per job</span>
+                    <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded">
+                      £{avgInvoice} per job
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -210,8 +232,12 @@ const PricingSection = () => {
                 {/* Slider 3 */}
                 <div className="space-y-2.5">
                   <div className="flex justify-between items-center text-xs font-bold uppercase select-none">
-                    <span className="text-gray-400">Admin/Office Hours Per Day</span>
-                    <span className="text-cyan-400 bg-cyan-500/10 border border-cyan-500/25 px-2 py-0.5 rounded">{adminHours} Hours/day</span>
+                    <span className="text-gray-400">
+                      Admin/Office Hours Per Day
+                    </span>
+                    <span className="text-cyan-400 bg-cyan-500/10 border border-cyan-500/25 px-2 py-0.5 rounded">
+                      {adminHours} Hours/day
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -231,7 +257,7 @@ const PricingSection = () => {
               {/* Live Savings Calculations Panel (Right) */}
               <div className="lg:col-span-5 bg-[#050816]/75 border border-white/5 rounded-3xl p-6 flex flex-col justify-between gap-6 relative shadow-lg roi-panel-preserve">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[40px] pointer-events-none" />
-                
+
                 <div className="space-y-4">
                   {/* Gauge 1 */}
                   <div className="flex items-center gap-4 border-b border-white/5 pb-4">
@@ -239,8 +265,15 @@ const PricingSection = () => {
                       <FiClock size={18} />
                     </div>
                     <div>
-                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-0.5">Admin Time Saved</span>
-                      <span className="text-lg font-black text-white">{monthlyHoursSaved} Hrs <span className="text-xs text-gray-400 font-medium">/month</span></span>
+                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-0.5">
+                        Admin Time Saved
+                      </span>
+                      <span className="text-lg font-black text-white">
+                        {monthlyHoursSaved} Hrs{" "}
+                        <span className="text-xs text-gray-400 font-medium">
+                          /month
+                        </span>
+                      </span>
                     </div>
                   </div>
 
@@ -250,8 +283,15 @@ const PricingSection = () => {
                       <FiPercent size={18} />
                     </div>
                     <div>
-                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-0.5">Estimated Revenue Gain</span>
-                      <span className="text-lg font-black text-emerald-400">£{monthlyRevenueGain.toLocaleString()} <span className="text-xs text-gray-400 font-medium">/month</span></span>
+                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-0.5">
+                        Estimated Revenue Gain
+                      </span>
+                      <span className="text-lg font-black text-emerald-400">
+                        £{monthlyRevenueGain.toLocaleString()}{" "}
+                        <span className="text-xs text-gray-400 font-medium">
+                          /month
+                        </span>
+                      </span>
                     </div>
                   </div>
 
@@ -261,16 +301,27 @@ const PricingSection = () => {
                       <FiTrendingUp size={18} />
                     </div>
                     <div>
-                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-0.5">Return on Investment</span>
-                      <span className="text-lg font-black text-white">{roiMultiplier}x <span className="text-xs text-indigo-400 font-semibold bg-indigo-500/15 border border-indigo-500/30 px-1.5 py-0.5 rounded ml-1">ROI</span></span>
+                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-0.5">
+                        Return on Investment
+                      </span>
+                      <span className="text-lg font-black text-white">
+                        {roiMultiplier}x{" "}
+                        <span className="text-xs text-indigo-400 font-semibold bg-indigo-500/15 border border-indigo-500/30 px-1.5 py-0.5 rounded ml-1">
+                          ROI
+                        </span>
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Banner summary */}
                 <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-4 text-center">
-                  <span className="text-[9px] uppercase font-black tracking-widest text-emerald-400 block mb-0.5">Projected Yearly Return</span>
-                  <span className="text-2xl font-black text-white">£{yearlySavings.toLocaleString()}</span>
+                  <span className="text-[9px] uppercase font-black tracking-widest text-emerald-400 block mb-0.5">
+                    Projected Yearly Return
+                  </span>
+                  <span className="text-2xl font-black text-white">
+                    £{yearlySavings.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>

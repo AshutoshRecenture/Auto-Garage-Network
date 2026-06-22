@@ -138,7 +138,7 @@ const getFeatureLogoOrIcon = (name, idx) => {
         <img
           src={logoSrc}
           alt={name}
-          loading="lazy" 
+          loading="lazy"
           decoding="async"
           className="h-8 object-contain max-w-[125px] select-none"
         />
@@ -247,7 +247,9 @@ const GarageManagementSystem = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Something went wrong while submitting booking.");
+        throw new Error(
+          data.message || "Something went wrong while submitting booking.",
+        );
       }
 
       setFormSubmitted(true);

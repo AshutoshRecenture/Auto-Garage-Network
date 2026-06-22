@@ -2,6 +2,5 @@ User-agent: *
 Disallow: /admin
 Allow: /
 
-# Host & Sitemap
-Host: https://autogaragenetwork.com
+# Sitemap
 Sitemap: https://autogaragenetwork.com/sitemap.xml

@@ -37,7 +37,7 @@ const Home = () => {
           <MOTDiary />
           <SEOSection />
           <MobileAppSection />
-          <PricingSection />
+          <PricingSection isHomepage={true} />
           <TestimonialsSection />
           <BlogSection limit={3} />
         </main>

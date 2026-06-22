@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
@@ -13,6 +14,7 @@ import {
 } from "react-icons/fa";
 
 const ContactUs = () => {
+  const location = useLocation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,6 +22,16 @@ const ContactUs = () => {
     interest: "Garage Management System",
     message: "",
   });
+
+  useEffect(() => {
+    if (location.state?.interest) {
+      setFormData((prev) => ({
+        ...prev,
+        interest: location.state.interest,
+      }));
+    }
+  }, [location.state]);
+
   const [submitted, setSubmitted] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);

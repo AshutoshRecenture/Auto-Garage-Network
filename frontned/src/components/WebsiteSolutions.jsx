@@ -79,10 +79,10 @@ const WebsiteSolutions = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
               <span>10% OFF ONLINE BOOKINGS</span>
             </div>
-            <h1 className="text-xs md:text-sm font-black text-slate-900 leading-tight">
+            <h3 className="text-xs md:text-sm font-black text-slate-900 leading-tight">
               Premium Vehicle Care, <br />
               <span className="text-blue-600">Built Around You.</span>
-            </h1>
+            </h3>
             <p className="text-[7.5px] md:text-[8px] text-slate-500 font-medium leading-relaxed">
               Dealer-level diagnostics, certified technicians, and full warranty
               protection.
@@ -552,10 +552,10 @@ const WebsiteSolutions = () => {
 
         {/* Hero Stacked */}
         <div className="space-y-1 text-center">
-          <h1 className="text-[10px] font-black text-slate-900 leading-tight">
+          <h3 className="text-[10px] font-black text-slate-900 leading-tight">
             Premium Car Care, <br />
             Right in Your Pocket.
-          </h1>
+          </h3>
           <p className="text-[6px] text-slate-400 font-medium leading-normal max-w-[180px] mx-auto">
             Book MOTs, track diagnostic logs, and receive text status updates on
             your mobile.

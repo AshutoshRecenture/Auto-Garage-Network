@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { FiSearch, FiCpu, FiDatabase, FiCheckCircle, FiInfo, FiArrowRight, FiCheck } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { FiCheckCircle, FiArrowRight } from "react-icons/fi";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
@@ -13,33 +13,9 @@ import chassisImg from "../assets/images/auto_network_img01.webp";
 import chassisImgSlide from "../assets/images/auto_network_img_slide.webp";
 
 const AutotechData = () => {
-  const [vrm, setVrm] = useState("");
-  const [carInfo, setCarInfo] = useState(null);
-  const [searching, setSearching] = useState(false);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const handleLookup = (e) => {
-    e.preventDefault();
-    if (!vrm.trim()) return;
-
-    setSearching(true);
-    setCarInfo(null);
-
-    setTimeout(() => {
-      setSearching(false);
-      setCarInfo({
-        make: "FORD",
-        model: "TRANSIT CUSTOM 290 L1H1",
-        year: 2021,
-        engine: "1995cc Turbo Diesel",
-        tyres: "215/65 R16",
-        recallStatus: "NO OUTSTANDING RECALLS",
-      });
-    }, 1200);
-  };
 
   const autodataFeatures = [
     {
@@ -124,94 +100,6 @@ const AutotechData = () => {
         </section>
 
         {/* ══════════════════════════════════════════
-            INTERACTIVE LOOKUP DEMO
-        ══════════════════════════════════════════ */}
-        <section className="py-12 px-6 md:px-12 max-w-4xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-[#0c1222]/60 border border-white/5 p-8 rounded-3xl shadow-2xl relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
-            <h2 className="text-2xl font-black text-center mb-2">Live Demonstration</h2>
-            <p className="text-gray-400 text-sm text-center mb-8 max-w-md mx-auto">
-              Type any UK registration plate (e.g. LN21 XDF) to test our real-time database query.
-            </p>
-
-            <form onSubmit={handleLookup} className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
-              <div className="relative w-full bg-[#f1c40f] text-black font-extrabold px-4 py-3 rounded-lg flex items-center border-4 border-black select-none max-w-[280px]">
-                <div className="absolute left-0 top-0 bottom-0 w-3 bg-[#002f9f] rounded-l-xs flex flex-col justify-between items-center py-1.5 text-[6px] text-white">
-                  <span>UK</span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="ENTER REG"
-                  value={vrm}
-                  onChange={(e) => setVrm(e.target.value.toUpperCase())}
-                  className="w-full bg-transparent text-center text-xl font-bold placeholder-black/30 outline-none uppercase pl-2 select-text text-black"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={searching}
-                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-[#ffffff] font-extrabold px-6 py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-sm h-[52px]"
-              >
-                {searching ? (
-                  <>
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, ease: "linear", duration: 1 }}
-                    >
-                      <FiSearch />
-                    </motion.div>
-                    Searching...
-                  </>
-                ) : (
-                  <>
-                    <FiSearch />
-                    Search Database
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Results Display */}
-            <div className="mt-8 max-w-md mx-auto min-h-[140px] flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                {carInfo && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -15 }}
-                    className="w-full bg-[#070b18] border border-white/5 rounded-2xl p-6 space-y-3"
-                  >
-                    <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-gray-500 text-xs font-bold uppercase">Make / Model</span>
-                      <span className="text-white text-xs font-black">{carInfo.make} {carInfo.model}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-gray-500 text-xs font-bold uppercase">Year of Manufacture</span>
-                      <span className="text-white text-xs font-black">{carInfo.year}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-gray-500 text-xs font-bold uppercase">Engine Specification</span>
-                      <span className="text-white text-xs font-black">{carInfo.engine}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-gray-500 text-xs font-bold uppercase">Matching Tyre Size</span>
-                      <span className="text-cyan-400 text-xs font-black">{carInfo.tyres}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500 text-xs font-bold uppercase">Recall Bulletins</span>
-                      <span className="text-green-400 text-xs font-black">{carInfo.recallStatus}</span>
-                    </div>
-                  </motion.div>
-                )}
-                {!carInfo && !searching && (
-                  <p className="text-gray-500 text-xs font-medium italic text-center">No registration query active.</p>
-                )}
               </AnimatePresence>
             </div>
           </motion.div>
@@ -406,6 +294,58 @@ const AutotechData = () => {
                 />
               </div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════
+            LOOKUP PRICING PACKAGES
+        ══════════════════════════════════════════ */}
+        <section className="py-20 px-6 border-t border-white/5 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none" />
+          
+          <div className="max-w-7xl mx-auto relative z-10 space-y-12">
+            <div className="text-center space-y-4 max-w-3xl mx-auto">
+              <span className="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-4 py-1.5 rounded-full inline-block">
+                On-Demand Top-ups
+              </span>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+                Autodata Lookup Packages
+              </h2>
+              <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+                Choose a flexible, one-off lookup bundle to fit your workshop's volume. Pay only for the data lookups you need, with no long-term commitments.
+              </p>
+            </div>
+
+            {/* Grid of Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 items-stretch">
+              {[
+                { count: 50, price: 15 },
+                { count: 100, price: 30 },
+                { count: 150, price: 43 },
+                { count: 200, price: 55 },
+                { count: 300, price: 70 }
+              ].map((tier, idx) => (
+                <div
+                  key={idx}
+                  className="bg-[#0c1222]/80 border border-white/5 hover:border-blue-500/30 rounded-2xl p-6 flex flex-col justify-between text-center transition-all duration-300 shadow-xl"
+                >
+                  <div className="space-y-2">
+                    <span className="text-[10px] text-gray-500 font-bold block uppercase tracking-wider">Top-up Plan</span>
+                    <h4 className="text-base font-black text-white uppercase tracking-wider">{tier.count} Lookups</h4>
+                    <div className="text-3xl font-black text-blue-400 pt-2">£{tier.price}</div>
+                    <span className="text-[10px] text-gray-500 block">One-off Payment</span>
+                  </div>
+                  
+                  <Link
+                    to="/contact-us"
+                    state={{ interest: "Autotech Data Integration" }}
+                    className="w-full mt-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-[#ffffff] font-bold rounded-xl transition-all text-xs cursor-pointer inline-block text-center shadow-md hover:shadow-lg"
+                  >
+                    Select Package
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </main>

@@ -10,7 +10,9 @@ html:not(.light) {
   scrollbar-color: rgba(99, 102, 241, 0.75) #050816;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   background-color: #ffffff;
   color: #0f172a;
   overflow-x: hidden !important;
@@ -19,7 +21,9 @@ html, body, #root {
   position: relative;
 }
 
-html:not(.light), body:not(.light), #root:not(.light) {
+html:not(.light),
+body:not(.light),
+#root:not(.light) {
   background-color: #050816;
   color: #ffffff;
 }
@@ -62,7 +66,6 @@ html:not(.light) ::-webkit-scrollbar-thumb:hover,
 html:not(.light)::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.95);
 }
-
 
 /* -------------------------------------------------------------------------- */
 /* Professional Light/Dark Mode Styling System                                */
@@ -264,6 +267,13 @@ html:not(.light)::-webkit-scrollbar-thumb:hover {
 }
 .light .to-\[\#0c1222\] {
   --tw-gradient-to: #ffffff !important;
+}
+
+/* Apply a filter in dark mode or footer to invert the black 'NETWORK' text to white,
+   while hue-rotating to preserve the blue 'AUTO GARAGE' text. */
+html:not(.light) img[src*="logo-color.png"],
+.footer-no-invert img[src*="logo-color.png"] {
+  filter: invert(1) hue-rotate(180deg) brightness(1.2);
 }
 
 /* Text Color Mappings */
@@ -789,6 +799,9 @@ main.flex-grow:not(.home-main) {
 .light .dark-card-preserve .text-blue-400 {
   color: #60a5fa !important;
 }
+.light .dark-card-preserve .text-emerald-400 {
+  color: #34d399 !important;
+}
 .light .dark-card-preserve .text-indigo-400 {
   color: #818cf8 !important;
 }
@@ -857,7 +870,7 @@ main.flex-grow:not(.home-main) {
   .bg-\[\#050816\]\/30 {
     background-color: #050816 !important;
   }
-  
+
   .light .bg-\[\#050816\]\/90,
   .light .bg-\[\#050816\]\/95,
   .light .bg-\[\#050816\]\/70,
@@ -897,7 +910,8 @@ main.flex-grow:not(.home-main) {
   }
 
   /* Smooth touch scrolling with simplified layers */
-  html, body {
+  html,
+  body {
     overflow-x: hidden;
     scroll-behavior: auto !important; /* Better touch kinetic response on iOS/Android */
   }

@@ -1,0 +1,44 @@
+# Auto Garage Network
+
+Auto Garage Network is the premium garage management system (GMS) & bespoke website provider for UK workshops, MOT centres & tyre specialists. The platform automates administrative tasks, streamlines daily workshop operations, and scales revenue.
+
+- Homepage URL: https://autogaragenetwork.com/
+- Sitemap URL: https://autogaragenetwork.com/sitemap.xml
+- Robots URL: https://autogaragenetwork.com/robots.txt
+
+## Key Topics & Services
+
+### 1. Garage Management System (GMS)
+All-in-one digital workspace for independent workshops:
+- Smart job cards & digital invoicing
+- Customer CRM & automated service campaigns
+- Real-time stock control & revenue reports
+- Solera Autodata & TecRMI scheduling integrations
+- QuickBooks, Xero, and Sage accounting synchronization
+
+### 2. Custom Websites for Garages
+Bespoke e-commerce website solutions designed to convert local search queries:
+- Live DVLA lookup via registration number
+- E-commerce booking portals for MOTs and vehicle servicing
+- Real-time tyre inventory stock integration with major UK distributors
+
+### 3. MOT Diary & ramp scheduler
+Cloud-based booking calendar with smart ramp resource management and automated SMS/email reminders to prevent workshop no-shows.
+
+### 4. Search Engine Optimisation (SEO)
+Targeted local SEO services positioning automotive workshops at the top of local Google search queries for MOTs, tyres, and mechanical repairs.
+
+## Site Map & Important URLs
+
+- [Home Page](https://autogaragenetwork.com/) - All-in-one platform overview and book demo.
+- [About Us](https://autogaragenetwork.com/about-us) - Company details, values, and Mr. Jatinder Singh Bassi's vision.
+- [Pricing](https://autogaragenetwork.com/pricing) - Elite, ProMax, and ProMax Plus plans for workshops.
+- [Features](https://autogaragenetwork.com/features) - Complete GMS features breakdown (DVLA, parts link, accounting sync).
+- [Latest Work](https://autogaragenetwork.com/latest-work) - Live showcase of websites launched for independent garages.
+- [Blog](https://autogaragenetwork.com/blog) - Guides, digital trends, and expert tips to grow garage operations.
+- [Contact Us](https://autogaragenetwork.com/contact-us) - Sales inquiry & customer support hotlines.
+- [Garage Management System](https://autogaragenetwork.com/garage-management-system) - All features of our cloud software suite.
+- [Website for Garages](https://autogaragenetwork.com/website-for-garages) - Features of our customized garage websites.
+- [Autotech Data](https://autogaragenetwork.com/autotech-data) - Real-time vehicle database lookup services.
+- [MOT Diary Scheduler](https://autogaragenetwork.com/mot-diary) - Interactive booking system demo.
+- [SEO Solutions](https://autogaragenetwork.com/seo) - Dedicated optimization strategies for local garage search.

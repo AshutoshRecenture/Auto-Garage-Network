@@ -59,7 +59,28 @@ const Footer = () => {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [leadStep, setLeadStep] = useState(0); // 0: normal, 1: name, 2: garage, 3: email, 4: phone
-  const [leadData, setLeadData] = useState({ name: "", garage: "", email: "", phone: "" });
+  const [leadData, setLeadData] = useState({
+    name: "",
+    garage: "",
+    email: "",
+    phone: "",
+  });
+
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isBottom =
+        window.innerHeight + Math.round(window.scrollY) >=
+        document.documentElement.scrollHeight - 50;
+      setIsAtBottom(isBottom);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Mobile Accordion state
   const [openSections, setOpenSections] = useState({
@@ -194,8 +215,10 @@ const Footer = () => {
           query.includes("plan") ||
           query.includes("fee")
         ) {
-          botText1 = "We offer simple, transparent pricing with no hidden fees or lock-in contracts:\n\n• **Elite Workshop** (£135/mo): Up to 3 users, invoices/quotes, MOT/service reminders, CRM.\n• **Elite ProMax** (£235/mo): Up to 10 users, Autodata & TecRMI, Xero/QuickBooks sync, GSF parts link.\n• **Elite ProMax Plus** (£375/mo): Unlimited users, multi-site management, custom API, 24/7 support.";
-          botText2 = "We also offer a **Free Trial & Free Version of MOT Diary** with unlimited trial users (no credit card needed). Would you like to book a free demo to see these features in action?";
+          botText1 =
+            "We offer simple, transparent pricing with no hidden fees or lock-in contracts:\n\n• **Elite Workshop** (£135/mo): Up to 3 users, invoices/quotes, MOT/service reminders, CRM.\n• **Elite ProMax** (£235/mo): Up to 10 users, Autodata & TecRMI, Xero/QuickBooks sync, GSF parts link.\n• **Elite ProMax Plus** (£375/mo): Unlimited users, multi-site management, custom API, 24/7 support.";
+          botText2 =
+            "We also offer a **Free Trial & Free Version of MOT Diary** with unlimited trial users (no credit card needed). Would you like to book a free demo to see these features in action?";
         } else if (
           query.includes("demo") ||
           query.includes("buy") ||
@@ -206,7 +229,8 @@ const Footer = () => {
           query.includes("purchase") ||
           query.includes("start")
         ) {
-          botText1 = "I would be delighted to help you set up a free interactive demo of Auto Garage Network! 🚀";
+          botText1 =
+            "I would be delighted to help you set up a free interactive demo of Auto Garage Network! 🚀";
           botText2 = "May I start by taking your name, please?";
           nextStep = 1;
         } else if (
@@ -218,8 +242,10 @@ const Footer = () => {
           query.includes("migrate") ||
           query.includes("implementation")
         ) {
-          botText1 = "Setting up your custom website and MOT diary is incredibly fast. We fully manage the onboarding and get everything live within **24 to 48 hours**.";
-          botText2 = "Our team helps you with domain setup, custom layout configuration, importing your existing customer & parts inventory data, plus full staff training. Would you like to book a demo?";
+          botText1 =
+            "Setting up your custom website and MOT diary is incredibly fast. We fully manage the onboarding and get everything live within **24 to 48 hours**.";
+          botText2 =
+            "Our team helps you with domain setup, custom layout configuration, importing your existing customer & parts inventory data, plus full staff training. Would you like to book a demo?";
         } else if (
           query.includes("founder") ||
           query.includes("owner") ||
@@ -231,8 +257,10 @@ const Footer = () => {
           query.includes("team") ||
           query.includes("jatinder")
         ) {
-          botText1 = "Auto Garage Network was founded by **Mr. Jatinder Singh Bassi** and has been in business for **6 years** (established in 2016). We are based in Melton Mowbray, Leicestershire.";
-          botText2 = "With a team of 200+ members, we support 425+ clients worldwide and power over 550K+ active users. We specialise in being lifetime e-partners for UK independent garages.";
+          botText1 =
+            "Auto Garage Network was founded by **Mr. Jatinder Singh Bassi** and has been in business for **6 years** (established in 2016). We are based in Melton Mowbray, Leicestershire.";
+          botText2 =
+            "With a team of 200+ members, we support 425+ clients worldwide and power over 550K+ active users. We specialise in being lifetime e-partners for UK independent garages.";
         } else if (
           query.includes("integration") ||
           query.includes("dvla") ||
@@ -246,8 +274,10 @@ const Footer = () => {
           query.includes("gsf") ||
           query.includes("partslink24")
         ) {
-          botText1 = "Yes! Our platform integrates seamlessly with standard UK workshop tools:\n\n• **DVLA Database**: Real-time vehicle info, engine size, MOT status, and tyre specs by typing a registration number.\n• **Solera Autodata & TecRMI**: OE repair data, interactive wiring diagrams, and technical specifications for 30,000+ models.\n• **Accounting Sync**: Live links to Xero, QuickBooks, and Sage.\n• **Parts Link**: Automated ordering via GSF and Partslink24.";
-          botText2 = "Would you like to book a demo to see these integrations in action?";
+          botText1 =
+            "Yes! Our platform integrates seamlessly with standard UK workshop tools:\n\n• **DVLA Database**: Real-time vehicle info, engine size, MOT status, and tyre specs by typing a registration number.\n• **Solera Autodata & TecRMI**: OE repair data, interactive wiring diagrams, and technical specifications for 30,000+ models.\n• **Accounting Sync**: Live links to Xero, QuickBooks, and Sage.\n• **Parts Link**: Automated ordering via GSF and Partslink24.";
+          botText2 =
+            "Would you like to book a demo to see these integrations in action?";
         } else if (
           query.includes("app") ||
           query.includes("mobile") ||
@@ -255,8 +285,10 @@ const Footer = () => {
           query.includes("ios") ||
           query.includes("android")
         ) {
-          botText1 = "We build **custom-branded mobile apps** for iOS and Android under *your own garage name*! Your customers can book MOTs, check vehicle histories, and receive real-time notifications directly.";
-          botText2 = "We have launched over 65+ custom apps. Would you like to see how a custom mobile app could look for your workshop?";
+          botText1 =
+            "We build **custom-branded mobile apps** for iOS and Android under *your own garage name*! Your customers can book MOTs, check vehicle histories, and receive real-time notifications directly.";
+          botText2 =
+            "We have launched over 65+ custom apps. Would you like to see how a custom mobile app could look for your workshop?";
         } else if (
           query.includes("mot") ||
           query.includes("diary") ||
@@ -266,8 +298,10 @@ const Footer = () => {
           query.includes("sms") ||
           query.includes("notification")
         ) {
-          botText1 = "Our smart, cloud-based **MOT Diary** links directly with the DVLA. It automatically syncs MOT expiry dates, VIN, and engine specifics.";
-          botText2 = "It features automated SMS/Email reminders to reduce no-shows, drag-and-drop ramp scheduling, and auto-generated campaigns. Would you like to book a demo?";
+          botText1 =
+            "Our smart, cloud-based **MOT Diary** links directly with the DVLA. It automatically syncs MOT expiry dates, VIN, and engine specifics.";
+          botText2 =
+            "It features automated SMS/Email reminders to reduce no-shows, drag-and-drop ramp scheduling, and auto-generated campaigns. Would you like to book a demo?";
         } else if (
           query.includes("seo") ||
           query.includes("marketing") ||
@@ -276,16 +310,20 @@ const Footer = () => {
           query.includes("search") ||
           query.includes("traffic")
         ) {
-          botText1 = "Our Search Engine Optimisation (SEO) services focus on ranking your workshop at the top of local Google searches for MOTs, tyre sales, and repairs.";
-          botText2 = "This targets active local customers and drives them straight to your booking system. Would you like to hear more details?";
+          botText1 =
+            "Our Search Engine Optimisation (SEO) services focus on ranking your workshop at the top of local Google searches for MOTs, tyre sales, and repairs.";
+          botText2 =
+            "This targets active local customers and drives them straight to your booking system. Would you like to hear more details?";
         } else if (
           query.includes("website") ||
           query.includes("solution") ||
           query.includes("design") ||
           query.includes("e-commerce")
         ) {
-          botText1 = "We build custom, SEO-optimised e-commerce website solutions designed specifically for UK garages.";
-          botText2 = "Features include vehicle registration search lookups, MOT booking gateways, and wholesale tyre distributor stock integration. Would you like to book a demo?";
+          botText1 =
+            "We build custom, SEO-optimised e-commerce website solutions designed specifically for UK garages.";
+          botText2 =
+            "Features include vehicle registration search lookups, MOT booking gateways, and wholesale tyre distributor stock integration. Would you like to book a demo?";
         } else if (
           query.includes("contact") ||
           query.includes("phone") ||
@@ -295,19 +333,25 @@ const Footer = () => {
           query.includes("number") ||
           query.includes("call")
         ) {
-          botText1 = "You can contact our teams directly:\n\n• **Sales Inquiry**: 07947 906789 | info@autogaragenetwork.com\n• **Customer Support**: 01702 655556 | jatindersingh@autogaragenetwork.com";
-          botText2 = "Our address is: The Chestnuts, 46 Middle Lane, Nether Broughton, LE14 3HD. Let us know if you would like us to call you!";
+          botText1 =
+            "You can contact our teams directly:\n\n• **Sales Inquiry**: 07947 906789 | info@autogaragenetwork.com\n• **Customer Support**: 01702 655556 | jatindersingh@autogaragenetwork.com";
+          botText2 =
+            "Our address is: The Chestnuts, 46 Middle Lane, Nether Broughton, LE14 3HD. Let us know if you would like us to call you!";
         } else if (
           query.includes("software") ||
           query.includes("system") ||
           query.includes("features")
         ) {
-          botText1 = "The Auto Garage Network software is an all-in-one suite covering smart job cards, customer CRM, invoicing/billing, stock control, and real-time revenue reports.";
-          botText2 = "It is designed to save you hours of admin time. Would you like to schedule a free demo?";
+          botText1 =
+            "The Auto Garage Network software is an all-in-one suite covering smart job cards, customer CRM, invoicing/billing, stock control, and real-time revenue reports.";
+          botText2 =
+            "It is designed to save you hours of admin time. Would you like to schedule a free demo?";
         } else {
           // Cannot answer, redirect to sales
-          botText1 = "I am afraid I do not have the information to answer that specific question.";
-          botText2 = "I would be happy to connect you with our sales team. You can reach us directly on **07947 906789** or email us at **info@autogaragenetwork.com**.";
+          botText1 =
+            "I am afraid I do not have the information to answer that specific question.";
+          botText2 =
+            "I would be happy to connect you with our sales team. You can reach us directly on **07947 906789** or email us at **info@autogaragenetwork.com**.";
         }
       }
 
@@ -480,7 +524,9 @@ const Footer = () => {
                 </span>
               </button>
 
-              <div className={`${openSections.company ? "block" : "hidden"} md:block mt-3 md:mt-0`}>
+              <div
+                className={`${openSections.company ? "block" : "hidden"} md:block mt-3 md:mt-0`}
+              >
                 <ul className="space-y-2.5 text-xs text-gray-400 font-semibold">
                   <li>
                     <Link to="/" className="hover:text-white transition-colors">
@@ -574,7 +620,9 @@ const Footer = () => {
                 </span>
               </button>
 
-              <div className={`${openSections.industries ? "block" : "hidden"} md:block mt-3 md:mt-0`}>
+              <div
+                className={`${openSections.industries ? "block" : "hidden"} md:block mt-3 md:mt-0`}
+              >
                 <ul className="space-y-2.5 text-xs text-gray-400 font-semibold">
                   <li>
                     <a href="#" className="hover:text-white transition-colors">
@@ -614,7 +662,9 @@ const Footer = () => {
                 </span>
               </button>
 
-              <div className={`${openSections.products ? "block" : "hidden"} md:block mt-3 md:mt-0`}>
+              <div
+                className={`${openSections.products ? "block" : "hidden"} md:block mt-3 md:mt-0`}
+              >
                 <ul className="space-y-2.5 text-xs text-gray-400 font-semibold">
                   <li>
                     <Link
@@ -665,18 +715,25 @@ const Footer = () => {
                 </span>
               </button>
 
-              <div className={`${openSections.contact ? "block" : "hidden"} md:block space-y-5 mt-4 md:mt-0 text-xs text-gray-400 font-semibold leading-relaxed`}>
+              <div
+                className={`${openSections.contact ? "block" : "hidden"} md:block space-y-5 mt-4 md:mt-0 text-xs text-gray-400 font-semibold leading-relaxed`}
+              >
                 <div className="flex items-start gap-3">
                   <FiMapPin className="text-indigo-400 w-4 h-4 mt-0.5 shrink-0" />
                   <div>
                     <span className="text-[10px] uppercase font-bold text-gray-500 block mb-0.5">
                       Address:
                     </span>
-                    <p className="text-gray-300">
+                    <a
+                      href="https://maps.app.goo.gl/vBwPZYJRoGCNC1M67"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white transition-colors block"
+                    >
                       The Chestnuts, 46 Middle Lane,
                       <br />
                       Nether Broughton, LE14 3HD
-                    </p>
+                    </a>
                   </div>
                 </div>
 
@@ -715,7 +772,7 @@ const Footer = () => {
                     </a>
                     <a
                       href="mailto:jatindersingh@autogaragenetwork.com"
-                      className="text-gray-400 hover:text-white block mt-0.5 break-all"
+                      className="text-gray-400 hover:text-white block mt-0.5 whitespace-nowrap"
                     >
                       jatindersingh@autogaragenetwork.com
                     </a>
@@ -735,7 +792,11 @@ const Footer = () => {
       </footer>
 
       {/* Floating Chatbot Assistant Widget */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      <div
+        className={`fixed bottom-6 right-6 z-50 flex flex-col items-end transition-opacity duration-300 ${
+          isAtBottom ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
         {/* Chat Tooltip Preview */}
         <AnimatePresence>
           {showTooltip && !isOpen && (

@@ -67,7 +67,7 @@ const generateBlogContent = (post) => {
     p1 =
       "Digitalisation has become the key to business growth in today’s digital economy. With every industry integrating themselves with technology, they have also been growing. Garages and auto repair shops have also seen a lot of growth in their business as new software has been introduced to streamline their operations and make their working much simpler. In this blog, we are going to discuss in detail what these softwares and how they have helped the garages in the growth of their business.";
 
-    p2 = <h1>What Is The Software For Garage Management?</h1>;
+    p2 = <h3>What Is The Software For Garage Management?</h3>;
     ("To automate the work and to help make it easy for the garages and auto repair shops to maintain their data, garage management software has been developed. Business owners can use this software for various purposes like including appointments, inventory, staff performance, and more. This has helped both small and large garages and auto repair shops to make their day to day work much easier.");
     p3 =
       "By leveraging systematic garage software, technicians receive digital checklists directly on their mobile devices. They can attach inspection reports, note parts requirements, and upload photos of worn items. The system automatically converts these checklists into professional customer estimates, driving both transparency and workshop revenue.";

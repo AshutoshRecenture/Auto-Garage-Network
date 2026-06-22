@@ -75,6 +75,62 @@ async function run() {
     console.log(`✓ Pre-rendered route: ${url} -> ${path.relative(toAbsolute("."), filePath)}`);
   }
 
+  // 4. Generate sitemap.xml dynamically based on the pre-rendered routes
+  const siteUrl = "https://autogaragenetwork.com";
+  let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+`;
+
+  for (const url of routes) {
+    if (url === "/admin") continue; // Exclude admin dashboard from sitemap
+
+    let changefreq = "monthly";
+    let priority = "0.8";
+
+    if (url === "/") {
+      changefreq = "daily";
+      priority = "1.0";
+    } else if (
+      url === "/features" ||
+      url === "/pricing" ||
+      url === "/garage-management-system" ||
+      url === "/website-for-garages" ||
+      url === "/blog"
+    ) {
+      changefreq = "weekly";
+      priority = "0.9";
+    } else if (url === "/latest-work") {
+      changefreq = "weekly";
+      priority = "0.7";
+    } else if (
+      url === "/privacy-policy" ||
+      url === "/terms-of-service" ||
+      url === "/cookie-policy"
+    ) {
+      changefreq = "monthly";
+      priority = "0.5";
+    } else if (url === "/login" || url === "/sitemap") {
+      changefreq = "monthly";
+      priority = "0.6";
+    }
+
+    const loc = `${siteUrl}${url === "/" ? "" : url}`;
+    sitemapXml += `  <url>
+    <loc>${loc}</loc>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>\n`;
+  }
+  sitemapXml += `</urlset>\n`;
+
+  try {
+    fs.writeFileSync(toAbsolute("dist/sitemap.xml"), sitemapXml);
+    fs.writeFileSync(toAbsolute("public/sitemap.xml"), sitemapXml);
+    console.log("✓ Dynamic sitemap.xml generated successfully in both dist/ and public/ directories");
+  } catch (error) {
+    console.warn("Could not generate sitemap.xml:", error.message);
+  }
+
   // Clean up server-side build artifacts from dist folder
   try {
     fs.rmSync(toAbsolute("dist/server"), { recursive: true, force: true });

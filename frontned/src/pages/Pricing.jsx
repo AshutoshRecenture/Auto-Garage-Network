@@ -1,30 +1,823 @@
-import React from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
-import PricingSection from "../components/PricingSection.jsx";
 import Footer from "../components/Footer.jsx";
+import { FiCheck, FiX, FiAlertCircle, FiPercent } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Pricing = () => {
+  const [activeTab, setActiveTab] = useState("gms"); // 'gms', 'websites', 'autodata'
+
+  const gmsPlans = [
+    {
+      name: "Elite Workshop",
+      price: "135",
+      desc: "Ideal for small to medium independent garages seeking core automation.",
+      setup: "£500",
+      users: "Up to 3 Users",
+      vrmLimit: "300/mo (Fair Use)",
+      postcodeLimit: "200/mo (Fair Use)",
+      smsLimit: "400 FOC/mo",
+      features: [
+        "Store Customer & Vehicle Data",
+        "Create Estimates & Invoicing",
+        "Jobsheets & Workshop Diary",
+        "MOT Diary Integration",
+        "Tyre Suppliers: 1 Supplier",
+        "Catalogue Integration & Ordering",
+        "Automated Reminders",
+        "Accounting Sync: Optional Extra (£)",
+      ],
+      cta: "Book Free Trial",
+      popular: false,
+    },
+    {
+      name: "Elite ProMax",
+      price: "235",
+      desc: "Full catalogue integration and diagnostics data for scaling operations.",
+      setup: "£1000",
+      users: "Unlimited* Users",
+      vrmLimit: "Unlimited* (Fair Use)",
+      postcodeLimit: "300/mo (Fair Use)",
+      smsLimit: "400 FOC/mo",
+      features: [
+        "Store Customer & Vehicle Data",
+        "Create Estimates & Invoicing",
+        "Jobsheets & Workshop Diary",
+        "MOT Diary Integration",
+        "Tyre Suppliers: Unlimited*",
+        "Catalogue Integration & Ordering",
+        "Manufacturers Service/Repair Times",
+        "Accounting Integration (Xero/QB/Sage)",
+        "Stock System & Service Visuals",
+      ],
+      cta: "Book Free Trial",
+      popular: true,
+    },
+    {
+      name: "Elite ProMax Plus",
+      price: "375",
+      desc: "All-inclusive flagship plan for multi-site garages and top-tier workshops.",
+      setup: "£500",
+      users: "Unlimited* Users",
+      vrmLimit: "Unlimited* (Fair Use)",
+      postcodeLimit: "Unlimited* (Fair Use)",
+      smsLimit: "Unlimited*",
+      features: [
+        "Everything in Elite ProMax",
+        "Full Technical Data (Autodata)",
+        "Courtesy Cars Management",
+        "Electronic Vehicle Inspections",
+        "Dedicated Customer App",
+        "Dedicated Technician App",
+        "Technician Efficiency Tracking",
+        "Advanced Analytics & Multi-Site",
+      ],
+      cta: "Book Free Trial",
+      popular: false,
+    },
+  ];
+
+  const websitePlans = [
+    {
+      name: "Iframe Widget",
+      price: "500",
+      target: "Existing Website Owners",
+      desc: "Integrate our booking, VRM, and tyre sales widget into your existing website.",
+      contract: "No setup waive",
+      pages: "Widget Only",
+    },
+    {
+      name: "Standard Website",
+      price: "1000",
+      setup: "£1,000",
+      target: "Garages wanting Tyre sales only",
+      desc: "Perfect starting website focusing entirely on tyre search & online bookings.",
+      contract: "Setup waived on 36-mo contract",
+      pages: "Up to 10 Unique Pages",
+    },
+    {
+      name: "Premium Website",
+      price: "2000",
+      setup: "£2,000",
+      target: "Pushing Tyres & Services",
+      desc: "Ideal for independent garages advertising tyres alongside local repair services.",
+      contract: "Setup waived on 36-mo contract",
+      pages: "Up to 20 Unique Pages",
+    },
+    {
+      name: "Professional Website",
+      price: "3000",
+      setup: "£3,000",
+      target: "Pushing Tyres, Services & MOTs",
+      desc: "Our most popular complete website setup for general MOT & repair workshops.",
+      contract: "Setup waived on 36-mo contract",
+      pages: "Up to 30 Unique Pages",
+      popular: true,
+    },
+    {
+      name: "Bespoke / Full Package",
+      price: "6000",
+      setup: "£6,000",
+      target: "Multi-site & Custom Franchises",
+      desc: "Fully tailor-made custom brand development with deep local marketing.",
+      contract: "Setup waived on 36-mo contract",
+      pages: "Up to 100 Unique Pages",
+    },
+  ];
+
+  const websiteFeatures = [
+    {
+      name: "Website Setup",
+      iframe: "On Request",
+      standard: true,
+      premium: true,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "VRM Lookup integration",
+      iframe: "On Request",
+      standard: true,
+      premium: true,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Tyre Selling Feature",
+      iframe: "On Request",
+      standard: true,
+      premium: true,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Services Booking (All Services)",
+      iframe: "On Request",
+      standard: false,
+      premium: true,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Notification App",
+      iframe: "On Request",
+      standard: false,
+      premium: true,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "MOT Booking Integration",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Wheels Sales Feature",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Body Shop Features",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Payment Gateway Integration",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Payment Assist Options",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Car Trading Module",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Web Development Support (1 Yr)",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: true,
+      bespoke: true,
+    },
+    {
+      name: "Web Development Support (Lifetime)",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "Facebook Advertising setup",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "Custom Mobile App",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "Local Area Exclusivity",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "Dedicated Full-Time SEO Person",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "Vostel (Telephone VoIP Integration)",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "Dedicated Customer App",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "Dedicated Technician App",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+    {
+      name: "5 Miles Location Micro Website",
+      iframe: "On Request",
+      standard: false,
+      premium: false,
+      professional: false,
+      bespoke: true,
+    },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#050816] text-white">
       <SEOHeader
-        title="Pricing & Packages | Affordable Workshop SaaS"
-        description="Transparent, flexible pricing options for garages of all sizes. Choose between Elite Workshop, Elite ProMax, and Elite ProMax Plus with no hidden fees."
-        keywords="garage software pricing, workshop software plans, Elite Workshop, Autodata integration cost"
+        title="Comprehensive Pricing Hub | Auto Garage Network"
+        description="View our complete pricing options for Garage Management Systems (GMS), custom Garage Websites, and Autotech Data Lookup plans."
+        keywords="garage management system cost, workshop software prices, garage website setup cost, autodata lookup package"
         canonicalPath="/pricing"
       />
       <Navbar />
-      <main className="flex-grow pt-24">
-        {/* Header decoration */}
-        <div className="relative pt-12 pb-6 text-center overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-          <h1 className="text-4xl md:text-5xl font-black mb-4">Pricing Plans</h1>
-          <p className="text-gray-400 max-w-xl mx-auto px-4">
-            Choose the right plan of Garage Management System and Website Solutions for your workshop.
+
+      <main className="flex-grow pt-28 pb-20">
+        {/* Header Hero Section */}
+        <div className="relative pt-12 pb-16 text-center overflow-hidden">
+          {/* Neon backlights */}
+          <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-0 right-1/4 w-[300px] h-[300px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight select-none">
+            Transparent, Flexible{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500">
+              Pricing Packages
+            </span>
+          </h1>
+          <p className="text-gray-300 max-w-2xl mx-auto px-6 text-base md:text-lg leading-relaxed select-none">
+            Choose the specific software features your independent workshop
+            needs. Scale, downgrade, or bundle options for maximum efficiency
+            and savings.
           </p>
+
+          {/* Tab Selection Navigation */}
+          <div className="flex justify-center mt-12 px-4">
+            <div className="bg-[#0c1222]/90 border border-white/10 p-1.5 rounded-2xl flex gap-2 max-w-full overflow-x-auto shadow-2xl backdrop-blur-md">
+              <button
+                onClick={() => setActiveTab("gms")}
+                className={`px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer ${
+                  activeTab === "gms"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Garage Management (GMS)
+              </button>
+              <button
+                onClick={() => setActiveTab("websites")}
+                className={`px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer ${
+                  activeTab === "websites"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Website Solutions
+              </button>
+              <Link
+                to="/autotech-data"
+                className="px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer text-gray-400 hover:text-white flex items-center"
+              >
+                Autotech Data
+              </Link>
+            </div>
+          </div>
         </div>
-        <PricingSection />
+
+        {/* Tab Content Panels */}
+        <div className="max-w-7xl mx-auto px-6 md:px-12 mt-6">
+          <AnimatePresence mode="wait">
+            {activeTab === "gms" && (
+              <motion.div
+                key="gms"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+                  {gmsPlans.map((plan, idx) => (
+                    <div
+                      key={idx}
+                      className={`relative bg-[#0c1222]/80 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between border transition-all duration-300 ${
+                        plan.popular
+                          ? "border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.2)]"
+                          : "border-white/5 hover:border-indigo-500/30"
+                      }`}
+                    >
+                      {plan.popular && (
+                        <div className="absolute top-0 inset-x-0 -translate-y-1/2 flex justify-center">
+                          <span className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                            Best Seller
+                          </span>
+                        </div>
+                      )}
+
+                      <div>
+                        <div className="mb-6">
+                          <h3 className="text-lg font-black text-white">
+                            {plan.name}
+                          </h3>
+                          <p className="text-xs md:text-sm text-gray-400 mt-1.5 h-10 leading-relaxed">
+                            {plan.desc}
+                          </p>
+                          <div className="mt-4 flex items-baseline text-white">
+                            <span className="text-2xl font-bold">£</span>
+                            <span className="text-4xl font-extrabold tracking-tight">
+                              {plan.price}
+                            </span>
+                            <span className="text-gray-400 text-xs ml-1">
+                              + VAT / month
+                            </span>
+                          </div>
+                          <div className="mt-2 text-xs text-gray-400 border-b border-white/5 pb-4">
+                            Setup Cost:{" "}
+                            <span className="text-white font-bold">
+                              {plan.setup}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Plan Quotas & Limits */}
+                        <div className="space-y-2 mb-6 bg-[#050816]/30 p-3 rounded-xl border border-white/5 text-xs md:text-[13px]">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">
+                              Users Included:
+                            </span>
+                            <span className="text-white font-semibold">
+                              {plan.users}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">VRM Lookups:</span>
+                            <span className="text-white font-semibold">
+                              {plan.vrmLimit}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">
+                              Postcode Lookups:
+                            </span>
+                            <span className="text-white font-semibold">
+                              {plan.postcodeLimit}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">
+                              SMS Reminders:
+                            </span>
+                            <span className="text-indigo-400 font-semibold">
+                              {plan.smsLimit}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Features List */}
+                        <ul className="space-y-3 mb-8">
+                          {plan.features.map((feature, fIdx) => (
+                            <li key={fIdx} className="flex items-start">
+                              <FiCheck className="text-emerald-400 mt-0.5 mr-2 flex-shrink-0 text-xs" />
+                              <span className="text-gray-300 text-xs md:text-sm leading-tight">
+                                {feature}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <Link
+                        to="/contact-us"
+                        state={{ interest: "Garage Management System" }}
+                        className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-center block ${
+                          plan.popular
+                            ? "bg-indigo-600 hover:bg-indigo-500 text-white no-invert shadow-lg shadow-indigo-600/15"
+                            : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                        }`}
+                      >
+                        {plan.cta}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Detailed Fair Usage Policy Section */}
+                <div className="mt-12 bg-[#0c1222]/80 border border-white/10 p-10 md:p-12 rounded-3xl w-full shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-[60px] pointer-events-none" />
+
+                  <h3 className="text-base md:text-xl font-black text-white mb-2 flex items-center gap-2">
+                    <span>
+                      ***** Fair Usage Policy for SMS Messages and VRM Lookups
+                      *****
+                    </span>
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-400 mb-8 leading-relaxed">
+                    This Fair Usage Policy (FUP) outlines the acceptable use of
+                    SMS messages and VRM (Vehicle Registration Mark) lookups
+                    provided under your subscribed package. The purpose of this
+                    policy is to ensure fair and reasonable use of these
+                    services for all customers while maintaining the quality and
+                    reliability of our services.
+                  </p>
+
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm md:text-base">
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        1. Allocation of SMS & VRMs
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        Your subscribed package includes a specific allocation
+                        of SMS messages and VRM lookups per billing cycle (e.g.,
+                        monthly). This allocation is designed to meet the needs
+                        of typical usage for your package tier. Unused
+                        allocations do not roll over to the next billing cycle.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        2. Fair Usage
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        Customers are expected to use SMS messages and VRM
+                        lookups in a manner consistent with the intended purpose
+                        of their subscribed package. Usage should align with
+                        standard business or personal needs, as applicable to
+                        your subscription type.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        3. Excessive Usage
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        Usage beyond your allocated amount will be considered
+                        excessive. Excessive usage may impact the performance
+                        and availability of services for other customers. We
+                        reserve the right to monitor usage patterns and identify
+                        any activity that exceeds fair usage limits.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        4. Charges for Excessive Usage
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        If your usage exceeds the allocated amount, additional
+                        charges will apply. Excess usage charges will be
+                        calculated based on the standard rates for SMS (10p)
+                        messages and VRM (10p) lookups, as outlined in your
+                        subscription agreement or pricing plan. You will be
+                        notified of any excess usage charges incurred.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        5. Monitoring & Notifications
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        We will monitor your usage to ensure compliance with
+                        this Fair Usage Policy. If your usage approaches or
+                        exceeds the allocated amount, we may notify you via
+                        email or SMS to inform you of potential additional
+                        charges. It is your responsibility to monitor your
+                        usage.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        6. Prohibited Use
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        The use of SMS messages and VRM lookups for unlawful,
+                        fraudulent, or abusive purposes is strictly prohibited.
+                        Reselling, redistributing, or otherwise commercialising
+                        the services outside the scope of your subscription is
+                        not permitted.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl md:col-span-2 lg:col-span-1">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        7. Policy Enforcement
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        We reserve the right to take action if this Fair Usage
+                        Policy is violated, including: applying additional
+                        charges for excessive usage, suspending or restricting
+                        access to services, and terminating your subscription in
+                        cases of severe or repeated violations.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl md:col-span-1 lg:col-span-1">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        8. Changes to This Policy
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        We may update this Fair Usage Policy from time to time.
+                        Any changes will be communicated to you via email or
+                        through your account portal. Continued use of the
+                        services after changes to this policy constitutes
+                        acceptance of the updated terms.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl md:col-span-1 lg:col-span-1">
+                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
+                        9. Contact Us
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        If you have any questions or need assistance managing
+                        your usage, contact customer support at{" "}
+                        <strong className="text-white font-bold">
+                          01702 655556
+                        </strong>{" "}
+                        /{" "}
+                        <strong className="text-white font-bold">
+                          +91 9667108961
+                        </strong>{" "}
+                        or email{" "}
+                        <strong className="text-white font-bold">
+                          support@autogaragenetwork.com
+                        </strong>
+                        .
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 text-center border-t border-white/5 pt-6 text-xs text-gray-500">
+                    By adhering to this Fair Usage Policy, you help us maintain
+                    a high-quality service for all customers. Thank you for your
+                    cooperation.
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === "websites" && (
+              <motion.div
+                key="websites"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-16"
+              >
+                {/* Contract Discount Banner */}
+                <div className="bg-[#0c1222]/90 border border-white/10 p-6 rounded-3xl w-full flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-[45px] pointer-events-none" />
+                  <div className="space-y-1 text-center md:text-left">
+                    <h3 className="text-base font-bold text-white flex items-center justify-center md:justify-start gap-2">
+                      <FiPercent className="text-purple-400" />
+                      <span>Contract Commitments & Waiver Discounts</span>
+                    </h3>
+                    <p className="text-[11px] text-gray-400 leading-relaxed max-w-2xl">
+                      <strong>36-Month Contract:</strong> Setup cost is entirely
+                      waived; only monthly fee applies from day one. Includes a
+                      12-month self-funding moneyback guarantee. <br />
+                      <strong>24-Month Contract:</strong> 25% setup cost
+                      discount (50% paid upfront, 50% on project sign-off).
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0 bg-purple-500/10 border border-purple-500/25 px-4 py-2 rounded-xl text-center">
+                    <span className="text-[10px] text-purple-400 uppercase font-black tracking-widest block">
+                      Free Setup
+                    </span>
+                    <span className="text-xs font-semibold text-white">
+                      on 3-Year Plans
+                    </span>
+                  </div>
+                </div>
+
+                {/* Website Tiers Grid */}
+                <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4 items-stretch">
+                  {websitePlans.map((plan, idx) => (
+                    <div
+                      key={idx}
+                      className={`relative bg-[#0c1222]/80 backdrop-blur-md rounded-2xl p-5 flex flex-col justify-between border transition-all duration-300 ${
+                        plan.popular
+                          ? "border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.15)]"
+                          : "border-white/5 hover:border-purple-500/20"
+                      }`}
+                    >
+                      {plan.popular && (
+                        <div className="absolute top-0 inset-x-0 -translate-y-1/2 flex justify-center">
+                          <span className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                            Best Choice
+                          </span>
+                        </div>
+                      )}
+
+                      <div>
+                        <div className="mb-4">
+                          <span className="text-[10px] text-purple-400 uppercase tracking-widest font-black block mb-1">
+                            {plan.target}
+                          </span>
+                          <h3 className="text-base font-black text-white">
+                            {plan.name}
+                          </h3>
+                          <p className="text-[10px] text-gray-400 mt-2 h-12 leading-relaxed">
+                            {plan.desc}
+                          </p>
+                          <div className="mt-4 flex items-baseline text-white">
+                            <span className="text-xl font-bold">£</span>
+                            <span className="text-3xl font-extrabold tracking-tight">
+                              {plan.price}
+                            </span>
+                            <span className="text-gray-400 text-[10px] ml-1">
+                              + VAT / mo
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 text-[10px] text-gray-300">
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Pages:</span>
+                            <span className="font-semibold text-white">
+                              {plan.pages}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Terms:</span>
+                            <span className="font-semibold text-white text-[9px] text-right max-w-[80px] leading-tight">
+                              {plan.contract}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Link
+                        to="/contact-us"
+                        state={{ interest: "Website for Garages" }}
+                        className={`w-full mt-6 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer text-center block ${
+                          plan.popular
+                            ? "bg-purple-600 hover:bg-purple-500 text-white no-invert shadow-lg shadow-purple-600/15"
+                            : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                        }`}
+                      >
+                        Select Tier
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Features Matrix Table */}
+                <div className="w-full overflow-hidden rounded-2xl border border-white/5 shadow-2xl bg-[#0c1222]/80 backdrop-blur-md">
+                  <div className="p-6 border-b border-white/5">
+                    <h3 className="text-lg font-bold text-white">
+                      Website Solutions Feature Matrix
+                    </h3>
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      Compare included features across all of our website design
+                      tiers. All packages include a **Free Garage Management
+                      System (GMS)**.
+                    </p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-[11px] border-collapse min-w-[700px]">
+                      <thead>
+                        <tr className="bg-[#050816] text-gray-400 border-b border-white/5 uppercase tracking-wider font-bold">
+                          <th className="p-4 w-1/3">Features</th>
+                          <th className="p-4 text-center">Iframe Widget</th>
+                          <th className="p-4 text-center">Standard</th>
+                          <th className="p-4 text-center">Premium</th>
+                          <th className="p-4 text-center">Professional</th>
+                          <th className="p-4 text-center">Bespoke</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {websiteFeatures.map((feat, fIdx) => (
+                          <tr
+                            key={fIdx}
+                            className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                          >
+                            <td className="p-4 font-medium text-gray-200">
+                              {feat.name}
+                            </td>
+                            <td className="p-4 text-center text-gray-400 italic font-semibold">
+                              {feat.iframe}
+                            </td>
+                            <td className="p-4 text-center">
+                              {feat.standard ? (
+                                <FiCheck className="text-emerald-400 mx-auto text-sm" />
+                              ) : (
+                                <FiX className="text-red-500 mx-auto text-sm" />
+                              )}
+                            </td>
+                            <td className="p-4 text-center">
+                              {feat.premium ? (
+                                <FiCheck className="text-emerald-400 mx-auto text-sm" />
+                              ) : (
+                                <FiX className="text-red-500 mx-auto text-sm" />
+                              )}
+                            </td>
+                            <td className="p-4 text-center">
+                              {feat.professional ? (
+                                <FiCheck className="text-emerald-400 mx-auto text-sm" />
+                              ) : (
+                                <FiX className="text-red-500 mx-auto text-sm" />
+                              )}
+                            </td>
+                            <td className="p-4 text-center">
+                              {feat.bespoke ? (
+                                <FiCheck className="text-emerald-400 mx-auto text-sm" />
+                              ) : (
+                                <FiX className="text-red-500 mx-auto text-sm" />
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </main>
+
       <Footer />
     </div>
   );

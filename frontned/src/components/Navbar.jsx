@@ -159,7 +159,8 @@ const Navbar = () => {
     const pages = {
       "/about-us": () => import("../pages/AboutUs.jsx"),
       "/pricing": () => import("../pages/Pricing.jsx"),
-      "/garage-management-system": () => import("../pages/GarageManagementSystem.jsx"),
+      "/garage-management-system": () =>
+        import("../pages/GarageManagementSystem.jsx"),
       "/website-for-garages": () => import("../pages/WebsiteForGarages.jsx"),
       "/autotech-data": () => import("../pages/AutotechData.jsx"),
       "/mot-diary": () => import("../pages/MOTDiary.jsx"),
@@ -405,7 +406,9 @@ const Navbar = () => {
                                   <Link
                                     key={subItem.name}
                                     to={subItem.href}
-                                    onMouseEnter={() => handlePreload(subItem.href)}
+                                    onMouseEnter={() =>
+                                      handlePreload(subItem.href)
+                                    }
                                     className={`flex items-start gap-3.5 p-3 rounded-lg transition-all duration-300 ${
                                       isSubActive
                                         ? "bg-indigo-500/15 border-l-2 border-indigo-500"
@@ -531,12 +534,18 @@ const Navbar = () => {
             >
               <div className="px-6 py-6 space-y-4">
                 {/* Theme Toggle inside drawer to save space in the main mobile header */}
-                <div className={`flex justify-between items-center pb-4 border-b no-invert ${
-                  theme === "light" ? "border-slate-200" : "border-white/10"
-                }`}>
-                  <span className={`text-xs font-bold uppercase tracking-wider ${
-                    theme === "light" ? "text-slate-500" : "text-gray-400"
-                  }`}>Switch Theme</span>
+                <div
+                  className={`flex justify-between items-center pb-4 border-b no-invert ${
+                    theme === "light" ? "border-slate-200" : "border-white/10"
+                  }`}
+                >
+                  <span
+                    className={`text-xs font-bold uppercase tracking-wider ${
+                      theme === "light" ? "text-slate-500" : "text-gray-400"
+                    }`}
+                  >
+                    Switch Theme
+                  </span>
                   <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 </div>
                 {navLinks.map((link) => {
@@ -553,7 +562,9 @@ const Navbar = () => {
                             setMobileDropdownOpen(!mobileDropdownOpen)
                           }
                           className={`w-full flex items-center justify-between text-base font-semibold py-2 cursor-pointer ${
-                            theme === "light" ? "text-blue-600" : "text-[#2196f3]"
+                            theme === "light"
+                              ? "text-blue-600"
+                              : "text-[#2196f3]"
                           }`}
                         >
                           <span>{link.name}</span>
@@ -570,7 +581,9 @@ const Navbar = () => {
                               animate={{ opacity: 1, height: "auto" }}
                               exit={{ opacity: 0, height: 0 }}
                               className={`pl-4 space-y-2 overflow-hidden mt-1 border-l ${
-                                theme === "light" ? "border-slate-200" : "border-white/10"
+                                theme === "light"
+                                  ? "border-slate-200"
+                                  : "border-white/10"
                               }`}
                             >
                               {link.dropdown.map((subItem) => {
@@ -579,11 +592,17 @@ const Navbar = () => {
                                   <Link
                                     key={subItem.name}
                                     to={subItem.href}
-                                    onMouseEnter={() => handlePreload(subItem.href)}
+                                    onMouseEnter={() =>
+                                      handlePreload(subItem.href)
+                                    }
                                     className={`block text-sm py-2 transition-colors duration-200 ${
                                       isSubActive
-                                        ? (theme === "light" ? "text-blue-600 font-bold" : "text-[#2196f3] font-bold")
-                                        : (theme === "light" ? "text-slate-600 hover:text-slate-900" : "text-gray-400 hover:text-white")
+                                        ? theme === "light"
+                                          ? "text-blue-600 font-bold"
+                                          : "text-[#2196f3] font-bold"
+                                        : theme === "light"
+                                          ? "text-slate-600 hover:text-slate-900"
+                                          : "text-gray-400 hover:text-white"
                                     }`}
                                     onClick={() => {
                                       setMobileMenuOpen(false);
@@ -618,12 +637,12 @@ const Navbar = () => {
                         : "text-rose-400 border-l-4 border-[#f43f5e] bg-rose-500/5 mt-1 pr-3";
                   } else {
                     linkClass += isActive
-                      ? (theme === "light"
-                          ? "text-indigo-600 border-l-4 border-indigo-500 bg-indigo-50 font-bold"
-                          : "text-indigo-400 border-l-4 border-indigo-500 bg-indigo-500/5 font-bold")
-                      : (theme === "light"
-                          ? "text-slate-700 border-l-4 border-transparent hover:text-slate-950 hover:bg-slate-100"
-                          : "text-gray-300 border-l-4 border-transparent hover:text-white hover:bg-white/5");
+                      ? theme === "light"
+                        ? "text-indigo-600 border-l-4 border-indigo-500 bg-indigo-50 font-bold"
+                        : "text-indigo-400 border-l-4 border-indigo-500 bg-indigo-500/5 font-bold"
+                      : theme === "light"
+                        ? "text-slate-700 border-l-4 border-transparent hover:text-slate-950 hover:bg-slate-100"
+                        : "text-gray-300 border-l-4 border-transparent hover:text-white hover:bg-white/5";
                   }
 
                   return (
@@ -640,27 +659,35 @@ const Navbar = () => {
                 })}
 
                 {/* Mobile Drawer Contacts & Socials */}
-                <div className={`pt-6 border-t space-y-5 ${
-                  theme === "light" ? "border-slate-200" : "border-white/10"
-                }`}>
+                <div
+                  className={`pt-6 border-t space-y-5 ${
+                    theme === "light" ? "border-slate-200" : "border-white/10"
+                  }`}
+                >
                   <div className="space-y-3">
-                    <p className={`text-[10px] uppercase tracking-wider font-extrabold ${
-                      theme === "light" ? "text-slate-400" : "text-gray-500"
-                    }`}>
+                    <p
+                      className={`text-[10px] uppercase tracking-wider font-extrabold ${
+                        theme === "light" ? "text-slate-400" : "text-gray-500"
+                      }`}
+                    >
                       Contact Info
                     </p>
                     <div className="grid grid-cols-1 gap-2.5">
                       <a
                         href="tel:07947906789"
                         className={`flex items-center text-sm transition-colors duration-300 ${
-                          theme === "light" ? "text-slate-700 hover:text-slate-950" : "text-gray-300 hover:text-white"
+                          theme === "light"
+                            ? "text-slate-700 hover:text-slate-950"
+                            : "text-gray-300 hover:text-white"
                         }`}
                       >
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 shrink-0 border ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 text-indigo-600"
-                            : "bg-white/5 border-white/5 text-indigo-400"
-                        }`}>
+                        <div
+                          className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 shrink-0 border ${
+                            theme === "light"
+                              ? "bg-slate-100 border-slate-200 text-indigo-600"
+                              : "bg-white/5 border-white/5 text-indigo-400"
+                          }`}
+                        >
                           <FiPhone className="w-3.5 h-3.5" />
                         </div>
                         <span className="font-semibold text-xs tracking-wide">
@@ -670,14 +697,18 @@ const Navbar = () => {
                       <a
                         href="tel:0172655556"
                         className={`flex items-center text-sm transition-colors duration-300 ${
-                          theme === "light" ? "text-slate-700 hover:text-slate-950" : "text-gray-300 hover:text-white"
+                          theme === "light"
+                            ? "text-slate-700 hover:text-slate-950"
+                            : "text-gray-300 hover:text-white"
                         }`}
                       >
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 shrink-0 border ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 text-indigo-600"
-                            : "bg-white/5 border-white/5 text-indigo-400"
-                        }`}>
+                        <div
+                          className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 shrink-0 border ${
+                            theme === "light"
+                              ? "bg-slate-100 border-slate-200 text-indigo-600"
+                              : "bg-white/5 border-white/5 text-indigo-400"
+                          }`}
+                        >
                           <FiPhone className="w-3.5 h-3.5" />
                         </div>
                         <span className="font-semibold text-xs tracking-wide">
@@ -688,9 +719,11 @@ const Navbar = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <p className={`text-[10px] uppercase tracking-wider font-extrabold ${
-                      theme === "light" ? "text-slate-400" : "text-gray-500"
-                    }`}>
+                    <p
+                      className={`text-[10px] uppercase tracking-wider font-extrabold ${
+                        theme === "light" ? "text-slate-400" : "text-gray-500"
+                      }`}
+                    >
                       Follow Us
                     </p>
                     <div className="flex items-center space-x-3.5">
@@ -699,7 +732,9 @@ const Navbar = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#1877F2] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light" ? "bg-slate-100 border-slate-200 hover:bg-[#1877F2]/10" : "bg-white/5 border-white/5 hover:bg-[#1877F2]/10"
+                          theme === "light"
+                            ? "bg-slate-100 border-slate-200 hover:bg-[#1877F2]/10"
+                            : "bg-white/5 border-white/5 hover:bg-[#1877F2]/10"
                         }`}
                       >
                         <FaFacebookF size={14} />
@@ -709,7 +744,9 @@ const Navbar = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#E1306C] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light" ? "bg-slate-100 border-slate-200 hover:bg-[#E1306C]/10" : "bg-white/5 border-white/5 hover:bg-[#E1306C]/10"
+                          theme === "light"
+                            ? "bg-slate-100 border-slate-200 hover:bg-[#E1306C]/10"
+                            : "bg-white/5 border-white/5 hover:bg-[#E1306C]/10"
                         }`}
                       >
                         <FaInstagram size={14} />
@@ -719,7 +756,9 @@ const Navbar = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#1877F2] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light" ? "bg-slate-100 border-slate-200 hover:bg-[#1DA1F2]/10" : "bg-white/5 border-white/5 hover:bg-[#1DA1F2]/10"
+                          theme === "light"
+                            ? "bg-slate-100 border-slate-200 hover:bg-[#1DA1F2]/10"
+                            : "bg-white/5 border-white/5 hover:bg-[#1DA1F2]/10"
                         }`}
                       >
                         <FaTwitter size={14} />
@@ -729,7 +768,9 @@ const Navbar = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#0A66C2] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light" ? "bg-slate-100 border-slate-200 hover:bg-[#0A66C2]/10" : "bg-white/5 border-white/5 hover:bg-[#0A66C2]/10"
+                          theme === "light"
+                            ? "bg-slate-100 border-slate-200 hover:bg-[#0A66C2]/10"
+                            : "bg-white/5 border-white/5 hover:bg-[#0A66C2]/10"
                         }`}
                       >
                         <FaLinkedinIn size={14} />
@@ -739,7 +780,9 @@ const Navbar = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#FF0000] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light" ? "bg-slate-100 border-slate-200 hover:bg-[#FF0000]/10" : "bg-white/5 border-white/5 hover:bg-[#FF0000]/10"
+                          theme === "light"
+                            ? "bg-slate-100 border-slate-200 hover:bg-[#FF0000]/10"
+                            : "bg-white/5 border-white/5 hover:bg-[#FF0000]/10"
                         }`}
                       >
                         <FaYoutube size={14} />
