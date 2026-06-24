@@ -525,8 +525,8 @@ const Navbar = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`lg:hidden border-b overflow-hidden shadow-2xl transition-colors duration-300 ${
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              className={`absolute top-full left-0 w-full lg:hidden border-b overflow-y-auto max-h-[85vh] shadow-2xl transition-colors duration-300 ${
                 theme === "light"
                   ? "bg-slate-50 border-slate-200"
                   : "bg-[#070b16]/98 backdrop-blur-xl border-white/10"
@@ -548,6 +548,66 @@ const Navbar = () => {
                   </span>
                   <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 </div>
+
+                {/* Mobile Drawer Contacts - Moved to Top */}
+                <div
+                  className={`pb-4 border-b space-y-3 ${
+                    theme === "light" ? "border-slate-200" : "border-white/10"
+                  }`}
+                >
+                  <p
+                    className={`text-[10px] uppercase tracking-wider font-extrabold ${
+                      theme === "light" ? "text-slate-400" : "text-gray-500"
+                    }`}
+                  >
+                    Contact Info
+                  </p>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <a
+                      href="tel:07947906789"
+                      className={`flex items-center text-sm transition-colors duration-300 ${
+                        theme === "light"
+                          ? "text-slate-700 hover:text-slate-950"
+                          : "text-gray-300 hover:text-white"
+                      }`}
+                    >
+                      <div
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2 shrink-0 border ${
+                          theme === "light"
+                            ? "bg-slate-100 border-slate-200 text-indigo-600"
+                            : "bg-white/5 border-white/5 text-indigo-400"
+                        }`}
+                      >
+                        <FiPhone className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="font-semibold text-[10px] sm:text-xs tracking-wide">
+                        Sales: 07947906789
+                      </span>
+                    </a>
+                    <a
+                      href="tel:0172655556"
+                      className={`flex items-center text-sm transition-colors duration-300 ${
+                        theme === "light"
+                          ? "text-slate-700 hover:text-slate-950"
+                          : "text-gray-300 hover:text-white"
+                      }`}
+                    >
+                      <div
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2 shrink-0 border ${
+                          theme === "light"
+                            ? "bg-slate-100 border-slate-200 text-indigo-600"
+                            : "bg-white/5 border-white/5 text-indigo-400"
+                        }`}
+                      >
+                        <FiPhone className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="font-semibold text-[10px] sm:text-xs tracking-wide">
+                        Services: 0172655556
+                      </span>
+                    </a>
+                  </div>
+                </div>
+
                 {navLinks.map((link) => {
                   const isActive =
                     activeLink === link.href ||
@@ -658,66 +718,12 @@ const Navbar = () => {
                   );
                 })}
 
-                {/* Mobile Drawer Contacts & Socials */}
+                {/* Mobile Drawer Socials */}
                 <div
                   className={`pt-6 border-t space-y-5 ${
                     theme === "light" ? "border-slate-200" : "border-white/10"
                   }`}
                 >
-                  <div className="space-y-3">
-                    <p
-                      className={`text-[10px] uppercase tracking-wider font-extrabold ${
-                        theme === "light" ? "text-slate-400" : "text-gray-500"
-                      }`}
-                    >
-                      Contact Info
-                    </p>
-                    <div className="grid grid-cols-1 gap-2.5">
-                      <a
-                        href="tel:07947906789"
-                        className={`flex items-center text-sm transition-colors duration-300 ${
-                          theme === "light"
-                            ? "text-slate-700 hover:text-slate-950"
-                            : "text-gray-300 hover:text-white"
-                        }`}
-                      >
-                        <div
-                          className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 shrink-0 border ${
-                            theme === "light"
-                              ? "bg-slate-100 border-slate-200 text-indigo-600"
-                              : "bg-white/5 border-white/5 text-indigo-400"
-                          }`}
-                        >
-                          <FiPhone className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="font-semibold text-xs tracking-wide">
-                          Sales: 07947906789
-                        </span>
-                      </a>
-                      <a
-                        href="tel:0172655556"
-                        className={`flex items-center text-sm transition-colors duration-300 ${
-                          theme === "light"
-                            ? "text-slate-700 hover:text-slate-950"
-                            : "text-gray-300 hover:text-white"
-                        }`}
-                      >
-                        <div
-                          className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2.5 shrink-0 border ${
-                            theme === "light"
-                              ? "bg-slate-100 border-slate-200 text-indigo-600"
-                              : "bg-white/5 border-white/5 text-indigo-400"
-                          }`}
-                        >
-                          <FiPhone className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="font-semibold text-xs tracking-wide">
-                          Services: 0172655556
-                        </span>
-                      </a>
-                    </div>
-                  </div>
-
                   <div className="space-y-3">
                     <p
                       className={`text-[10px] uppercase tracking-wider font-extrabold ${

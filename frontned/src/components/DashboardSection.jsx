@@ -26,13 +26,31 @@ const DashboardSection = () => {
   const [isFlying, setIsFlying] = useState(false);
   const [flyText, setFlyText] = useState("Syncing...");
 
-  // Coordinates mapping for each menu tab on the left (in percentages relative to parent container)
-  const menuPositions = [
-    { left: "5%", top: "18%" }, // Dashboard
-    { left: "5%", top: "32%" }, // Maintenance
-    { left: "5%", top: "25%" }, // Fleet
-    { left: "5%", top: "39%" }, // Scheduling
-  ];
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Coordinates mapping for each menu tab (in percentages relative to parent container)
+  const menuPositions = isMobile
+    ? [
+        { left: "53%", top: "6%" }, // Dashboard (idx 0)
+        { left: "75%", top: "6%" }, // Maintenance (idx 1)
+        { left: "64%", top: "6%" }, // Fleet (idx 2)
+        { left: "86%", top: "6%" }, // Scheduling (idx 3)
+      ]
+    : [
+        { left: "5%", top: "18%" }, // Dashboard
+        { left: "5%", top: "32%" }, // Maintenance
+        { left: "5%", top: "25%" }, // Fleet
+        { left: "5%", top: "39%" }, // Scheduling
+      ];
 
   // Define details for each state transition loop
   const tourSequence = [
@@ -364,7 +382,7 @@ const DashboardSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="dashboard-mockup relative rounded-3xl border border-white/10 bg-[#090d1f]/60 backdrop-blur-xl p-3 md:p-6 shadow-[0_30px_100px_rgba(0,0,0,0.8),0_0_80px_rgba(79,70,229,0.15)] mx-auto max-w-5xl overflow-hidden flex flex-col h-auto lg:h-[620px] lg:aspect-[16/10]"
+          className="dashboard-mockup relative rounded-3xl border border-white/10 bg-[#090d1f]/60 backdrop-blur-xl p-3 md:p-6 shadow-[0_30px_100px_rgba(0,0,0,0.8),0_0_80px_rgba(79,70,229,0.15)] mx-auto max-w-5xl overflow-hidden flex flex-col h-[520px] md:h-[580px] lg:h-[620px] lg:aspect-[16/10]"
         >
           {/* Dashboard Window Header (mock status bar) */}
           <div className="flex items-center justify-between px-4 pb-4 border-b border-white/5 w-full">
@@ -384,7 +402,7 @@ const DashboardSection = () => {
           </div>
 
           {/* Interactive HTML/CSS Dashboard Content Container */}
-          <div className="bg-[#04060f] rounded-2xl border border-white/5 overflow-hidden mt-4 flex-1 flex flex-col lg:flex-row relative font-sans h-auto lg:h-[89%]">
+          <div className="bg-[#04060f] rounded-2xl border border-white/5 overflow-hidden mt-4 flex-1 flex flex-col lg:flex-row relative font-sans">
             {/* 1. Left-Side Navigation Panel (Glassmorphic) */}
             <div className="w-full lg:w-[24%] border-b lg:border-b-0 lg:border-r border-white/5 bg-[#070b18]/90 p-3 lg:p-4 flex flex-row lg:flex-col justify-between items-center lg:items-stretch select-none">
               <div className="flex flex-row lg:flex-col items-center lg:items-stretch lg:space-y-6 w-full justify-between lg:justify-start">
@@ -487,24 +505,24 @@ const DashboardSection = () => {
                   <h3 className="text-[8px] md:text-[9px] font-black text-gray-500 tracking-widest uppercase">
                     VEHICLE MANAGEMENT SYSTEM
                   </h3>
-                  <h2 className="text-lg md:text-2xl font-black text-white mt-1">
+                  <h2 className="text-sm sm:text-lg md:text-2xl font-black text-white mt-1 leading-tight">
                     Live Workshop Operations
                   </h2>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 md:space-x-4">
                   <div className="hidden lg:flex items-center space-x-2 bg-[#0a0f1d] border border-white/5 rounded-full px-3 py-1 text-[9px] text-gray-400 font-bold">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                     <span>Database Latency: 12ms</span>
                   </div>
-                  <div className="flex items-center space-x-3 text-gray-400 text-sm md:text-base">
-                    <div className="p-2 rounded-lg hover:bg-white/5 hover:text-white cursor-pointer transition-colors">
+                  <div className="flex items-center space-x-1.5 sm:space-x-3 text-gray-400 text-xs sm:text-sm md:text-base">
+                    <div className="p-1.5 sm:p-2 rounded-lg hover:bg-white/5 hover:text-white cursor-pointer transition-colors">
                       <FiSearch />
                     </div>
-                    <div className="p-2 rounded-lg hover:bg-white/5 hover:text-white cursor-pointer transition-colors relative">
+                    <div className="p-1.5 sm:p-2 rounded-lg hover:bg-white/5 hover:text-white cursor-pointer transition-colors relative">
                       <FiMail />
-                      <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                      <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500" />
                     </div>
-                    <div className="p-2 rounded-lg hover:bg-white/5 hover:text-white cursor-pointer transition-colors">
+                    <div className="p-1.5 sm:p-2 rounded-lg hover:bg-white/5 hover:text-white cursor-pointer transition-colors">
                       <FiSettings />
                     </div>
                   </div>
