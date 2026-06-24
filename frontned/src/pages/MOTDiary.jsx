@@ -5,10 +5,13 @@ import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import MOTDiarySection from "../components/MOTDiary.jsx";
 import Footer from "../components/Footer.jsx";
-import aboutImg from "../assets/about-img-add.jpg";
-import motDiaryImg from "../assets/images/mot-diary.png";
+import { getCloudinaryUrl, useBackendOnline } from "../utils/cloudinary.js";
 
 const MOTDiaryPage = () => {
+  useBackendOnline();
+  const aboutImg = getCloudinaryUrl("about-img-add.jpg");
+  const motDiaryImg = getCloudinaryUrl("mot-diary.png");
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -45,19 +48,19 @@ const MOTDiaryPage = () => {
         canonicalPath="/mot-diary"
       />
       <Navbar />
-      
+
       <main className="flex-grow pt-24">
         {/* ══════════════════════════════════════════
             HERO BANNER
         ══════════════════════════════════════════ */}
-        <section 
-          className="relative py-24 md:py-32 overflow-hidden bg-cover bg-center garage-hero-banner" 
+        <section
+          className="relative py-24 md:py-32 overflow-hidden bg-cover bg-center garage-hero-banner"
           style={{ backgroundImage: `url(${aboutImg})` }}
         >
           {/* Blue/Navy tint brand overlay */}
           <div className="absolute inset-0 bg-[#060b26]/85 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#243cc6ff]/35 via-transparent to-[#050816]" />
-          
+
           <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
@@ -75,7 +78,7 @@ const MOTDiaryPage = () => {
         ══════════════════════════════════════════ */}
         <section className="py-16 md:py-20 px-6 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
-          
+
           <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -92,7 +95,9 @@ const MOTDiaryPage = () => {
               transition={{ delay: 0.1 }}
               className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
             >
-              Benefit from our state-of-the-art MOT Diary system as you guide customers for their tests and grow your independent garage to be a brand.
+              Benefit from our state-of-the-art MOT Diary system as you guide
+              customers for their tests and grow your independent garage to be a
+              brand.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -118,18 +123,33 @@ const MOTDiaryPage = () => {
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left: Detailed Info */}
             <div className="lg:col-span-7 space-y-6 text-left">
-              <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Database Sync</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-blue-400">
+                Database Sync
+              </span>
               <p className="text-gray-400 text-base md:text-lg leading-relaxed">
-                Yes, cloud-based MOT management is now a reality! We, at MOT Diary, have made it possible. By virtue of our tie-up with DVLA, your garage can make the most of first-hand access to the extensive MOT database.
+                Yes, cloud-based MOT management is now a reality! We, at MOT
+                Diary, have made it possible. By virtue of our tie-up with DVLA,
+                your garage can make the most of first-hand access to the
+                extensive MOT database.
               </p>
-              
+
               <div className="border-t border-white/10 pt-6 space-y-4">
-                <h3 className="text-2xl font-black text-white">What Not To Miss?</h3>
+                <h3 className="text-2xl font-black text-white">
+                  What Not To Miss?
+                </h3>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                  We link closely with DVLA to make sure we keep all car data and your MOT diary up to date. This prime feature of MOT Diary lets you in on the detailed MOT specifics (MOT expiry date, VIN, engine number, MOT history, tyre data, and more) like no other app or any other tool ever will!
+                  We link closely with DVLA to make sure we keep all car data
+                  and your MOT diary up to date. This prime feature of MOT Diary
+                  lets you in on the detailed MOT specifics (MOT expiry date,
+                  VIN, engine number, MOT history, tyre data, and more) like no
+                  other app or any other tool ever will!
                 </p>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed font-semibold">
-                  Of course, MOT Diary is the best MOT management and reminder in the UK that'll not only guarantee you taking the test on time, but also prompts you to make an advance booking. And must we add, this is not all! We're certain you are enticed to know more about its rich features.
+                  Of course, MOT Diary is the best MOT management and reminder
+                  in the UK that'll not only guarantee you taking the test on
+                  time, but also prompts you to make an advance booking. And
+                  must we add, this is not all! We're certain you are enticed to
+                  know more about its rich features.
                 </p>
               </div>
             </div>
@@ -158,11 +178,15 @@ const MOTDiaryPage = () => {
         ══════════════════════════════════════════ */}
         <section className="py-20 px-6 bg-[#0a0f24]/30 border-y border-white/5 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none" />
-          
+
           <div className="max-w-7xl mx-auto relative z-10 space-y-12">
             <div className="text-center space-y-3">
-              <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block">Features Grid</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white">It's Feature-loaded!</h2>
+              <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block">
+                Features Grid
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+                It's Feature-loaded!
+              </h2>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -175,8 +199,12 @@ const MOTDiaryPage = () => {
                   <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-[#ffffff] font-black text-sm mb-6 shadow-md shadow-blue-500/20">
                     {item.num}
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed flex-grow font-medium">{item.desc}</p>
+                  <h3 className="text-lg font-bold text-white mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-400 text-xs leading-relaxed flex-grow font-medium">
+                    {item.desc}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -191,9 +219,12 @@ const MOTDiaryPage = () => {
             <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block mb-2">
               Live Interactive Demo
             </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Try the Live MOT Diary Grid</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+              Try the Live MOT Diary Grid
+            </h2>
             <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto mt-3 px-6">
-              Click on the tabs below to test automated SMS notifications, DVLA API queries, drag-and-drop slots, and ramp load occupancies.
+              Click on the tabs below to test automated SMS notifications, DVLA
+              API queries, drag-and-drop slots, and ramp load occupancies.
             </p>
           </div>
           <MOTDiarySection />

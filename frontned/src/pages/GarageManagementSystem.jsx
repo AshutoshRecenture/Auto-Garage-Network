@@ -27,79 +27,53 @@ import Navbar from "../components/Navbar.jsx";
 import DashboardSection from "../components/DashboardSection.jsx";
 import Footer from "../components/Footer.jsx";
 
-// Import brand logos from assets
-import tecrmlImg from "../assets/images/tecrml.webp";
-import automatedRemindersImg from "../assets/images/automated-reminders.webp";
-import courtesyVehiclesImg from "../assets/images/courtesy-vehicles.webp";
-import calendarImg from "../assets/images/calendar.webp";
-import customerManagementImg from "../assets/images/customer-management.webp";
-import customerPortalImg from "../assets/images/customer-portal.webp";
-import autodataImg from "../assets/images/solera-autodata.webp";
-import gsfImg from "../assets/images/gsf-car-parts.webp";
-import partslink24Img from "../assets/images/partslink24.webp";
-import bondImg from "../assets/images/bond-integration.webp";
-import stapletonsImg from "../assets/images/stapletons.webp";
-import bmtrImg from "../assets/images/bmtr.webp";
-import groupTyresImg from "../assets/images/group-tyres.webp";
-import oakTyresImg from "../assets/images/oak-tyres.webp";
-import motImg from "../assets/images/mot.webp";
-import quickbooksImg from "../assets/images/quickbooks.webp";
-import stockControlImg from "../assets/images/stock-control.webp";
-import webBookingImg from "../assets/images/web-booking.webp";
-import technicianAppImg from "../assets/images/technician-mobile-app-andriod-ios.webp";
-import vehicleSalesImg from "../assets/images/vehicle-sales.webp";
-import inspectionImg from "../assets/images/inspection-form-management.webp";
-import bookkeepingImg from "../assets/images/bookkeeping.webp";
-import multiSiteImg from "../assets/images/multi-site-garage-management-system.webp";
-import personnelImg from "../assets/images/personnel-management.webp";
-import workshopBookingsImg from "../assets/images/workshop-bookings.webp";
-import workshopEstimatesImg from "../assets/images/workshop-estimates.webp";
+import { getCloudinaryUrl, useBackendOnline } from "../utils/cloudinary.js";
 
-// Mapping feature names to imported logos
+// Mapping feature names to Cloudinary asset filenames
 const featureLogos = {
-  "TecRMI Inside": tecrmlImg,
-  "Automated Reminders": automatedRemindersImg,
-  "Courtesy Vehicles": courtesyVehiclesImg,
-  "Calendar Scheduling": calendarImg,
-  "Customer Management": customerManagementImg,
-  "Customer Portal": customerPortalImg,
-  "Autodata Integration": autodataImg,
-  "Full Technical Data (Autodata)": autodataImg,
-  "GSF Parts Integration": gsfImg,
-  "GSF Integration": gsfImg,
-  "Partslink24 Integration": partslink24Img,
-  "Bond Integration": bondImg,
-  "Stapletons Tyre Integration": stapletonsImg,
-  "Stapletons Integration": stapletonsImg,
-  "BMTR Tyre API": bmtrImg,
-  "BMTR Integration": bmtrImg,
-  "Group Tyre Stock": groupTyresImg,
-  "Group Integration": groupTyresImg,
-  "Oak Tyre Integration": oakTyresImg,
-  "Oak Integration": oakTyresImg,
-  "DVLA Database Sync": motImg,
-  "MOT Expiry Lookup": motImg,
-  "Quickbooks Integration": quickbooksImg,
-  "QuickBooks Integration": quickbooksImg,
-  "Stock Control": stockControlImg,
-  "Web Bookings Gateway": webBookingImg,
-  "Web Bookings": webBookingImg,
-  "Technician Mobile App": technicianAppImg,
-  "Technician Mobile App Android/iOS": technicianAppImg,
-  "Vehicle Sales": vehicleSalesImg,
-  "Inspection Form Manager": inspectionImg,
-  "Inspection Form Management": inspectionImg,
-  "Bookkeeping & Reports": bookkeepingImg,
-  Bookkeeping: bookkeepingImg,
-  BookKeeping: bookkeepingImg,
-  "Multi-Site Control": multiSiteImg,
-  "Multi-site Management": multiSiteImg,
-  "Personnel Rota Logs": personnelImg,
-  "Personnel Management": personnelImg,
-  "Workshop Bookings": workshopBookingsImg,
-  "Workshop bookings": workshopBookingsImg,
-  "Workshop Estimates": workshopEstimatesImg,
-  "Invoicing & Estimates": workshopEstimatesImg,
+  "TecRMI Inside": "tecrml.webp",
+  "Automated Reminders": "automated-reminders.webp",
+  "Courtesy Vehicles": "courtesy-vehicles.webp",
+  "Calendar Scheduling": "calendar.webp",
+  "Customer Management": "customer-management.webp",
+  "Customer Portal": "customer-portal.webp",
+  "Autodata Integration": "solera-autodata.webp",
+  "Full Technical Data (Autodata)": "solera-autodata.webp",
+  "GSF Parts Integration": "gsf-car-parts.webp",
+  "GSF Integration": "gsf-car-parts.webp",
+  "Partslink24 Integration": "partslink24.webp",
+  "Bond Integration": "bond-integration.webp",
+  "Stapletons Tyre Integration": "stapletons.webp",
+  "Stapletons Integration": "stapletons.webp",
+  "BMTR Tyre API": "bmtr.webp",
+  "BMTR Integration": "bmtr.webp",
+  "Group Tyre Stock": "group-tyres.webp",
+  "Group Integration": "group-tyres.webp",
+  "Oak Tyre Integration": "oak-tyres.webp",
+  "Oak Integration": "oak-tyres.webp",
+  "DVLA Database Sync": "mot.webp",
+  "MOT Expiry Lookup": "mot.webp",
+  "Quickbooks Integration": "quickbooks.webp",
+  "QuickBooks Integration": "quickbooks.webp",
+  "Stock Control": "stock-control.webp",
+  "Web Bookings Gateway": "web-booking.webp",
+  "Web Bookings": "web-booking.webp",
+  "Technician Mobile App": "technician-mobile-app-andriod-ios.webp",
+  "Technician Mobile App Android/iOS": "technician-mobile-app-andriod-ios.webp",
+  "Vehicle Sales": "vehicle-sales.webp",
+  "Inspection Form Manager": "inspection-form-management.webp",
+  "Inspection Form Management": "inspection-form-management.webp",
+  "Bookkeeping & Reports": "bookkeeping.webp",
+  Bookkeeping: "bookkeeping.webp",
+  BookKeeping: "bookkeeping.webp",
+  "Multi-Site Control": "multi-site-garage-management-system.webp",
+  "Multi-site Management": "multi-site-garage-management-system.webp",
+  "Personnel Rota Logs": "personnel-management.webp",
+  "Personnel Management": "personnel-management.webp",
+  "Workshop Bookings": "workshop-bookings.webp",
+  "Workshop bookings": "workshop-bookings.webp",
+  "Workshop Estimates": "workshop-estimates.webp",
+  "Invoicing & Estimates": "workshop-estimates.webp",
 };
 
 const getIconComponent = (name) => {
@@ -130,9 +104,10 @@ const getIconComponent = (name) => {
 };
 
 const getFeatureLogoOrIcon = (name, idx) => {
-  const logoSrc = featureLogos[name];
+  const logoFilename = featureLogos[name];
 
-  if (logoSrc) {
+  if (logoFilename) {
+    const logoSrc = getCloudinaryUrl(logoFilename);
     return (
       <div className="bg-gradient-to-b from-white to-[#f1f5f9] px-4 py-2.5 rounded-2xl border border-slate-200/80 shadow-[0_4px_10px_rgba(0,0,0,0.06),inset_0_-2px_0_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,1)] flex items-center justify-center h-14 w-fit min-w-[95px] transform hover:scale-[1.05] transition-transform duration-300">
         <img
@@ -178,6 +153,7 @@ const getFeatureLogoOrIcon = (name, idx) => {
 };
 
 const GarageManagementSystem = () => {
+  useBackendOnline();
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
@@ -633,7 +609,7 @@ const GarageManagementSystem = () => {
                       <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Name */}
                         <div className="space-y-1">
-                          <label className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Full Name *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -655,7 +631,7 @@ const GarageManagementSystem = () => {
 
                         {/* Garage Name */}
                         <div className="space-y-1">
-                          <label className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Company / Garage Name *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -678,7 +654,7 @@ const GarageManagementSystem = () => {
                         {/* Email & Phone side-by-side */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-1">
-                            <label className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                            <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                               Email Address *
                             </label>
                             <div className="relative flex items-center group/field">
@@ -698,7 +674,7 @@ const GarageManagementSystem = () => {
                             </div>
                           </div>
                           <div className="space-y-1">
-                            <label className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                            <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                               Phone Number *
                             </label>
                             <div className="relative flex items-center group/field">
@@ -721,7 +697,7 @@ const GarageManagementSystem = () => {
 
                         {/* Dropdown: Interested in */}
                         <div className="space-y-1">
-                          <label className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Interested In *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -774,7 +750,7 @@ const GarageManagementSystem = () => {
 
                         {/* Address */}
                         <div className="space-y-1">
-                          <label className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Garage Address *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -796,7 +772,7 @@ const GarageManagementSystem = () => {
 
                         {/* Message */}
                         <div className="space-y-1">
-                          <label className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Inquiry Message
                           </label>
                           <div className="relative flex items-start group/field">
@@ -874,60 +850,60 @@ const GarageManagementSystem = () => {
 
             {/* Desktop Table View */}
             <div className="hidden md:block overflow-x-auto rounded-[24px] border border-white/10 bg-[#0c1222]/90 shadow-xl">
-              <table className="w-full border-collapse text-left text-xs">
+              <table className="w-full border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 bg-[#050816]/80 text-gray-400 select-none">
-                    <th className="p-5 font-black uppercase text-[10px] tracking-wider">
+                    <th className="p-5 font-black uppercase text-xs tracking-wider">
                       Features Suite
                     </th>
-                    <th className="p-5 font-black uppercase text-[10px] tracking-wider text-center bg-white/5">
+                    <th className="p-5 font-black uppercase text-xs tracking-wider text-center bg-white/5">
                       <div className="text-white text-sm">Elite Workshop</div>
                       <div className="text-emerald-400 text-lg font-black mt-1">
                         £135
-                        <span className="text-[10px] font-normal text-gray-400">
+                        <span className="text-xs font-normal text-gray-400">
                           /mo + VAT
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => scrollToForm("Elite Workshop")}
-                        className="mt-3 px-4 py-2 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-indigo-600 hover:text-white border border-white/10 text-white font-bold transition-all text-[10px] cursor-pointer"
+                        className="mt-3 px-4 py-2 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-indigo-600 hover:text-white border border-white/10 text-white font-bold transition-all text-xs cursor-pointer"
                       >
                         Select Plan
                       </button>
                     </th>
-                    <th className="p-5 font-black uppercase text-[10px] tracking-wider text-center bg-indigo-500/10 border-x border-white/10">
+                    <th className="p-5 font-black uppercase text-xs tracking-wider text-center bg-indigo-500/10 border-x border-white/10">
                       <div className="text-indigo-300 text-sm">
                         Elite ProMax
                       </div>
                       <div className="text-indigo-400 text-lg font-black mt-1">
                         £235
-                        <span className="text-[10px] font-normal text-gray-400">
+                        <span className="text-xs font-normal text-gray-400">
                           /mo + VAT
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => scrollToForm("Elite ProMax")}
-                        className="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black transition-all text-[10px] cursor-pointer shadow-md shadow-indigo-600/20"
+                        className="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black transition-all text-xs cursor-pointer shadow-md shadow-indigo-600/20"
                       >
                         Select Plan
                       </button>
                     </th>
-                    <th className="p-5 font-black uppercase text-[10px] tracking-wider text-center bg-white/5">
+                    <th className="p-5 font-black uppercase text-xs tracking-wider text-center bg-white/5">
                       <div className="text-white text-sm">
                         Elite ProMax Plus
                       </div>
                       <div className="text-emerald-400 text-lg font-black mt-1">
                         £375
-                        <span className="text-[10px] font-normal text-gray-400">
+                        <span className="text-xs font-normal text-gray-400">
                           /mo + VAT
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => scrollToForm("Elite ProMax Plus")}
-                        className="mt-3 px-4 py-2 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-indigo-600 hover:text-white border border-white/10 text-white font-bold transition-all text-[10px] cursor-pointer"
+                        className="mt-3 px-4 py-2 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-indigo-600 hover:text-white border border-white/10 text-white font-bold transition-all text-xs cursor-pointer"
                       >
                         Select Plan
                       </button>
@@ -940,10 +916,10 @@ const GarageManagementSystem = () => {
                       key={idx}
                       className="border-b border-white/5 hover:bg-white/[0.02] transition-colors font-medium text-gray-300"
                     >
-                      <td className="p-4 font-bold text-gray-200 border-r border-white/5">
+                      <td className="p-4 font-bold text-gray-100 border-r border-white/5">
                         {row.name}
                       </td>
-                      <td className="p-4 text-center border-r border-white/5 bg-white/[0.01] text-gray-200">
+                      <td className="p-4 text-center border-r border-white/5 bg-white/[0.01] text-gray-100">
                         {row.p1 === "Yes" ? (
                           <FiCheck className="text-blue-400 w-4.5 h-4.5 mx-auto" />
                         ) : row.p1 === "No" ? (
@@ -952,7 +928,7 @@ const GarageManagementSystem = () => {
                           row.p1
                         )}
                       </td>
-                      <td className="p-4 text-center bg-indigo-500/[0.02] border-r border-white/10 font-bold text-white">
+                      <td className="p-4 text-center bg-indigo-500/[0.02] border-r border-white/10 font-bold text-gray-100">
                         {row.p2 === "Yes" ? (
                           <FiCheck className="text-blue-400 w-4.5 h-4.5 mx-auto" />
                         ) : row.p2 === "No" ? (
@@ -961,7 +937,7 @@ const GarageManagementSystem = () => {
                           row.p2
                         )}
                       </td>
-                      <td className="p-4 text-center bg-white/[0.01] text-gray-200">
+                      <td className="p-4 text-center bg-white/[0.01] text-gray-100">
                         {row.p3 === "Yes" ? (
                           <FiCheck className="text-blue-400 w-4.5 h-4.5 mx-auto" />
                         ) : row.p3 === "No" ? (
@@ -995,7 +971,7 @@ const GarageManagementSystem = () => {
                       {plan.price}/mo
                     </span>
                   </div>
-                  <ul className="space-y-3.5 text-xs text-gray-400">
+                  <ul className="space-y-3.5 text-sm text-gray-400">
                     {pricingFeatures.slice(0, 10).map((row, idx) => (
                       <li key={idx} className="flex justify-between">
                         <span className="font-medium">{row.name}</span>
@@ -1020,11 +996,12 @@ const GarageManagementSystem = () => {
           </div>
         </section>
 
+
         {/* ══════════════════════════════════════════
             FAIR USAGE POLICY BLOCK
         ══════════════════════════════════════════ */}
         <section className="py-16 px-6">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1039,33 +1016,49 @@ const GarageManagementSystem = () => {
                   Policy (FUP) for SMS & VRMs
                 </div>
                 <h3 className="text-2xl font-black text-white leading-tight">
-                  Fair Usage Policy Rules
+                  Fair Usage Policy for SMS Messages and VRM Lookups
                 </h3>
-                <div className="space-y-4 text-xs md:text-sm text-gray-400 leading-relaxed font-medium">
-                  <p>
-                    <strong>1. Allocation:</strong> Subscribed packages include
-                    specific allocations of SMS messages and Vehicle
-                    Registration Mark (VRM) lookups per billing cycle (monthly).
-                    Unused allocations do not roll over.
-                  </p>
-                  <p>
-                    <strong>2. Fair Usage Limits:</strong> Customers must use
-                    services for standard business operations. Standard rates
-                    apply for excess usage beyond your limit (SMS: 10p per
-                    message, VRM: 10p per lookup).
-                  </p>
-                  <p>
-                    <strong>3. Prohibited Use:</strong> Reselling lookup queries
-                    or utilizing automated scrapers is strictly prohibited under
-                    Mr. Bassi's security system.
-                  </p>
-                  <p>
-                    <strong>4. Support & Monitoring:</strong> Notifications will
-                    be dispatched when approaching 90% usage limits. Contact
-                    support on <strong>01702 655556</strong> or{" "}
-                    <strong>support@autogaragenetwork.com</strong> for
-                    assistance.
-                  </p>
+                <p className="text-xs md:text-sm text-gray-400 leading-relaxed font-semibold">
+                  This Fair Usage Policy (FUP) outlines the acceptable use of SMS messages and VRM (Vehicle Registration Mark) lookups provided under your subscribed package. The purpose of this policy is to ensure fair and reasonable use of these services for all customers while maintaining the quality and reliability of our services.
+                </p>
+                <div className="space-y-5 text-xs md:text-sm text-gray-400 leading-relaxed font-medium">
+                  <div>
+                    <strong className="text-white block mb-1">1. Allocation of SMS Messages and VRM Lookups</strong>
+                    <p>Your subscribed package includes a specific allocation of SMS messages and VRM lookups per billing cycle (e.g., monthly). The allocation is designed to meet the needs of typical usage for your package tier. Unused allocations do not roll over to the next billing cycle.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">2. Fair Usage</strong>
+                    <p>Customers are expected to use SMS messages and VRM lookups in a manner consistent with the intended purpose of their subscribed package. Usage should align with standard business or personal needs, as applicable to your subscription type.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">3. Excessive Usage</strong>
+                    <p>Usage beyond your allocated amount will be considered excessive. Excessive usage may impact the performance and availability of services for other customers. We reserve the right to monitor usage patterns and identify any activity that exceeds fair usage limits.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">4. Charges for Excessive Usage</strong>
+                    <p>If your usage exceeds the allocated amount, additional charges will apply. Excess usage charges will be calculated based on the standard rates for SMS (10p) messages and VRM (10p) lookups, as outlined in your subscription agreement or pricing plan. You will be notified of any excess usage charges incurred during the billing cycle.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">5. Monitoring and Notifications</strong>
+                    <p>We will monitor your usage to ensure compliance with this Fair Usage Policy. If your usage approaches or exceeds the allocated amount, we may notify you via email or SMS to inform you of potential additional charges. It is your responsibility to monitor your usage and ensure it remains within the allocated limits.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">6. Prohibited Use</strong>
+                    <p>The use of SMS messages and VRM lookups for unlawful, fraudulent, or abusive purposes is strictly prohibited. Reselling, redistributing, or otherwise commercialising the services outside the scope of your subscription is not permitted.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">7. Policy Enforcement</strong>
+                    <p>We reserve the right to take action if this Fair Usage Policy is violated, including but not limited to: Applying additional charges for excessive usage, suspending or restricting access to services, and terminating your subscription in cases of severe or repeated violations.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">8. Changes to This Policy</strong>
+                    <p>We may update this Fair Usage Policy from time to time. Any changes will be communicated to you via email or through your account portal. Continued use of the services after changes to this policy constitutes acceptance of the updated terms.</p>
+                  </div>
+                  <div>
+                    <strong className="text-white block mb-1">9. Contact Us</strong>
+                    <p>If you have any questions about this Fair Usage Policy or need assistance managing your usage, please contact our customer support team at <strong>01702 655556</strong> / <strong>+91 9667108961</strong> / <strong>support@autogaragenetwork.com</strong>.</p>
+                    <p className="mt-2 text-indigo-300 font-bold">By adhering to this Fair Usage Policy, you help us maintain a high-quality service for all customers. Thank you for your cooperation.</p>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -1092,7 +1085,7 @@ const GarageManagementSystem = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
               {keyFeatures
                 .filter(
                   (item) =>
@@ -1100,39 +1093,60 @@ const GarageManagementSystem = () => {
                     item.name === "Xero Integration" ||
                     item.name === "Sage Integration",
                 )
-                .map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{
-                      y: -10,
-                      scale: 1.025,
-                      borderColor: "rgba(99, 102, 241, 0.5)",
-                    }}
-                    transition={{ type: "spring", stiffness: 350, damping: 22 }}
-                    className="bg-gradient-to-br from-[#0c1222] to-[#080d19] border border-white/10 border-b-4 border-b-indigo-500/20 hover:border-b-indigo-500/40 p-6 rounded-[24px] flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.05)] text-left group relative overflow-hidden cursor-default transition-all duration-300 gms-feature-card"
-                  >
-                    {/* Shiny reflecting beam sweep on hover */}
+                .map((item, idx) => {
+                  const isHighlighted = item.name === "Automated Reminders";
+                  return (
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.04] to-transparent pointer-events-none"
-                      initial={{ x: "-100%" }}
-                      whileHover={{ x: "200%" }}
-                      transition={{ duration: 1.2, ease: "easeInOut" }}
-                    />
+                      key={idx}
+                      whileHover={{
+                        y: -12,
+                        scale: 1.025,
+                        rotateX: 4,
+                        rotateY: -4,
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                      className={`backdrop-blur-md rounded-[24px] p-5 md:p-6 text-left flex flex-col justify-between border transition-all duration-300 cursor-default group relative overflow-hidden h-full ${
+                        isHighlighted
+                          ? "bg-gradient-to-br from-[#ffe9ec] via-[#e7e5ff] to-[#e1f5fe] dark:bg-gradient-to-br dark:from-[#2a1b40] dark:via-[#171b3c] dark:to-[#142d4a] border-indigo-500/30 dark:border-indigo-500/40 shadow-[0_15px_35px_rgba(99,102,241,0.18),inset_0_1.5px_0_rgba(255,255,255,0.7)] dark:shadow-[0_18px_40px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_30px_55px_rgba(99,102,241,0.32),inset_0_2px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_35px_60px_rgba(99,102,241,0.42),inset_0_2px_0_rgba(255,255,255,0.28)]"
+                          : "bg-slate-200/30 dark:bg-white/[0.03] border-slate-300/40 dark:border-white/10 hover:border-indigo-500/20 dark:hover:border-indigo-500/30 shadow-[0_12px_28px_rgba(0,0,0,0.05),inset_0_1.5px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:shadow-[0_15px_35px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.15)] hover:shadow-[0_25px_45px_rgba(99,102,241,0.12),inset_0_2px_0_rgba(255,255,255,0.85)] dark:hover:shadow-[0_30px_50px_rgba(99,102,241,0.28),inset_0_1.5px_0_rgba(255,255,255,0.22)]"
+                      }`}
+                    >
+                      {/* Shiny reflecting beam sweep on hover */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.08] to-transparent pointer-events-none"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "200%" }}
+                        transition={{ duration: 1.2, ease: "easeInOut" }}
+                      />
 
-                    {/* Corner ambient radial glow */}
-                    <div className="absolute -right-8 -top-8 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-colors pointer-events-none" />
+                      {/* Corner ambient radial glow for standard cards */}
+                      {!isHighlighted && (
+                        <div className="absolute -right-8 -top-8 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-colors pointer-events-none" />
+                      )}
 
-                    <div className="h-14 flex items-center mb-4 select-none relative z-10">
-                      {getFeatureLogoOrIcon(item.name, idx)}
-                    </div>
-                    <h4 className="font-extrabold text-white text-sm mb-2 transition-colors duration-300 group-hover:text-indigo-300 relative z-10">
-                      {item.name}
-                    </h4>
-                    <p className="text-[11px] text-gray-400 leading-relaxed font-medium flex-grow relative z-10">
-                      {item.desc}
-                    </p>
-                  </motion.div>
-                ))}
+                      <div>
+                        <div className="h-14 flex items-center mb-4 select-none relative z-10">
+                          {getFeatureLogoOrIcon(item.name, idx)}
+                        </div>
+                        <h4 className={`font-extrabold text-xs md:text-sm mb-2 transition-colors duration-300 relative z-10 ${
+                          isHighlighted
+                            ? "text-indigo-950 dark:text-indigo-200 group-hover:text-indigo-600 dark:group-hover:text-white"
+                            : "text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300"
+                        }`}>
+                          {item.name}
+                        </h4>
+                        <p className={`text-[10px] md:text-xs leading-relaxed font-medium relative z-10 ${
+                          isHighlighted
+                            ? "text-indigo-950/80 dark:text-indigo-300/80"
+                            : "text-slate-600 dark:text-gray-400"
+                        }`}>
+                          {item.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
             </div>
           </div>
         </section>

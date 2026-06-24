@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --font-size-xs: 0.825rem;
+  --font-size-sm: 0.9375rem;
+  --font-size-base: 1.0625rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.35rem;
+  --font-size-2xl: 1.625rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3.25rem;
+  --font-size-6xl: 4.1rem;
+  --font-size-7xl: 5.1rem;
+}
+
 html {
   scroll-behavior: smooth;
   scrollbar-color: rgba(99, 102, 241, 0.5) #ffffff;
@@ -19,6 +33,7 @@ body,
   max-width: 100% !important;
   width: 100% !important;
   position: relative;
+  line-height: 1.6;
 }
 
 html:not(.light),
@@ -83,6 +98,12 @@ html:not(.light)::-webkit-scrollbar-thumb:hover {
 }
 .light .bg-\[\#050816\]\/90 {
   background-color: rgba(248, 250, 252, 0.9) !important;
+}
+.light .bg-\[\#050816\]\/80 {
+  background-color: rgba(241, 245, 249, 0.95) !important;
+}
+.light .bg-\[\#050816\]\/40 {
+  background-color: #f8fafc !important;
 }
 .light .bg-\[\#050816\]\/95 {
   background-color: rgba(248, 250, 252, 0.95) !important;
@@ -441,7 +462,37 @@ html:not(.light) img[src*="logo-color.png"],
 .light [class*="bg-blue-"] .text-white,
 .light [class*="bg-green-"] .text-white,
 .light [class*="bg-emerald-"] .text-white,
-.light [class*="bg-rose-"] .text-white {
+.light [class*="bg-rose-"] .text-white,
+/* Direct element selectors (no space) to keep white text on colored buttons */
+.light button.bg-indigo-600,
+.light button.bg-gradient-to-r,
+.light button.bg-gradient-to-br,
+.light button.bg-gradient-to-tr,
+.light button[class*="bg-indigo-"],
+.light button[class*="bg-blue-"],
+.light button[class*="bg-emerald-"],
+.light button[class*="bg-gradient-"],
+.light button.hover\:text-white:hover,
+.light button.bg-white\/10.hover\:bg-indigo-600:hover,
+.light a.text-white,
+.light a.hover\:text-white:hover,
+.light .bg-indigo-600.text-white,
+.light .bg-indigo-600.hover\:text-white:hover,
+.light [class*="bg-indigo-"].text-white,
+.light [class*="bg-indigo-"].hover\:text-white:hover,
+.light [class*="bg-blue-"].text-white,
+.light [class*="bg-blue-"].hover\:text-white:hover,
+.light [class*="bg-emerald-"].text-white,
+.light [class*="bg-emerald-"].hover\:text-white:hover,
+.light [class*="bg-gradient-"].text-white,
+.light [class*="bg-gradient-"].hover\:text-white:hover,
+.light [class*="from-indigo-"].text-white,
+.light [class*="from-indigo-"].hover\:text-white:hover,
+.light [class*="from-blue-"].text-white,
+.light [class*="from-blue-"].hover\:text-white:hover,
+.light [class*="from-emerald-"].text-white,
+.light [class*="from-emerald-"].hover\:text-white:hover,
+.light .bg-white\/10.hover\:bg-indigo-600:hover {
   color: #ffffff !important;
 }
 
@@ -844,6 +895,56 @@ main.flex-grow:not(.home-main) {
 .light .gms-feature-card .text-gray-400,
 .light .gms-feature-card .text-gray-500 {
   color: #475569 !important;
+}
+
+/* Table Contrast and Legibility overrides in Light Mode */
+.light table,
+.light td,
+.light th {
+  color: #000000 !important;
+}
+
+.light td .text-blue-400,
+.light .text-blue-400 {
+  color: #2563eb !important;
+}
+
+.light td .text-red-400,
+.light .text-red-400 {
+  color: #be123c !important;
+}
+
+.light td .text-red-500,
+.light .text-red-500 {
+  color: #be123c !important;
+}
+
+.light td .text-emerald-400,
+.light .text-emerald-400 {
+  color: #047857 !important;
+}
+
+.light td .text-rose-400,
+.light .text-rose-400 {
+  color: #be123c !important;
+}
+
+.light td .text-indigo-400,
+.light .text-indigo-400 {
+  color: #4f46e5 !important;
+}
+
+.light th .text-indigo-300,
+.light .text-indigo-300 {
+  color: #3730a3 !important;
+}
+
+.light th .text-indigo-400 {
+  color: #4f46e5 !important;
+}
+
+.light th .text-emerald-400 {
+  color: #047857 !important;
 }
 
 /* ========================================================================== */

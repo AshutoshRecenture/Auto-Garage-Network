@@ -58,6 +58,7 @@ const HeroSection = () => {
   const [todayRevenue, setTodayRevenue] = useState(1240.5);
   const [dayOccupancy, setDayOccupancy] = useState(85);
   const [performanceVal, setPerformanceVal] = useState(18.4);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   // Active Queue State
   const [queue, setQueue] = useState([
@@ -352,6 +353,7 @@ const HeroSection = () => {
               </motion.button>
             </Link>
             <motion.button
+              onClick={() => setShowVideoModal(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center space-x-2 bg-[#111827]/80 backdrop-blur-md hover:bg-[#1f2937] text-white border border-white/10 font-semibold px-8 py-4 rounded-xl transition-all cursor-pointer"
@@ -822,6 +824,45 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
+      
+      {/* Video Modal Popup */}
+      {showVideoModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+          onClick={() => setShowVideoModal(false)}
+        >
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="relative w-full max-w-4xl bg-[#0c1222] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header bar / Close button */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#070c18]">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Auto Garage Network - Live Demo</h3>
+              <button 
+                onClick={() => setShowVideoModal(false)}
+                className="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/5 cursor-pointer"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            {/* Video container */}
+            <div className="aspect-video w-full bg-black">
+              <video 
+                src="https://res.cloudinary.com/n4okswsd/video/upload/v1782238075/agn_short_intro_1.mp4"
+                controls
+                autoPlay
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 };

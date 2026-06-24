@@ -6,10 +6,13 @@ import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import WebsiteSolutions from "../components/WebsiteSolutions.jsx";
 import Footer from "../components/Footer.jsx";
-import aboutImg from "../assets/about-img-add.jpg";
-import websiteForGaragesImg from "../assets/images/website-for-garages.png";
+import { getCloudinaryUrl, useBackendOnline } from "../utils/cloudinary.js";
 
 const WebsiteForGarages = () => {
+  useBackendOnline();
+  const aboutImg = getCloudinaryUrl("about-img-add.jpg");
+  const websiteForGaragesImg = getCloudinaryUrl("website-for-garages.png");
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -42,19 +45,19 @@ const WebsiteForGarages = () => {
         canonicalPath="/website-for-garages"
       />
       <Navbar />
-      
+
       <main className="flex-grow pt-24">
         {/* ══════════════════════════════════════════
             HERO BANNER
         ══════════════════════════════════════════ */}
-        <section 
-          className="relative py-24 md:py-32 overflow-hidden bg-cover bg-center garage-hero-banner" 
+        <section
+          className="relative py-24 md:py-32 overflow-hidden bg-cover bg-center garage-hero-banner"
           style={{ backgroundImage: `url(${aboutImg})` }}
         >
           {/* Blue/Navy tint brand overlay */}
           <div className="absolute inset-0 bg-[#060b26]/85 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#243cc6ff]/35 via-transparent to-[#050816]" />
-          
+
           <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
@@ -72,7 +75,7 @@ const WebsiteForGarages = () => {
         ══════════════════════════════════════════ */}
         <section className="py-16 md:py-20 px-6 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
-          
+
           <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -89,7 +92,9 @@ const WebsiteForGarages = () => {
               transition={{ delay: 0.1 }}
               className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
             >
-              Take advantage of our state-of-the-art website design technology to establish your brand online and kick-start your digital journey.
+              Take advantage of our state-of-the-art website design technology
+              to establish your brand online and kick-start your digital
+              journey.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -121,10 +126,18 @@ const WebsiteForGarages = () => {
               className="bg-[#0c1222]/60 border border-white/5 p-8 rounded-3xl shadow-xl flex flex-col justify-between"
             >
               <div className="space-y-4">
-                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Who We Are</span>
-                <h3 className="text-2xl font-black text-white">We at Auto Garage Network</h3>
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">
+                  Who We Are
+                </span>
+                <h3 className="text-2xl font-black text-white">
+                  We at Auto Garage Network
+                </h3>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                  At Auto Garage Network, we specialise in developing personalised e-commerce websites tailored to meet the unique needs of garages. With years of experience and a deep understanding of the automotive market, our team creates solutions that help your business thrive online.
+                  At Auto Garage Network, we specialise in developing
+                  personalised e-commerce websites tailored to meet the unique
+                  needs of garages. With years of experience and a deep
+                  understanding of the automotive market, our team creates
+                  solutions that help your business thrive online.
                 </p>
               </div>
             </motion.div>
@@ -137,16 +150,30 @@ const WebsiteForGarages = () => {
               className="bg-[#0c1222]/60 border border-white/5 p-8 rounded-3xl shadow-xl flex flex-col justify-between"
             >
               <div className="space-y-4">
-                <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">The Digital Edge</span>
-                <h3 className="text-2xl font-black text-white">Why Go Online?</h3>
+                <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">
+                  The Digital Edge
+                </span>
+                <h3 className="text-2xl font-black text-white">
+                  Why Go Online?
+                </h3>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                  Managing the diverse aspects of a garage—servicing, diagnostics, tyre sales, alignment services, and more—can quickly become complex. That's why we're here to simplify it all.
+                  Managing the diverse aspects of a garage—servicing,
+                  diagnostics, tyre sales, alignment services, and more—can
+                  quickly become complex. That's why we're here to simplify it
+                  all.
                 </p>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                  Our digital transformation solutions equip you with a complete, centralised database system to synchronise all your operations. From inventory management and service records to product pricing and revenue tracking, everything is owner-controlled, ensuring data security and seamless operations.
+                  Our digital transformation solutions equip you with a
+                  complete, centralised database system to synchronise all your
+                  operations. From inventory management and service records to
+                  product pricing and revenue tracking, everything is
+                  owner-controlled, ensuring data security and seamless
+                  operations.
                 </p>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed font-semibold">
-                  With our help, your garage can become more efficient, secure, and hassle-free, giving you the freedom to focus on growing your business.
+                  With our help, your garage can become more efficient, secure,
+                  and hassle-free, giving you the freedom to focus on growing
+                  your business.
                 </p>
               </div>
             </motion.div>
@@ -158,7 +185,7 @@ const WebsiteForGarages = () => {
         ══════════════════════════════════════════ */}
         <section className="py-20 px-6 bg-[#0a0f24]/30 border-y border-white/5 relative overflow-hidden">
           <div className="absolute top-1/3 left-1/3 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none" />
-          
+
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
             {/* Left: Text & Features */}
             <div className="lg:col-span-7 space-y-8">
@@ -168,9 +195,16 @@ const WebsiteForGarages = () => {
                 viewport={{ once: true }}
                 className="space-y-4"
               >
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Choose Us?</h2>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+                  Why Choose Us?
+                </h2>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                  At Auto Garage Network, your website isn't just another URL—it's a powerful marketing tool that shapes your brand reputation. Our dedicated team of developers, analysts, designers, and writers uses cutting-edge methods to deliver a garage website that exceeds your expectations with a quick turnaround.
+                  At Auto Garage Network, your website isn't just another
+                  URL—it's a powerful marketing tool that shapes your brand
+                  reputation. Our dedicated team of developers, analysts,
+                  designers, and writers uses cutting-edge methods to deliver a
+                  garage website that exceeds your expectations with a quick
+                  turnaround.
                 </p>
               </motion.div>
 
@@ -181,14 +215,20 @@ const WebsiteForGarages = () => {
                 transition={{ delay: 0.1 }}
                 className="space-y-6"
               >
-                <h3 className="text-xl font-bold text-white border-b border-white/10 pb-2">What We Offer</h3>
+                <h3 className="text-xl font-bold text-white border-b border-white/10 pb-2">
+                  What We Offer
+                </h3>
                 <div className="grid sm:grid-cols-2 gap-6">
                   {offers.map((item, idx) => (
                     <div key={idx} className="flex gap-3">
                       <FiCheckCircle className="text-blue-500 w-5 h-5 shrink-0 mt-0.5" />
                       <div className="space-y-1">
-                        <h4 className="font-extrabold text-white text-sm tracking-tight">{item.title}</h4>
-                        <p className="text-gray-400 text-xs leading-relaxed font-medium">{item.desc}</p>
+                        <h4 className="font-extrabold text-white text-sm tracking-tight">
+                          {item.title}
+                        </h4>
+                        <p className="text-gray-400 text-xs leading-relaxed font-medium">
+                          {item.desc}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -227,14 +267,20 @@ const WebsiteForGarages = () => {
               className="bg-gradient-to-r from-[#0c1222] via-[#0c1222]/90 to-indigo-950/20 border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden dark-card-preserve"
             >
               <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-              
+
               <div className="relative z-10 max-w-4xl space-y-6">
-                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Our Commitment</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">
+                  Our Commitment
+                </span>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white leading-tight">
-                  We are dedicated to delivering websites that are impactful, customised, and user-focused.
+                  We are dedicated to delivering websites that are impactful,
+                  customised, and user-focused.
                 </h2>
                 <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                  Our designs help you expand your business, establish a strong brand reputation, and build lasting customer loyalty. Experience innovative web design by experts at affordable prices — pay only for what you need.
+                  Our designs help you expand your business, establish a strong
+                  brand reputation, and build lasting customer loyalty.
+                  Experience innovative web design by experts at affordable
+                  prices — pay only for what you need.
                 </p>
                 <div className="pt-4 flex flex-col sm:flex-row items-start sm:items-center gap-6">
                   <a
@@ -244,7 +290,9 @@ const WebsiteForGarages = () => {
                     <FiMail className="w-5 h-5" /> info@autogaragenetwork.com
                   </a>
                   <span className="text-gray-500 text-xs md:text-sm font-semibold flex items-center gap-1.5">
-                    <FiInfo className="w-4 h-4 shrink-0 text-indigo-400" /> Share your ideas, and we'll get back to you with a quote you can't refuse.
+                    <FiInfo className="w-4 h-4 shrink-0 text-indigo-400" />{" "}
+                    Share your ideas, and we'll get back to you with a quote you
+                    can't refuse.
                   </span>
                 </div>
               </div>
@@ -260,9 +308,12 @@ const WebsiteForGarages = () => {
             <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block mb-2">
               Live Interactive Demo
             </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Explore Website Templates</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+              Explore Website Templates
+            </h2>
             <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto mt-3 px-6">
-              Test out the responsive design, check booking flow templates, and experience what we build for garages.
+              Test out the responsive design, check booking flow templates, and
+              experience what we build for garages.
             </p>
           </div>
           <WebsiteSolutions />

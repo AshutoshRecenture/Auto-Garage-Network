@@ -1,6 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const { notFound, errorHandler } = require("./middleware/error.middleware");
+const { configureCloudinary } = require("./config/cloudinary");
+
+// Initialize Cloudinary
+configureCloudinary();
 
 // Routes imports
 const authRoutes = require("./routes/auth.routes");
@@ -9,6 +13,10 @@ const blogRoutes = require("./routes/blog.routes");
 const projectRoutes = require("./routes/project.routes");
 const serviceRoutes = require("./routes/service.routes");
 const bookingRoutes = require("./routes/booking.routes");
+const mediaRoutes = require("./routes/media.routes");
+const chatLeadRoutes = require("./routes/chatLead.routes");
+
+const path = require("path");
 
 const app = express();
 
@@ -16,6 +24,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static images folder
+app.use("/images", express.static(path.join(__dirname, "../public/images")));
 
 // Welcome test route
 app.get("/", (req, res) => {
@@ -29,6 +40,8 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/media", mediaRoutes);
+app.use("/api/chat-submissions", chatLeadRoutes);
 
 // Fallback middlewares for error handling
 app.use(notFound);

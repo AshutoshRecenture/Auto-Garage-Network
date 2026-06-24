@@ -748,14 +748,14 @@ const Pricing = () => {
                     <h3 className="text-lg font-bold text-white">
                       Website Solutions Feature Matrix
                     </h3>
-                    <p className="text-[11px] text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                       Compare included features across all of our website design
                       tiers. All packages include a **Free Garage Management
                       System (GMS)**.
                     </p>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-[11px] border-collapse min-w-[700px]">
+                    <table className="w-full text-left text-sm border-collapse min-w-[700px]">
                       <thead>
                         <tr className="bg-[#050816] text-gray-400 border-b border-white/5 uppercase tracking-wider font-bold">
                           <th className="p-4 w-1/3">Features</th>
@@ -772,7 +772,7 @@ const Pricing = () => {
                             key={fIdx}
                             className="border-b border-white/5 hover:bg-white/5 transition-colors"
                           >
-                            <td className="p-4 font-medium text-gray-200">
+                            <td className="p-4 font-medium text-gray-100">
                               {feat.name}
                             </td>
                             <td className="p-4 text-center text-gray-400 italic font-semibold">

@@ -10,37 +10,73 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 
-// Import downloaded blog image assets (Folder: assets)
-import workshopImg from "../assets/workshop-management-software-600x300.jpg";
-import tyreSoftwareImg from "../assets/international-enters-into-tyre-software-600x300.jpg";
-import automateImg from "../assets/The-Automate-Garage-Management-Software-600x300.jpg";
-import customerImg from "../assets/garage-software-improve-customer-600x300.jpg";
-import efficientImg from "../assets/garage-management-software-efficient-600x300.jpg";
-import experienceImg from "../assets/experience-garage-management-software-600x300.jpg";
-import vehicleImg from "../assets/garage-managemen-software-vehicle-600x300.jpg";
-import toolsImg from "../assets/new_garage-managment-600x300.jpg";
+// Blog images are now fetched dynamically from the backend static folder
+const getCategoryStyles = (category) => {
+  const cat = category.toLowerCase();
+  if (cat.includes("workflow")) {
+    return "bg-blue-600/90 text-white border-blue-500/30 shadow-md shadow-blue-500/20";
+  }
+  if (cat.includes("news") || cat.includes("industry")) {
+    return "bg-indigo-600/90 text-white border-indigo-500/30 shadow-md shadow-indigo-500/20";
+  }
+  if (cat.includes("automation")) {
+    return "bg-purple-600/90 text-white border-purple-500/30 shadow-md shadow-purple-500/20";
+  }
+  if (cat.includes("customer") || cat.includes("relations")) {
+    return "bg-emerald-600/90 text-white border-emerald-500/30 shadow-md shadow-emerald-500/20";
+  }
+  if (cat.includes("efficiency")) {
+    return "bg-rose-600/90 text-white border-rose-500/30 shadow-md shadow-rose-500/20";
+  }
+  if (cat.includes("case")) {
+    return "bg-cyan-600/90 text-white border-cyan-500/30 shadow-md shadow-cyan-500/20";
+  }
+  if (cat.includes("guide")) {
+    return "bg-amber-600/90 text-white border-amber-500/30 shadow-md shadow-amber-500/20";
+  }
+  if (cat.includes("features")) {
+    return "bg-teal-600/90 text-white border-teal-500/30 shadow-md shadow-teal-500/20";
+  }
+  return "bg-slate-600/90 text-white border-slate-500/30 shadow-md shadow-slate-500/20";
+};
 
-// Extra assets to prevent duplicates
-import aboutImg from "../assets/about-img-add.jpg";
-import featureImg from "../assets/feature-img3.jpg";
-import videoImg from "../assets/video-img-01.png";
+const getHoverTextColor = (category) => {
+  const cat = category.toLowerCase();
+  if (cat.includes("workflow")) return "group-hover:text-blue-400";
+  if (cat.includes("news") || cat.includes("industry"))
+    return "group-hover:text-indigo-400";
+  if (cat.includes("automation")) return "group-hover:text-purple-400";
+  if (cat.includes("customer") || cat.includes("relations"))
+    return "group-hover:text-emerald-400";
+  if (cat.includes("efficiency")) return "group-hover:text-rose-400";
+  if (cat.includes("case")) return "group-hover:text-cyan-400";
+  if (cat.includes("guide")) return "group-hover:text-amber-400";
+  return "group-hover:text-teal-400";
+};
 
-// Import downloaded blog image assets (Folder: assets/images)
-import taskAutomationImg from "../assets/images/Automate-Tasks-600x300.webp";
-import dataImg from "../assets/images/Workshop-Management-Systems-600x300.webp";
-import drivingSuccessImg from "../assets/images/Driving-Success-600x300.webp";
-import createGarageImg from "../assets/images/create-garage-software-600x300.jpg";
-import justifyUseImg from "../assets/images/garage-software-600x300.jpg";
-import appAdvantagesImg from "../assets/images/applications-advantages-garage-600x300.jpg";
-import purposeAutomotiveImg from "../assets/images/Purpose-of-Automotive-Software-for-Garages-600x300.jpg";
-import saveHassleImg from "../assets/images/Garage-Management-Software-Can-Save-Your-Hassle-600x300.jpg";
-import streamlineOpsImg from "../assets/images/garage-management-software-600x300.jpg";
-import repairShopImg from "../assets/images/Automobile-Repair-Shop-600x300.jpg";
-import insightGarageImg from "../assets/images/garagesoftware-600x300.jpg";
-
-// Dashboard and Hero subfolders
-import dashboardImg from "../assets/images/dashboard/dashboard.jpg";
-import heroImg from "../assets/images/hero/hero.jpg";
+const getFilterStyles = (cat, isSelected) => {
+  if (!isSelected) {
+    return "bg-[#0d1226]/50 text-gray-400 border border-white/5 hover:text-white hover:border-indigo-500/30";
+  }
+  const name = cat.toLowerCase();
+  if (name === "all")
+    return "bg-blue-600 text-white shadow-lg shadow-blue-500/30";
+  if (name.includes("workflow"))
+    return "bg-blue-600 text-white shadow-lg shadow-blue-500/30";
+  if (name.includes("news") || name.includes("industry"))
+    return "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30";
+  if (name.includes("automation"))
+    return "bg-purple-600 text-white shadow-lg shadow-purple-500/30";
+  if (name.includes("customer") || name.includes("relations"))
+    return "bg-emerald-600 text-white shadow-lg shadow-emerald-500/30";
+  if (name.includes("efficiency"))
+    return "bg-rose-600 text-white shadow-lg shadow-rose-500/30";
+  if (name.includes("case"))
+    return "bg-cyan-600 text-white shadow-lg shadow-cyan-500/30";
+  if (name.includes("guide"))
+    return "bg-amber-600 text-white shadow-lg shadow-amber-500/30";
+  return "bg-teal-600 text-white shadow-lg shadow-teal-500/30";
+};
 
 const generateBlogContent = (post) => {
   const cat = post.category.toLowerCase();
@@ -140,7 +176,7 @@ const BlogModal = ({ post, onClose }) => {
         <div className="p-5 md:p-6 space-y-4.5 overflow-y-auto max-h-[45vh] text-left">
           <div className="flex flex-wrap items-center gap-3">
             <span
-              className={`px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${post.color} border border-current/10`}
+              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border backdrop-blur-md ${getCategoryStyles(post.category)}`}
             >
               {post.category}
             </span>
@@ -259,7 +295,7 @@ const BlogCard = ({ post, onReadMore }) => {
         y: isHovered ? -6 : 0,
       }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={`group cursor-pointer select-none text-left bg-[#0d1226]/50 border border-white/5 rounded-2xl overflow-hidden shadow-xl hover:border-indigo-500/20 transition-all duration-300 flex flex-col h-full ${getShadowColor(post.category)}`}
+      className={`group cursor-pointer select-none text-left bg-[#0d1226]/50 border border-white/5 rounded-2xl overflow-hidden shadow-xl hover:border-indigo-500/35 transition-all duration-300 flex flex-col h-full ${getShadowColor(post.category)}`}
     >
       {/* Blog Image wrapper with category tag */}
       <div className="relative overflow-hidden aspect-video">
@@ -273,7 +309,7 @@ const BlogCard = ({ post, onReadMore }) => {
           height="300"
         />
         <div
-          className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${post.color} border border-current/10 shrink-0 z-10`}
+          className={`absolute top-4 left-4 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border shrink-0 z-10 backdrop-blur-md transition-all duration-300 ${getCategoryStyles(post.category)}`}
         >
           {post.category}
         </div>
@@ -294,7 +330,9 @@ const BlogCard = ({ post, onReadMore }) => {
             </span>
           </div>
 
-          <h3 className="text-lg font-extrabold text-white group-hover:text-indigo-400 transition-colors leading-snug mb-3 line-clamp-2 h-[56px]">
+          <h3
+            className={`text-lg font-extrabold text-white transition-colors leading-snug mb-3 line-clamp-2 h-[56px] ${getHoverTextColor(post.category)}`}
+          >
             {post.title}
           </h3>
 
@@ -317,6 +355,8 @@ const BlogCard = ({ post, onReadMore }) => {
 const BlogSection = ({ limit }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [posts, setPosts] = useState([]);
   const postsPerPage = 9;
 
   useEffect(() => {
@@ -325,431 +365,34 @@ const BlogSection = ({ limit }) => {
     }
   }, [currentPage, limit]);
 
-  const posts = [
-    {
-      category: "Workflow",
-      title:
-        "What Role Does Workshop Management System Play in Managing Workshop Workflow?",
-      date: "20 May, 2025",
-      readTime: "5 min read",
-      excerpt:
-        "Running a garage can be a very daunting and tough task, especially if you are doing it without any technical help. A modern workshop management system resolves scheduling bottlenecks and streamlines parts ordering.",
-      color: "bg-blue-500/10 text-blue-400",
-      image: workshopImg,
-      content: [
-        {
-          type: "text",
-          value:
-            "Running a garage can be a very daunting and tough task, especially if you are doing it without any technical help. You need to do many things in one go, and you also need to manage many tasks at once. You must care for the cars, help customers, keep the tools in order, and ensure everything runs on time. These things might get messy and confusing. Garage Software has been introduced to ease workflow and simultaneously manage all tasks.",
-        },
-        {
-          type: "text",
-          value:
-            "This helps garages stay organised, work faster, and give better services to customers. Garage management software is a special computer tool made for auto repair shops. It manages all the tough tasks of garages at one stop. You can use this tool for many tasks, see which car is coming for which problem, and whether it gets fixed. This software has proven to be a competent help running the garage smoothly. Read this blog to get the information.",
-        },
-        {
-          type: "heading",
-          value: "Keeps Track of All Jobs",
-        },
-        {
-          type: "text",
-          value:
-            "Sometimes garages don’t correctly note what they need for their cars. By opting for this software, garages can analyse the procedure for what is going on with the vehicle. This system lets you track the car coming to the garage, what it needs, and how you fix it. You don’t need to look at a paper for records, and you don’t need to ask many people to get the details of the car and the work the car needs. The software shows everything on your computer screen and how the work is being completed. This helps the workers focus on their jobs, and they don’t have to waste time searching for information.",
-        },
-        {
-          type: "heading",
-          value: "Easy Scheduling",
-        },
-        {
-          type: "text",
-          value:
-            "This software eases the scheduling process a lot. Customers just need to call or come in to book a service. This software lets people set appointments according to their schedule and needs using their phones and computers. When customers book an appointment and add the time slot, the software automatically adds it to the garage calendar. This allows the garage owners to access the appointments independently and serve their customers. You don’t have to book an appointment for two cars at the same time by mistake. Workers can easily see what jobs are coming up. The garage stays ready on time to fix the car.",
-        },
-        {
-          type: "heading",
-          value: "Saves Time on Paperwork",
-        },
-        {
-          type: "text",
-          value:
-            "Writing everything can take longer, especially when filling out forms or bills. But not anymore, the garage management software is also designed to help you with the paperwork. This software makes the workflow easy by generating bills for you. This software also tells you about the parts used to fix the car and their cost. You don’t need to keep big stacks of paper to write down everything. This makes everything sorted in your computer quickly by saving time and keeping the records safe.",
-        },
-        {
-          type: "heading",
-          value: "Helps with Inventory Control",
-        },
-        {
-          type: "text",
-          value:
-            "The garage uses many parts, like oils, filters, and tyres, but keeping a manual record of everything can be very tough. This inventory work involves what you have and need to buy for your garage. This software keeps a list of everything, along with the restocking. When you use something, the number just goes down and automatically goes to restocking. If you are running low, the software reminds you to order that item. You don’t have to rush for the parts at the end time while performing the repair work. This helps the garage manage its workflow without any delays.",
-        },
-        {
-          type: "heading",
-          value: "Keeps the Team Organised",
-        },
-        {
-          type: "text",
-          value:
-            "Every person in the garage has to do something and has a lot of work as well. Some need to fix the engine, some need to look at restocking the parts, some need to change the oil in the vehicle, and some need to look at administrative work. The software makes the staff workflow more efficient, and they can focus on their other work without worrying about it. This software assigns the work according to their capabilities. This software allows you to give tasks to the right person and set deadlines accordingly. If someone does their job early, they don’t have to sit idle. They can check what the next thing is that they need to do. This keeps the staff busy and helps the garage finish the work on time every day.",
-        },
-        {
-          type: "heading",
-          value: "Final Thoughts",
-        },
-        {
-          type: "text",
-          value:
-            "Garage management software has proven to be a big help to garages and workshops. It eases the garage's workflow and helps them manage their other tasks. This keeps the garage clean, saves time and ensures that the job is done correctly. This helps you to remember all the essential things and keeps the team on track. When the garage runs better, the customers will notice everything. The customers see the positive side of the garage and will return. If the garage still uses paper and simple tools, it may be time to switch to this software. This makes the workflow more manageable and helps the business to grow.",
-        },
-      ],
-    },
-    {
-      category: "Industry News",
-      title:
-        "Bond International Enters Into Tyre Software with Tyresoft Ltd. Acquisition",
-      date: "01 May, 2025",
-      readTime: "4 min read",
-      excerpt:
-        "Bond International, an established name in the UK tyre industry, has acquired Worcester-based Tyresoft Ltd., expanding its digital ecosystem and capabilities for garages nationwide.",
-      color: "bg-indigo-500/10 text-indigo-400",
-      image: tyreSoftwareImg,
-      content: [
-        {
-          type: "text",
-          value:
-            "Bond International, an established name in the UK tyre industry, has acquired Worcester-based Tyresoft Ltd., one of the country's most recognised tyre software providers. The deal effectuates Bond's foothold in the UK's tyre software market.",
-        },
-        {
-          type: "text",
-          value:
-            'Founded in 2011, Tyresoft Ltd. quickly rose to eminence because of its unique business approach, which offered an "all-purpose complete management system" to the tyre and automobile industries. Marcus Hathaway, the company’s founder, provided groundbreaking solutions to harmonise tyre sales, systematise tyre stock, and strengthen overall tyre business operations.',
-        },
-        {
-          type: "text",
-          value:
-            "The acquisition strongly indicates Bond’s tactical focus on top-notch infrastructure after escalating its delivery and warehouse capabilities to cover 96% of the UK with same-day service. Bond International's CEO, Charlie Bond, described the deal as “historic” in the company's long-term growth strategy.",
-        },
-        {
-          type: "text",
-          value:
-            "Bond talked about his company's significant achievement in building a nationwide delivery network; he also added that his company's vision is to gain success in the system development sector, where Tyresoft, as a partner, will play a vital role in upscaling its operations.",
-        },
-        {
-          type: "text",
-          value:
-            "Hathaway, too, lauded the agreement between the two organisations. He exemplified the new journey as a \"thrilling opportunity\" for the customers. Marcus Hathaway praised Bond International's commitment to quality and innovation and added that the company's values synchronise perfectly with Tyresoft’s ambitions.",
-        },
-        {
-          type: "text",
-          value:
-            "As part of the accord, Hathaway will soon join Bond International’s Board of Directors as the Director of Systems Development. He will also continue to guide Tyresoft’s software management and direction. On the other hand, Oliver Russell will join Tyresoft as its Managing Director.",
-        },
-        {
-          type: "text",
-          value:
-            "Last month, Bond International acquired yet another leading tyre brand: Tyrescope. This undoubtedly signals Bond’s business strategy to incorporate high-end digital solutions into the core of its tyre-related operations. By affiliating with giant market leaders in the tyre software space, Bond is diversifying its operations to optimise business efficiency, customer value, and new-age innovation.",
-        },
-      ],
-    },
-    {
-      category: "Automation",
-      title: "Automate All The Work Of Your Garage With Workshop Software",
-      date: "15 March, 2025",
-      readTime: "6 min read",
-      excerpt:
-        "Digitalisation has become the key to business growth in today's digital economy. With every industry integrating smart tools, automating billing and client intake ensures maximum throughput for technicians.",
-      color: "bg-purple-500/10 text-purple-400",
-      image: automateImg,
-    },
-    {
-      category: "Customer Relations",
-      title:
-        "Does Garage Software Improve Customer Relationship & Competitive Benefits?",
-      date: "19 February, 2025",
-      readTime: "5 min read",
-      excerpt:
-        "Customer loyalty and systematic management are two strengths that ensure the success of any business. Learn how automated booking confirmations and technician updates foster direct customer trust.",
-      color: "bg-emerald-500/10 text-emerald-400",
-      image: customerImg,
-    },
-    {
-      category: "Efficiency",
-      title: "Why Is Workshop Management Software Efficient?",
-      date: "15 January, 2025",
-      readTime: "5 min read",
-      excerpt:
-        "Nowadays, everything is fast and furious. In this fast-paced automotive industry, paper records cause massive delays. Modern cloud scheduling brings instantaneous efficiency updates to your service desks.",
-      color: "bg-rose-500/10 text-rose-400",
-      image: efficientImg,
-    },
-    {
-      category: "Case Study",
-      title: "Want to Know About Our Experience with Garage Software?",
-      date: "10 December, 2024",
-      readTime: "8 min read",
-      excerpt:
-        "You might have heard the name of garage software but before investing in it, you want to confirm whether it will yield positive ROI. Here is an in-depth look at performance data from top UK test centres.",
-      color: "bg-cyan-500/10 text-cyan-400",
-      image: experienceImg,
-    },
-    {
-      category: "Guide",
-      title: "Is Garage Software the right fit for your vehicle?",
-      date: "18 November, 2024",
-      readTime: "5 min read",
-      excerpt:
-        "Introduction to Garage Software: A platform that helps in keeping a record of garage work. Learn how our software aligns vehicle specs automatically using live DVSA and wholesale database links.",
-      color: "bg-amber-500/10 text-amber-400",
-      image: vehicleImg,
-    },
-    {
-      category: "Features",
-      title: "All About the Tools and Features of Garage Management Systems",
-      date: "28 October, 2024",
-      readTime: "6 min read",
-      excerpt:
-        "When it comes to good management, it does not matter whether the garage is small or big. Key features like inventory control, VRM lookup, and SMS diaries play a vital role in day-to-day operations.",
-      color: "bg-teal-500/10 text-teal-400",
-      image: toolsImg,
-    },
-    {
-      category: "Automation",
-      title: "Using Garage Software to Automate Tasks",
-      date: "07 August, 2023",
-      readTime: "7 min read",
-      excerpt:
-        "The requirements put on garages and repair shops have grown as the automotive industry has progressed. Keeping up with tasks manually leads to missed revenue. Automation saves valuable manager time.",
-      color: "bg-indigo-500/10 text-indigo-400",
-      image: taskAutomationImg,
-    },
-    {
-      category: "Data Protection",
-      title: "Protecting Client Data in Workshop Management Systems",
-      date: "21 July, 2023",
-      readTime: "6 min read",
-      excerpt:
-        "Data security is critical for modern workshops. Learn how industry-standard encryption, cloud backups, and user access permissions safeguard sensitive customer and business records.",
-      color: "bg-rose-500/10 text-rose-400",
-      image: dataImg,
-    },
-    {
-      category: "Benefits",
-      title: "Driving Success: The Benefits of Implementing Garage Software",
-      date: "11 July, 2023",
-      readTime: "5 min read",
-      excerpt:
-        "As new technologies emerge, businesses across sectors look for ways to incorporate them into their operations. Implementing workshop software drives mechanic utilization and simplifies scheduling.",
-      color: "bg-blue-500/10 text-blue-400",
-      image: drivingSuccessImg,
-    },
-    {
-      category: "Workflow",
-      title: "Why Create A Garage Software You Should Know",
-      date: "22 June, 2023",
-      readTime: "6 min read",
-      excerpt:
-        "Different improvements are being made to vehicles in the current day to get better performance out of them. A specialized workshop portal adapts to these changes and simplifies job tracking.",
-      color: "bg-indigo-500/10 text-indigo-400",
-      image: createGarageImg,
-    },
-    {
-      category: "Guide",
-      title: "What Justifies The Use Of Garage Software?",
-      date: "09 June, 2023",
-      readTime: "5 min read",
-      excerpt:
-        "Before purchasing car repair software, there must be a lot of reasons why you should. Automating key workflows yields massive improvements in direct labor conversion and booking counts.",
-      color: "bg-purple-500/10 text-purple-400",
-      image: justifyUseImg,
-    },
-    {
-      category: "Workflow",
-      title: "How Do You Create a Workshop Management Software?",
-      date: "23 May, 2023",
-      readTime: "7 min read",
-      excerpt:
-        "The automotive business is changing faster in the current world, and technology is introducing new models of management. We explain the core modular design needed to scale a software workspace.",
-      color: "bg-emerald-500/10 text-emerald-400",
-      image: aboutImg, // Replaced duplicate whiteboard with aboutImg for uniqueness
-    },
-    {
-      category: "Benefits",
-      title: "Applications and Advantages of Garage Software",
-      date: "10 May, 2023",
-      readTime: "6 min read",
-      excerpt:
-        "Whenever the car industry is thus brought up, software for managing garages is appropriate. Learn how built-in vehicle status dashboards keep services transparent and boost customer trust.",
-      color: "bg-rose-500/10 text-rose-400",
-      image: appAdvantagesImg,
-    },
-    {
-      category: "Workflow",
-      title: "Purpose of Automotive Software for Garages",
-      date: "12 April, 2023",
-      readTime: "5 min read",
-      excerpt:
-        "Many industries are seeking to change in order to benefit from developing technology. Car mechanics utilize central tools to access wholesale parts networks and complete repair orders faster.",
-      color: "bg-cyan-500/10 text-cyan-400",
-      image: purposeAutomotiveImg,
-    },
-    {
-      category: "Workflow",
-      title: "How a Garage Software Can Save Your Hassle",
-      date: "21 April, 2023",
-      readTime: "6 min read",
-      excerpt:
-        "When it comes to running a successful garage, having the right tools and resources is essential. Eliminating paper billing sheets resolves most service-desk invoicing errors and hassles.",
-      color: "bg-amber-500/10 text-amber-400",
-      image: saveHassleImg,
-    },
-    {
-      category: "Efficiency",
-      title: "Streamlining Automotive Business Operations with Technology",
-      date: "08 February, 2023",
-      readTime: "5 min read",
-      excerpt:
-        "Utilizing technology to enhance efficiency with the help of Garage Management Software allows independent shops to coordinate technician day schedules and increase monthly booking slots.",
-      color: "bg-teal-500/10 text-teal-400",
-      image: streamlineOpsImg,
-    },
-    {
-      category: "Guide",
-      title: "Top Six Reasons for Using Software in Automobile Repair Shop",
-      date: "20 January, 2023",
-      readTime: "5 min read",
-      excerpt:
-        "If you own an auto repair shop, you are aware of how important it is to spend money on the proper tools. Modern software provides key integrations that make parts inventory tracking effortless.",
-      color: "bg-indigo-500/10 text-indigo-400",
-      image: repairShopImg,
-    },
-    {
-      category: "Case Study",
-      title: "Let's Have a Deep Yet Brief Insight Into Garage Software!",
-      date: "10 January, 2023",
-      readTime: "8 min read",
-      excerpt:
-        "Automobiles are becoming more technical nowadays. In tandem with the development of auto repair shops, digitizing booking and job sheets brings unprecedented visibility to shop owners.",
-      color: "bg-rose-500/10 text-rose-400",
-      image: insightGarageImg,
-    },
-    {
-      category: "Diaries",
-      title: "Maximizing Mechanic Efficiency in Modern Workshop Diaries",
-      date: "15 December, 2022",
-      readTime: "5 min read",
-      excerpt:
-        "Workshop booking diaries have evolved. Smart calendars coordinate mechanical technicians, allocate day tasks, and issue automatic updates to minimize booking bottlenecks.",
-      color: "bg-blue-500/10 text-blue-400",
-      image: featureImg, // Replaced with unique extra asset
-    },
-    {
-      category: "Outreach",
-      title: "Integrating SMS and Email Reminders for Customer Retention",
-      date: "05 December, 2022",
-      readTime: "4 min read",
-      excerpt:
-        "Automated notifications help workshops reduce booking no-shows. Discover how simple, timely MOT and service check reminders keep your calendar filled months in advance.",
-      color: "bg-indigo-500/10 text-indigo-400",
-      image: videoImg, // Replaced with unique extra asset
-    },
-    {
-      category: "Guide",
-      title: "The Evolution of Digital Job Cards in Independent Garages",
-      date: "28 November, 2022",
-      readTime: "6 min read",
-      excerpt:
-        "Say goodbye to greasy paper sheets. Digital job checklists allow technicians to upload vehicle photos, record diagnostics, and sign off on tasks straight from tablet devices.",
-      color: "bg-purple-500/10 text-purple-400",
-      image: dashboardImg, // Replaced with unique extra asset
-    },
-    {
-      category: "Features",
-      title: "Understanding VRM Lookups & Parts Procurement Networks",
-      date: "14 November, 2022",
-      readTime: "5 min read",
-      excerpt:
-        "Searching for parts by vehicle registration plates saves time. Explore how integrated parts catalog search makes selecting and ordering matching spare parts simple.",
-      color: "bg-emerald-500/10 text-emerald-400",
-      image: heroImg, // Replaced with unique extra asset
-    },
-    {
-      category: "Guide",
-      title: "Why SEO is Essential for Local Garage Websites",
-      date: "22 October, 2022",
-      readTime: "5 min read",
-      excerpt:
-        "Garages rely on local customers. Structuring your website's search engine optimizations ensures that drivers searching for tire changes or MOTs in your city find your workshop first.",
-      color: "bg-rose-500/10 text-rose-400",
-      image: customerImg,
-    },
-    {
-      category: "Workflow",
-      title: "A Guide to Managing Multi-Site Garages and Branches",
-      date: "10 October, 2022",
-      readTime: "7 min read",
-      excerpt:
-        "Managing multiple branches requires a central viewpoint. Unified dashboards allow managers to compare performance, transfer parts stock, and track multi-site billing metrics.",
-      color: "bg-cyan-500/10 text-cyan-400",
-      image: tyreSoftwareImg,
-    },
-    {
-      category: "Benefits",
-      title: "The Importance of Customer Portals in Car Repair Invoicing",
-      date: "18 September, 2022",
-      readTime: "5 min read",
-      excerpt:
-        "Customers demand clarity. Central portals allow drivers to review detailed visual quotes, accept repair jobs, view historic invoices, and complete payments securely online.",
-      color: "bg-amber-500/10 text-amber-400",
-      image: efficientImg,
-    },
-    {
-      category: "Analytics",
-      title: "Leveraging Analytics to Increase Garage Profitability",
-      date: "02 September, 2022",
-      readTime: "6 min read",
-      excerpt:
-        "Workshop numbers point to productivity. Tracking key indicators like average job values, parts markup, and labor rates helps owners identify opportunities to improve margins.",
-      color: "bg-teal-500/10 text-teal-400",
-      image: experienceImg,
-    },
-    {
-      category: "Workflow",
-      title: "Streamlining Vehicle Intake and Diagnostics with Smart Systems",
-      date: "15 August, 2022",
-      readTime: "5 min read",
-      excerpt:
-        "Intake is the first point of contact. Standardizing check-ins, reporting vehicle damage, and registering keys electronically prevents drop-off scheduling delays.",
-      color: "bg-indigo-500/10 text-indigo-400",
-      image: vehicleImg,
-    },
-    {
-      category: "Guide",
-      title: "Future Trends in Automotive Workshop Software",
-      date: "28 July, 2022",
-      readTime: "5 min read",
-      excerpt:
-        "As electric vehicles and connected vehicles increase, repair spaces must adapt. Discover how software systems are integrating advanced diagnostics to match these EV tech trends.",
-      color: "bg-rose-500/10 text-rose-400",
-      image: taskAutomationImg,
-    },
-    {
-      category: "Features",
-      title: "Simplifying Accounting Sync with QuickBooks & Sage",
-      date: "10 July, 2022",
-      readTime: "4 min read",
-      excerpt:
-        "Accounting should not require manual double entries. Automating the transfer of client invoices and payment data to standard accounting programs saves valuable hours.",
-      color: "bg-blue-500/10 text-blue-400",
-      image: dataImg,
-    },
-  ];
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/blogs");
+        const data = await response.json();
+        setPosts(data);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      }
+    };
+    fetchBlogs();
+  }, []);
+
+
+
+  const allCategories = ["All", ...new Set(posts.map((post) => post.category))];
+
+  const filteredPosts =
+    selectedCategory === "All"
+      ? posts
+      : posts.filter((post) => post.category === selectedCategory);
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = limit
-    ? posts.slice(0, limit)
-    : posts.slice(indexOfFirstPost, indexOfLastPost);
-  const totalPages = Math.ceil(posts.length / postsPerPage);
+    ? filteredPosts.slice(0, limit)
+    : filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
   const getVisiblePages = () => {
     if (totalPages <= 2) {
@@ -801,15 +444,43 @@ const BlogSection = ({ limit }) => {
           </div>
         )}
 
+        {!limit && (
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            {allCategories.map((cat, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setCurrentPage(1);
+                }}
+                className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all duration-300 ${getFilterStyles(cat, selectedCategory === cat)} cursor-pointer`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="flex flex-wrap justify-center gap-8">
-          {currentPosts.map((post, idx) => (
-            <div
-              key={idx}
-              className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-[380px] flex"
-            >
-              <BlogCard post={post} onReadMore={() => setSelectedPost(post)} />
+          {currentPosts.length > 0 ? (
+            currentPosts.map((post, idx) => (
+              <div
+                key={idx}
+                className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-[380px] flex"
+              >
+                <BlogCard
+                  post={post}
+                  onReadMore={() => setSelectedPost(post)}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="w-full text-center py-20">
+              <p className="text-gray-400 text-lg">
+                No posts found in this category.
+              </p>
             </div>
-          ))}
+          )}
         </div>
 
         <AnimatePresence>
@@ -822,11 +493,12 @@ const BlogSection = ({ limit }) => {
         </AnimatePresence>
 
         {/* Pagination UI */}
-        {!limit && (
+        {!limit && filteredPosts.length > 0 && (
           <div className="mt-16 flex flex-col items-center gap-4">
             <span className="text-sm text-gray-400 font-medium">
               Showing {indexOfFirstPost + 1} -{" "}
-              {Math.min(indexOfLastPost, posts.length)} of {posts.length}
+              {Math.min(indexOfLastPost, filteredPosts.length)} of{" "}
+              {filteredPosts.length}
             </span>
             <div className="flex items-center gap-2">
               <button

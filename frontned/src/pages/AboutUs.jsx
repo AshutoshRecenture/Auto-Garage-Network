@@ -3,10 +3,9 @@ import { motion } from "framer-motion";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
-import aboutImg from "../assets/about-img-add.jpg";
-import videoPoster from "../assets/video-img-01.png";
-const founderVideo = "/Agn_01.mp4";
-import featureImg3 from "../assets/feature-img3.jpg";
+import { getCloudinaryUrl, useBackendOnline } from "../utils/cloudinary.js";
+
+const founderVideo = "https://res.cloudinary.com/n4okswsd/video/upload/v1782237688/Agn_01_1_1.mp4";
 import {
   FiUsers,
   FiCpu,
@@ -103,6 +102,10 @@ const fadeRight = {
 };
 
 const AboutUs = () => {
+  useBackendOnline();
+  const aboutImg = getCloudinaryUrl("about-img-add.jpg");
+  const videoPoster = getCloudinaryUrl("video-img-01.png");
+  const featureImg3 = getCloudinaryUrl("feature-img3.jpg");
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   useEffect(() => {
     window.scrollTo(0, 0);

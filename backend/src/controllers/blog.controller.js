@@ -1,11 +1,22 @@
 const Blog = require("../models/Blog");
+const blogsData = require("../data/blogs.json");
+
+const getCloudinaryUrl = (imagePath) => {
+  const cloudName = "n4okswsd";
+  const filename = imagePath.split("/").pop();
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${filename}`;
+};
 
 // @desc    Get all blogs
 // @route   GET /api/blogs
 // @access  Public
 const getBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({}).sort({ createdAt: -1 });
+    const blogs = blogsData.map((blog, index) => ({
+      _id: String(index + 1),
+      ...blog,
+      image: getCloudinaryUrl(blog.image),
+    }));
     res.json(blogs);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -17,7 +28,12 @@ const getBlogs = async (req, res) => {
 // @access  Public
 const getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
+    const blogs = blogsData.map((blog, index) => ({
+      _id: String(index + 1),
+      ...blog,
+      image: getCloudinaryUrl(blog.image),
+    }));
+    const blog = blogs.find((b) => b._id === req.params.id);
     if (blog) {
       res.json(blog);
     } else {
