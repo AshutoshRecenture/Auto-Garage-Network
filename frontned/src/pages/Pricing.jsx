@@ -3,11 +3,102 @@ import { Link } from "react-router-dom";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
-import { FiCheck, FiX, FiAlertCircle, FiPercent } from "react-icons/fi";
+import {
+  FiCheck,
+  FiX,
+  FiAlertCircle,
+  FiPercent,
+  FiLayers,
+  FiSmile,
+  FiAlertTriangle,
+  FiCreditCard,
+  FiBell,
+  FiSlash,
+  FiShield,
+  FiEdit,
+  FiMail,
+} from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Pricing = () => {
   const [activeTab, setActiveTab] = useState("gms"); // 'gms', 'websites', 'autodata'
+  const [flippedCards, setFlippedCards] = useState({});
+
+  const toggleFlip = (index) => {
+    setFlippedCards((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const fupItems = [
+    {
+      title: "1. Allocation of SMS & VRMs",
+      desc: "Your subscribed package includes a specific allocation of SMS messages and VRM lookups per billing cycle (e.g., monthly). This allocation is designed to meet the needs of typical usage for your package tier. Unused allocations do not roll over to the next billing cycle.",
+      icon: FiLayers,
+      color: "#3b82f6", // blue
+    },
+    {
+      title: "2. Fair Usage",
+      desc: "Customers are expected to use SMS messages and VRM lookups in a manner consistent with the intended purpose of their subscribed package. Usage should align with standard business or personal needs, as applicable to your subscription type.",
+      icon: FiSmile,
+      color: "#10b981", // emerald/green
+    },
+    {
+      title: "3. Excessive Usage",
+      desc: "Usage beyond your allocated amount will be considered excessive. Excessive usage may impact the performance and availability of services for other customers. We reserve the right to monitor usage patterns and identify any activity that exceeds fair usage limits.",
+      icon: FiAlertTriangle,
+      color: "#f97316", // orange
+    },
+    {
+      title: "4. Charges for Excessive Usage",
+      desc: "If your usage exceeds the allocated amount, additional charges will apply. Excess usage charges will be calculated based on the standard rates for SMS (10p) messages and VRM (10p) lookups, as outlined in your subscription agreement or pricing plan. You will be notified of any excess usage charges incurred.",
+      icon: FiCreditCard,
+      color: "#ef4444", // red
+    },
+    {
+      title: "5. Monitoring & Notifications",
+      desc: "We will monitor your usage to ensure compliance with this Fair Usage Policy. If your usage approaches or exceeds the allocated amount, we may notify you via email or SMS to inform you of potential additional charges. It is your responsibility to monitor your usage.",
+      icon: FiBell,
+      color: "#f59e0b", // amber
+    },
+    {
+      title: "6. Prohibited Use",
+      desc: "The use of SMS messages and VRM lookups for unlawful, fraudulent, or abusive purposes is strictly prohibited. Reselling, redistributing, or otherwise commercialising the services outside the scope of your subscription is not permitted.",
+      icon: FiSlash,
+      color: "#8b5cf6", // violet
+    },
+    {
+      title: "7. Policy Enforcement",
+      desc: "We reserve the right to take action if this Fair Usage Policy is violated, including: applying additional charges for excessive usage, suspending or restricting access to services, and terminating your subscription in cases of severe or repeated violations.",
+      icon: FiShield,
+      color: "#06b6d4", // cyan
+    },
+    {
+      title: "8. Changes to This Policy",
+      desc: "We may update this Fair Usage Policy from time to time. Any changes will be communicated to you via email or through your account portal. Continued use of the services after changes to this policy constitutes acceptance of the updated terms.",
+      icon: FiEdit,
+      color: "#ec4899", // pink
+    },
+    {
+      title: "9. Contact Us",
+      desc: (
+        <>
+          If you have any questions or need assistance managing your usage,
+          contact customer support at{" "}
+          <strong className="text-white font-bold">01702 655556</strong> /{" "}
+          <strong className="text-white font-bold">+91 9667108961</strong> or
+          email{" "}
+          <strong className="text-white font-bold">
+            support@autogaragenetwork.com
+          </strong>
+          .
+        </>
+      ),
+      icon: FiMail,
+      color: "#6366f1", // indigo
+    },
+  ];
 
   const gmsPlans = [
     {
@@ -467,8 +558,8 @@ const Pricing = () => {
                         state={{ interest: "Garage Management System" }}
                         className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-center block ${
                           plan.popular
-                            ? "bg-indigo-600 hover:bg-indigo-500 text-white no-invert shadow-lg shadow-indigo-600/15"
-                            : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                            ? "bg-indigo-600 hover:!bg-blue-600 hover:!text-white text-white no-invert shadow-lg shadow-indigo-600/15"
+                            : "bg-white/5 hover:!bg-blue-600 hover:!text-white text-white border border-white/10 hover:!border-blue-600"
                         }`}
                       >
                         {plan.cta}
@@ -478,13 +569,17 @@ const Pricing = () => {
                 </div>
 
                 {/* Detailed Fair Usage Policy Section */}
-                <div className="mt-12 bg-[#0c1222]/80 border border-white/10 p-10 md:p-12 rounded-3xl w-full shadow-2xl relative overflow-hidden">
+                <div className="mt-12 fup-container-bg border p-10 md:p-12 rounded-3xl w-full shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-[60px] pointer-events-none" />
+
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-500 dark:text-indigo-300 flex items-center gap-1.5 mb-3 select-none">
+                    <FiAlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>FAIR USAGE POLICY (FUP) FOR SMS & VRMS</span>
+                  </span>
 
                   <h3 className="text-base md:text-xl font-black text-white mb-2 flex items-center gap-2">
                     <span>
-                      ***** Fair Usage Policy for SMS Messages and VRM Lookups
-                      *****
+                      Fair Usage Policy for SMS Messages and VRM Lookups
                     </span>
                   </h3>
                   <p className="text-xs md:text-sm text-gray-400 mb-8 leading-relaxed">
@@ -497,133 +592,57 @@ const Pricing = () => {
                   </p>
 
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm md:text-base">
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        1. Allocation of SMS & VRMs
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        Your subscribed package includes a specific allocation
-                        of SMS messages and VRM lookups per billing cycle (e.g.,
-                        monthly). This allocation is designed to meet the needs
-                        of typical usage for your package tier. Unused
-                        allocations do not roll over to the next billing cycle.
-                      </p>
-                    </div>
+                    {fupItems.map((item, idx) => {
+                      const Icon = item.icon;
+                      const isFlipped = !!flippedCards[idx];
 
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        2. Fair Usage
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        Customers are expected to use SMS messages and VRM
-                        lookups in a manner consistent with the intended purpose
-                        of their subscribed package. Usage should align with
-                        standard business or personal needs, as applicable to
-                        your subscription type.
-                      </p>
-                    </div>
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => toggleFlip(idx)}
+                          className={`fup-card h-[220px] cursor-pointer group ${
+                            isFlipped ? "flipped" : ""
+                          }`}
+                        >
+                          <div className="fup-card-inner">
+                            {/* Front Side */}
+                            <div className="fup-card-front select-none">
+                              <div
+                                className="w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
+                                style={{
+                                  backgroundColor: `${item.color}15`,
+                                  border: `1px solid ${item.color}30`,
+                                }}
+                              >
+                                <Icon
+                                  className="w-5 h-5"
+                                  style={{ color: item.color }}
+                                />
+                              </div>
+                              <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base text-center px-2">
+                                {item.title}
+                              </h4>
+                              <span className="text-[10px] text-gray-500 mt-6 group-hover:text-indigo-400 transition-colors uppercase tracking-widest font-bold">
+                                Click to Read Details
+                              </span>
+                            </div>
 
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        3. Excessive Usage
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        Usage beyond your allocated amount will be considered
-                        excessive. Excessive usage may impact the performance
-                        and availability of services for other customers. We
-                        reserve the right to monitor usage patterns and identify
-                        any activity that exceeds fair usage limits.
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        4. Charges for Excessive Usage
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        If your usage exceeds the allocated amount, additional
-                        charges will apply. Excess usage charges will be
-                        calculated based on the standard rates for SMS (10p)
-                        messages and VRM (10p) lookups, as outlined in your
-                        subscription agreement or pricing plan. You will be
-                        notified of any excess usage charges incurred.
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        5. Monitoring & Notifications
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        We will monitor your usage to ensure compliance with
-                        this Fair Usage Policy. If your usage approaches or
-                        exceeds the allocated amount, we may notify you via
-                        email or SMS to inform you of potential additional
-                        charges. It is your responsibility to monitor your
-                        usage.
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        6. Prohibited Use
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        The use of SMS messages and VRM lookups for unlawful,
-                        fraudulent, or abusive purposes is strictly prohibited.
-                        Reselling, redistributing, or otherwise commercialising
-                        the services outside the scope of your subscription is
-                        not permitted.
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl md:col-span-2 lg:col-span-1">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        7. Policy Enforcement
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        We reserve the right to take action if this Fair Usage
-                        Policy is violated, including: applying additional
-                        charges for excessive usage, suspending or restricting
-                        access to services, and terminating your subscription in
-                        cases of severe or repeated violations.
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl md:col-span-1 lg:col-span-1">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        8. Changes to This Policy
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        We may update this Fair Usage Policy from time to time.
-                        Any changes will be communicated to you via email or
-                        through your account portal. Continued use of the
-                        services after changes to this policy constitutes
-                        acceptance of the updated terms.
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 p-6 bg-[#050816]/30 border border-white/5 rounded-2xl md:col-span-1 lg:col-span-1">
-                      <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base">
-                        9. Contact Us
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">
-                        If you have any questions or need assistance managing
-                        your usage, contact customer support at{" "}
-                        <strong className="text-white font-bold">
-                          01702 655556
-                        </strong>{" "}
-                        /{" "}
-                        <strong className="text-white font-bold">
-                          +91 9667108961
-                        </strong>{" "}
-                        or email{" "}
-                        <strong className="text-white font-bold">
-                          support@autogaragenetwork.com
-                        </strong>
-                        .
-                      </p>
-                    </div>
+                            {/* Back Side */}
+                            <div className="fup-card-back">
+                              <h4 className="font-black text-indigo-400 uppercase tracking-wider text-xs md:text-sm mb-3">
+                                {item.title}
+                              </h4>
+                              <div className="text-gray-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-grow scrollbar-thin">
+                                {item.desc}
+                              </div>
+                              <span className="text-[9px] text-gray-500 mt-3 text-center uppercase tracking-widest font-bold">
+                                Click to Flip Back
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className="mt-8 text-center border-t border-white/5 pt-6 text-xs text-gray-500">

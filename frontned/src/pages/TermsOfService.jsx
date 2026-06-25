@@ -20,7 +20,7 @@ const TermsOfService = () => {
       <Navbar />
       <main className="flex-grow pt-24">
         {/* Hero Header Section */}
-        <section className="relative py-20 px-6 md:px-12 overflow-hidden text-center">
+        <section className="relative pt-12 pb-4 px-6 md:px-12 overflow-hidden text-center">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -44,7 +44,7 @@ const TermsOfService = () => {
         </section>
 
         {/* Content Section */}
-        <section className="py-12 pb-24 px-6 md:px-12">
+        <section className="pt-2 pb-24 px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

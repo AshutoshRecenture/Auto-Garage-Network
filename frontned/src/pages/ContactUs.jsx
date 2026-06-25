@@ -63,7 +63,9 @@ const ContactUs = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Something went wrong while submitting request.");
+        throw new Error(
+          data.message || "Something went wrong while submitting request.",
+        );
       }
 
       // Capture and save data to localStorage as fallback
@@ -89,7 +91,7 @@ const ContactUs = () => {
         name: formData.name,
         interest: formData.interest,
         phone: formData.phone,
-        email: formData.email
+        email: formData.email,
       });
       setShowPopup(true);
       setFormData({
@@ -270,7 +272,10 @@ const ContactUs = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label htmlFor="company-name" className="text-[10px] uppercase font-bold text-slate-400">
+                    <label
+                      htmlFor="company-name"
+                      className="text-[10px] uppercase font-bold text-slate-400"
+                    >
                       Company/Garage Name *
                     </label>
                     <input
@@ -279,14 +284,20 @@ const ContactUs = () => {
                       required
                       value={formData.name}
                       onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value.replace(/[0-9]/g, "") })
+                        setFormData({
+                          ...formData,
+                          name: e.target.value.replace(/[0-9]/g, ""),
+                        })
                       }
                       placeholder="e.g. Apex Tyres"
                       className="w-full bg-[#070b18] border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label htmlFor="phone-number" className="text-[10px] uppercase font-bold text-slate-400">
+                    <label
+                      htmlFor="phone-number"
+                      className="text-[10px] uppercase font-bold text-slate-400"
+                    >
                       Phone Number *
                     </label>
                     <input
@@ -295,7 +306,10 @@ const ContactUs = () => {
                       required
                       value={formData.phone}
                       onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "").slice(0, 11) })
+                        setFormData({
+                          ...formData,
+                          phone: e.target.value.replace(/\D/g, "").slice(0, 11),
+                        })
                       }
                       placeholder="e.g. 07947906789"
                       className="w-full bg-[#070b18] border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white"
@@ -305,7 +319,10 @@ const ContactUs = () => {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label htmlFor="email-address" className="text-[10px] uppercase font-bold text-slate-400">
+                    <label
+                      htmlFor="email-address"
+                      className="text-[10px] uppercase font-bold text-slate-400"
+                    >
                       Email Address *
                     </label>
                     <input
@@ -321,7 +338,10 @@ const ContactUs = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label htmlFor="interested-in" className="text-[10px] uppercase font-bold text-slate-400">
+                    <label
+                      htmlFor="interested-in"
+                      className="text-[10px] uppercase font-bold text-slate-400"
+                    >
                       Interested In?
                     </label>
                     <select
@@ -341,7 +361,10 @@ const ContactUs = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="message-profile" className="text-[10px] uppercase font-bold text-slate-400">
+                  <label
+                    htmlFor="message-profile"
+                    className="text-[10px] uppercase font-bold text-slate-400"
+                  >
                     Message / Garage Profile
                   </label>
                   <textarea
@@ -400,40 +423,65 @@ const ContactUs = () => {
               >
                 {/* Decorative background glow */}
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-[50px] pointer-events-none" />
-                
+
                 {/* Success Checkmark Circle */}
                 <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-6 text-emerald-400">
-                  <svg className="w-8 h-8 stroke-current" fill="none" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-8 h-8 stroke-current"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2.5"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
 
                 {/* Title & Description */}
-                <h3 className="text-2xl font-black text-white mb-2">Request Submitted!</h3>
+                <h3 className="text-2xl font-black text-white mb-2">
+                  Request Submitted!
+                </h3>
                 <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-                  Thank you! Your sandbox demo request has been successfully recorded in our database.
+                  Thank you! Your sandbox demo request has been successfully
+                  recorded in our database.
                 </p>
 
                 {/* Submitted Info Panel */}
                 <div className="bg-[#050816]/50 border border-white/5 rounded-2xl p-5 text-left text-xs text-gray-400 space-y-2.5 mb-6 text-slate-300">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-500 block mb-0.5">Garage/Company</span>
-                    <span className="font-semibold text-white text-sm">{submittedData.name}</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-500 block mb-0.5">
+                      Garage/Company
+                    </span>
+                    <span className="font-semibold text-white text-sm">
+                      {submittedData.name}
+                    </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-gray-500 block mb-0.5">Phone Number</span>
-                      <span className="font-semibold text-white">{submittedData.phone}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-500 block mb-0.5">
+                        Phone Number
+                      </span>
+                      <span className="font-semibold text-white">
+                        {submittedData.phone}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-gray-500 block mb-0.5">Interest</span>
-                      <span className="font-semibold text-white truncate block">{submittedData.interest}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-500 block mb-0.5">
+                        Interest
+                      </span>
+                      <span className="font-semibold text-white truncate block">
+                        {submittedData.interest}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <p className="text-[11px] text-gray-500 mb-6 leading-normal">
-                  Our support team will review your workshop requirements and get back to you shortly.
+                  Our support team will review your workshop requirements and
+                  get back to you shortly.
                 </p>
 
                 {/* Button */}

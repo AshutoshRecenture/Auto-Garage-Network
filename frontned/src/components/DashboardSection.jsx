@@ -331,7 +331,7 @@ const DashboardSection = () => {
   }, []);
 
   return (
-    <section className="py-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden">
+    <section className="pt-12 pb-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden">
       {/* Visual background elements */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.05),transparent)] pointer-events-none" />
       <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[160px] pointer-events-none"></div>

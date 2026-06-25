@@ -33,7 +33,7 @@ const CookiePolicy = () => {
         </div>
 
         {/* Hero Header Section */}
-        <section className="relative py-20 px-6 md:px-12 overflow-hidden text-center z-10">
+        <section className="relative pt-10 pb-2 px-6 md:px-12 overflow-hidden text-center z-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -41,24 +41,18 @@ const CookiePolicy = () => {
             transition={{ duration: 0.6 }}
             className="relative z-10"
           >
-            <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block mb-4">
-              Legal & Compliance
-            </span>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
               Cookie{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-400 to-cyan-400">
                 Policy
               </span>
             </h1>
-            <p className="text-gray-300 text-base md:text-lg max-w-xl mx-auto px-4 leading-relaxed">
-              Understand how cookies and tracking technologies are utilized to
-              optimize your experience on our platforms.
-            </p>
+            
           </motion.div>
         </section>
 
         {/* Content Section */}
-        <section className="py-12 pb-24 px-6 md:px-12 z-10 relative">
+        <section className="pt-2 pb-24 px-6 md:px-12 z-10 relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

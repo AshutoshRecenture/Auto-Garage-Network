@@ -38,6 +38,9 @@ const getCategoryStyles = (category) => {
   if (cat.includes("features")) {
     return "bg-teal-600/90 text-white border-teal-500/30 shadow-md shadow-teal-500/20";
   }
+  if (cat.includes("diary")) {
+    return "bg-teal-600/90 text-white border-teal-500/30 shadow-md shadow-teal-500/20";
+  }
   return "bg-slate-600/90 text-white border-slate-500/30 shadow-md shadow-slate-500/20";
 };
 
@@ -351,6 +354,7 @@ const BlogSection = ({ limit }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [showOthers, setShowOthers] = useState(false);
   const [posts, setPosts] = useState([]);
   const postsPerPage = 9;
 
@@ -376,6 +380,33 @@ const BlogSection = ({ limit }) => {
 
 
   const allCategories = ["All", ...new Set(posts.map((post) => post.category))];
+  const cutIndex = allCategories.findIndex(
+    (c) =>
+      c.toLowerCase().includes("relations") ||
+      c.toLowerCase().includes("customer relations"),
+  );
+
+  const mainCategories =
+    cutIndex !== -1
+      ? allCategories.slice(0, cutIndex + 1)
+      : allCategories.slice(0, 5);
+  const otherCategories =
+    cutIndex !== -1 ? allCategories.slice(cutIndex + 1) : allCategories.slice(5);
+
+  useEffect(() => {
+    if (posts.length > 0) {
+      const allCats = ["All", ...new Set(posts.map((post) => post.category))];
+      const cutIdx = allCats.findIndex(
+        (c) =>
+          c.toLowerCase().includes("relations") ||
+          c.toLowerCase().includes("customer relations"),
+      );
+      const otherCats = cutIdx !== -1 ? allCats.slice(cutIdx + 1) : allCats.slice(5);
+      if (otherCats.includes(selectedCategory)) {
+        setShowOthers(true);
+      }
+    }
+  }, [selectedCategory, posts]);
 
   const filteredPosts =
     selectedCategory === "All"
@@ -402,7 +433,7 @@ const BlogSection = ({ limit }) => {
   return (
     <section
       id="blog"
-      className="py-24 px-6 md:px-12 bg-[#050816] border-b border-white/5 relative overflow-hidden"
+      className={`px-6 md:px-12 bg-[#050816] border-b border-white/5 relative overflow-hidden ${limit ? "py-24" : "pt-6 pb-20"}`}
     >
       <div className="absolute top-1/2 left-1/4 w-[450px] h-[450px] bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
@@ -440,19 +471,43 @@ const BlogSection = ({ limit }) => {
         )}
 
         {!limit && (
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-            {allCategories.map((cat, idx) => (
-              <button
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-6 max-w-5xl mx-auto transition-all duration-300">
+            {mainCategories.map((cat, idx) => (
+              <span
                 key={idx}
                 onClick={() => {
                   setSelectedCategory(cat);
                   setCurrentPage(1);
                 }}
-                className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all duration-300 ${getFilterStyles(cat, selectedCategory === cat)} cursor-pointer`}
+                className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all duration-300 ${getFilterStyles(cat, selectedCategory === cat)} cursor-pointer select-none`}
               >
                 {cat}
-              </button>
+              </span>
             ))}
+
+            {showOthers &&
+              otherCategories.map((cat, idx) => (
+                <span
+                  key={idx + 100}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all duration-300 ${getFilterStyles(cat, selectedCategory === cat)} cursor-pointer select-none`}
+                >
+                  {cat}
+                </span>
+              ))}
+
+            {otherCategories.length > 0 && (
+              <span
+                onClick={() => setShowOthers(!showOthers)}
+                className="px-4 py-2 rounded-full text-xs md:text-sm font-bold bg-[#0d1226]/50 text-gray-400 border border-white/5 hover:text-white hover:border-indigo-500/30 cursor-pointer transition-all duration-300 flex items-center gap-1.5 select-none"
+              >
+                <span>{showOthers ? "Show Less" : "Other..."}</span>
+                <span className="text-[10px] opacity-75">{showOthers ? "▲" : "▼"}</span>
+              </span>
+            )}
           </div>
         )}
 

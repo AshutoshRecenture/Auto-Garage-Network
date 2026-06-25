@@ -230,7 +230,7 @@ const FeaturesSection = () => {
   return (
     <section
       id="features"
-      className="feature-section py-24 px-6 md:px-12 bg-[#050816] relative"
+      className="feature-section pt-24 pb-12 px-6 md:px-12 bg-[#050816] relative"
       onMouseMove={handleMouseMove}
     >
       <div className="max-w-7xl mx-auto relative">
@@ -269,31 +269,12 @@ const FeaturesSection = () => {
             <motion.div
               key={idx}
               variants={itemVariants}
-              className={
-                idx >= 4 && !showAllFeatures ? "hidden sm:block" : "block"
-              }
+              className="block"
             >
               <FeatureCard feature={feature} />
             </motion.div>
           ))}
         </motion.div>
-
-        {/* Mobile See More / See Less Button */}
-        <div className="flex justify-center mt-12 sm:hidden">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAllFeatures(!showAllFeatures)}
-            className="bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-600/10 px-8 py-3 rounded-2xl text-xs font-bold tracking-widest uppercase transition-all duration-300 text-indigo-300 hover:text-white flex items-center gap-2 shadow-[0_0_15px_rgba(79,70,229,0.1)] cursor-pointer"
-          >
-            <span>{showAllFeatures ? "See Less" : "See More"}</span>
-            <FiChevronDown
-              className={`w-4 h-4 transition-transform duration-300 ${
-                showAllFeatures ? "rotate-180" : ""
-              }`}
-            />
-          </motion.button>
-        </div>
       </div>
     </section>
   );

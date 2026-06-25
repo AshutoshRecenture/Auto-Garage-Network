@@ -15,6 +15,8 @@ import {
 const MOTDiary = () => {
   const [activeFeature, setActiveFeature] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [showAllFeatures, setShowAllFeatures] = useState(false);
+  const [bookedSlots, setBookedSlots] = useState([]);
 
   // States for Feature 0 (SMS simulation)
   const [smsSent, setSmsSent] = useState(false);
@@ -192,7 +194,7 @@ const MOTDiary = () => {
     </div>
   );
 
-  const renderDiaryGrid = () => {
+  const renderDiaryGrid = (cardIdx) => {
     const rows = [
       {
         time: "09:00",
@@ -275,8 +277,14 @@ const MOTDiary = () => {
             </div>
 
             {row.bookings.map((b, i) => {
+              const slotId = `${cardIdx}-${idx}-${i}`;
+              const customBooking = bookedSlots.find((s) => s.id === slotId);
+              const cellBooking = customBooking 
+                ? { type: customBooking.type, color: customBooking.type === "MOT" ? "bg-blue-500/20 text-blue-400 border-blue-500/30" : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30", empty: false }
+                : b;
+
               if (activeFeature === 3) {
-                if (b.empty) {
+                if (cellBooking.empty) {
                   return (
                     <div
                       key={i}
@@ -287,18 +295,18 @@ const MOTDiary = () => {
                   );
                 } else {
                   const progressWidth =
-                    b.type === "MOT"
+                    cellBooking.type === "MOT"
                       ? "95%"
-                      : b.type === "Service"
+                      : cellBooking.type === "Service"
                         ? "80%"
                         : "35%";
                   return (
                     <div
                       key={i}
-                      className={`rounded-md border p-1 flex flex-col justify-center text-[7.5px] leading-tight ${b.color} relative overflow-hidden h-full`}
+                      className={`rounded-md border p-1 flex flex-col justify-center text-[7.5px] leading-tight ${cellBooking.color} relative overflow-hidden h-full`}
                     >
                       <span className="font-extrabold text-[8px]">
-                        {b.type}
+                        {cellBooking.type}
                       </span>
                       <span className="text-[6px] opacity-70">AB12 CDE</span>
                       <div className="w-full bg-white/5 h-0.5 rounded-full overflow-hidden mt-1.5 border border-white/5">
@@ -313,7 +321,7 @@ const MOTDiary = () => {
               }
 
               if (activeFeature === 2) {
-                if (b.isDragSource) {
+                if (cellBooking.isDragSource) {
                   return (
                     <div key={i} className="relative h-full">
                       <motion.div
@@ -329,7 +337,7 @@ const MOTDiary = () => {
                           ],
                           boxShadow: [
                             "0 1px 2px rgba(0,0,0,0.1)",
-                            "0 6px 15px rgba(59,130,246,0.3)",
+                            "0 6px 15px rgba(59,130,246,0.35)",
                             "0 6px 15px rgba(59,130,246,0.35)",
                             "0 6px 15px rgba(59,130,246,0.35)",
                             "0 1px 2px rgba(0,0,0,0.1)",
@@ -354,7 +362,7 @@ const MOTDiary = () => {
                   );
                 }
 
-                if (b.isDragTarget) {
+                if (cellBooking.isDragTarget) {
                   return (
                     <div key={i} className="relative h-full">
                       <div className="absolute inset-0 border border-dashed border-blue-500/40 bg-blue-500/5 rounded-md flex items-center justify-center">
@@ -382,18 +390,18 @@ const MOTDiary = () => {
               }
 
               if (activeFeature === 0) {
-                if (b.type === "MOT" && row.time === "09:00") {
+                if (cellBooking.type === "MOT" && row.time === "09:00") {
                   return (
                     <div
                       key={i}
                       className={`rounded-md border p-1 flex flex-col justify-center text-[7.5px] leading-tight transition-all duration-300 ${
                         smsConfirmed
                           ? "bg-green-500/10 border-green-500/40 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.15)]"
-                          : b.color
+                          : cellBooking.color
                       } h-full`}
                     >
                       <span className="font-extrabold text-[8px]">
-                        {b.type}
+                        {cellBooking.type}
                       </span>
                       <span className="text-[6px] opacity-70">AB12 CDE</span>
                       <span
@@ -414,15 +422,15 @@ const MOTDiary = () => {
                 <div
                   key={i}
                   className={`rounded-md border p-1 flex flex-col justify-center text-[7.5px] leading-tight ${
-                    b.type
-                      ? b.color
+                    cellBooking.type
+                      ? cellBooking.color
                       : "border-dashed border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition-colors"
                   } h-full`}
                 >
-                  {b.type ? (
+                  {cellBooking.type ? (
                     <>
                       <span className="font-extrabold text-[8px]">
-                        {b.type}
+                        {cellBooking.type}
                       </span>
                       <span className="text-[6px] opacity-70">AB12 CDE</span>
                     </>
@@ -432,43 +440,6 @@ const MOTDiary = () => {
             })}
           </div>
         ))}
-
-        {/* Floating SMS message overlay for Feature 0 */}
-        {activeFeature === 0 && smsSent && (
-          <motion.div
-            initial={{ opacity: 0, y: 15, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute bottom-4 left-4 right-4 bg-slate-900 border border-white/15 p-2.5 rounded-xl shadow-2xl z-30 max-w-[280px] mx-auto text-left"
-          >
-            <div className="flex justify-between items-center border-b border-white/5 pb-1.5 mb-1.5 text-[7.5px] font-black text-gray-500 uppercase tracking-wider">
-              <span>💬 SMS Notification Gateway</span>
-              <span className="text-green-500">Live</span>
-            </div>
-            <div className="space-y-1.5">
-              <div className="text-[7.5px] font-bold text-gray-400">
-                To: +44 7700 900077
-              </div>
-              <div className="bg-slate-800 p-2 rounded-lg text-[8px] font-semibold text-white leading-relaxed relative">
-                "Hi Alex, reminder that your Ford Focus MOT is booked for Tue
-                Oct 24th at 09:00 AM. Please reply YES to confirm."
-                <div className="absolute -left-1 top-2.5 w-2 h-2 bg-slate-800 rotate-45 rounded-sm"></div>
-              </div>
-              {smsConfirmed && (
-                <motion.div
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex justify-end"
-                >
-                  <div className="bg-blue-600 p-2 rounded-lg text-[8px] font-black text-white relative">
-                    "YES"
-                    <div className="absolute -right-1 top-2.5 w-2 h-2 bg-blue-600 rotate-45 rounded-sm"></div>
-                  </div>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-        )}
       </div>
     );
   };
@@ -514,213 +485,135 @@ const MOTDiary = () => {
     }
   };
 
-  const currentNotification = getFloatingNotification();
-
   return (
-    <section className="py-24 px-6 md:px-12 bg-[#0c1222] overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          {/* Left Column: Visual Mockup */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="relative w-full flex justify-center items-center"
-          >
-            <div className="absolute inset-0 bg-blue-600/15 blur-[120px] rounded-full pointer-events-none"></div>
+    <section className="py-16 px-6 md:px-12 bg-[#0c1222] overflow-hidden">
+      <div className="max-w-7xl mx-auto space-y-16">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <h2 className="text-3xl md:text-5xl font-black text-white">
+            Smart{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
+              MOT Diary
+            </span>{" "}
+            Management
+          </h2>
+          <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+            Simplify your MOT scheduling with our intelligent diary system. Reduce no-shows, fill gaps, and keep your ramps fully booked.
+          </p>
+        </div>
 
-            {/* MOT Diary Dashboard Mockup Box */}
+        {/* 2-Column Responsive Card Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          {features.slice(0, showAllFeatures ? 4 : 2).map((item, idx) => (
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="relative rounded-2xl border border-white/10 bg-[#050816] p-4 shadow-[0_0_40px_rgba(30,115,190,0.12)] z-10 w-full max-w-[500px]"
-            >
-              {/* Header */}
-              <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4 shrink-0">
-                <div className="flex items-center space-x-3 select-none">
-                  <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
-                    <FiCalendar className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-bold text-xs md:text-sm">
-                      MOT Diary Dashboard
-                    </h3>
-                    <p className="text-[9px] text-gray-500 font-semibold mt-0.5">
-                      Tue, Oct 24th, 2026
-                    </p>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <div className="px-3 py-1 bg-blue-600 text-white text-[9px] font-black rounded-lg cursor-pointer shadow-sm shadow-blue-500/20 hover:bg-blue-500 transition-colors">
-                    + New Booking
-                  </div>
-                </div>
-              </div>
-
-              {/* Dynamic Viewport */}
-              <div className="relative">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeFeature}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    {activeFeature === 1
-                      ? renderDVSALookup()
-                      : renderDiaryGrid()}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </motion.div>
-
-            {/* Dynamic Floating Notification Box */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={
-                  activeFeature +
-                  "-" +
-                  (smsConfirmed ? "confirmed" : "pending") +
-                  "-" +
-                  dvsaStep
-                }
-                initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -15, scale: 0.95 }}
-                transition={{ duration: 0.25 }}
-                className="absolute -bottom-6 -right-6 md:-right-8 bg-[#111827] border border-white/10 p-3 rounded-xl shadow-2xl glass-panel z-20 flex items-center space-x-3 select-none shrink-0"
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentNotification.color}`}
-                >
-                  {currentNotification.icon}
-                </div>
-                <div className="text-left leading-none">
-                  <div className="text-[8px] text-gray-500 font-black uppercase tracking-wider">
-                    {currentNotification.title}
-                  </div>
-                  <div className="text-[10.5px] font-bold text-white mt-1">
-                    {currentNotification.desc}
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Right Column: Descriptions & Clickable Feature Tabs */}
-          <div className="space-y-8 text-left z-10 w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              whileHover={{ y: -6, scale: 1.015, borderColor: "rgba(59, 130, 246, 0.4)", boxShadow: "0 20px 40px rgba(59, 130, 246, 0.15)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="bg-[#111827]/40 border border-white/5 rounded-3xl p-6 md:p-8 flex flex-col justify-between space-y-8 shadow-xl relative transition-all group duration-300"
             >
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                Smart{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-                  MOT Diary
-                </span>{" "}
-                Management
-              </h2>
-              <p className="text-gray-400 text-lg leading-relaxed">
-                Simplify your MOT scheduling with our intelligent diary system.
-                Reduce no-shows, fill gaps, and keep your ramps fully booked.
-              </p>
-            </motion.div>
-
-            {/* Mobile Feature Description Card */}
-            <div className="block md:hidden bg-[#111827]/60 border border-white/5 p-5 rounded-2xl space-y-3.5 shadow-xl select-none">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/30 shadow-md">
-                  {features[activeFeature].icon}
+              {/* Header inside Card */}
+              <div className="space-y-4 text-left">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                  {item.icon}
                 </div>
-                <h3 className="text-base font-bold text-blue-400 leading-tight">
-                  {features[activeFeature].title}
-                </h3>
+                <div>
+                  <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-400 text-xs md:text-sm leading-relaxed mt-2">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
-              <p className="text-xs text-gray-400 leading-relaxed min-h-[40px]">
-                {features[activeFeature].desc}
-              </p>
-              {/* Dot selectors */}
-              <div className="flex items-center space-x-2.5 pt-2 justify-center">
-                {features.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setActiveFeature(idx);
-                      setIsAutoPlaying(false);
-                    }}
-                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                      idx === activeFeature ? "bg-blue-500 w-5" : "bg-gray-600 w-2 hover:bg-gray-500"
-                    }`}
-                    aria-label={`View feature ${idx + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
 
-            <div className="hidden md:block space-y-4">
-              {features.map((item, idx) => {
-                const isActive = idx === activeFeature;
-                return (
-                  <motion.div
-                    key={idx}
-                    onClick={() => {
-                      setActiveFeature(idx);
-                      setIsAutoPlaying(false);
-                    }}
-                    whileHover={{ scale: 1.02 }}
-                    className={`flex gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-300 relative overflow-hidden ${
-                      isActive
-                        ? "bg-[#111827]/80 border-blue-500/50 shadow-[0_0_20px_rgba(30,115,190,0.1)]"
-                        : "bg-[#111827]/20 border-white/5 hover:bg-[#111827]/40 hover:border-white/10"
-                    }`}
-                  >
-                    {isActive && isAutoPlaying && (
-                      <motion.div
-                        key={idx}
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 6.5, ease: "linear" }}
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 origin-left"
-                      />
-                    )}
-
-                    <div
-                      className={`flex-shrink-0 w-12 h-12 rounded-xl border flex items-center justify-center transition-all ${
-                        isActive
-                          ? "bg-blue-500/20 border-blue-500/40 text-blue-400 shadow-[0_0_10px_rgba(30,115,190,0.2)]"
-                          : "bg-[#111827] border-white/10 text-gray-500"
-                      }`}
-                    >
-                      {item.icon}
+              {/* Visual Mockup inside card */}
+              <div className="relative rounded-2xl border border-slate-700 bg-slate-900 p-4 shadow-[0_0_30px_rgba(59,130,246,0.06)] z-10 w-full overflow-hidden">
+                {/* Mockup Header */}
+                <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-3 shrink-0">
+                  <div className="flex items-center space-x-2 select-none text-left">
+                    <div className="p-1.5 bg-blue-500/15 rounded-md text-blue-400 text-sm">
+                      <FiCalendar className="w-4 h-4" />
                     </div>
                     <div>
-                      <h3
-                        className={`text-xl font-bold transition-all mb-1 ${isActive ? "text-blue-400" : "text-white"}`}
-                      >
-                        {item.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm leading-relaxed">
-                        {item.desc}
+                      <h4 className="text-white font-bold text-[10px] md:text-xs">
+                        {idx === 1 ? "DVSA Live API Gateway" : "MOT Diary Dashboard"}
+                      </h4>
+                      {idx !== 1 && (
+                        <p className="text-[8px] text-gray-500 font-semibold mt-0.5">
+                          Tue, Oct 24th, 2026
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {idx !== 1 && (
+                    <div
+                      onClick={() => {
+                        const possibleFreeSlots = [`${idx}-0-1`, `${idx}-1-2`, `${idx}-1-3`, `${idx}-2-0`];
+                        const nextToBook = possibleFreeSlots.find(
+                          (slotId) => !bookedSlots.some((s) => s.id === slotId)
+                        );
+                        if (nextToBook) {
+                          setBookedSlots([...bookedSlots, { id: nextToBook, type: idx === 0 ? "MOT" : "Service" }]);
+                        }
+                        setIsAutoPlaying(false);
+                      }}
+                      className="px-2.5 py-1 bg-blue-600 text-white text-[8.5px] font-black rounded-lg cursor-pointer shadow-sm shadow-blue-500/20 hover:bg-blue-500 transition-colors"
+                    >
+                      + New Booking
+                    </div>
+                  )}
+                </div>
+
+                {/* Viewport content */}
+                <div>
+                  {idx === 1 ? renderDVSALookup() : renderDiaryGrid(idx)}
+                </div>
+
+                {/* Floating SMS message overlay for Card 0 */}
+                {idx === 0 && smsSent && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="absolute bottom-4 left-4 right-4 bg-slate-900 border border-white/15 p-2.5 rounded-xl shadow-2xl z-30 max-w-[280px] mx-auto text-left"
+                  >
+                    <div className="flex justify-between items-center border-b border-white/5 pb-1.5 mb-1.5 text-[7.5px] font-black text-gray-500 uppercase tracking-wider">
+                      <span>💬 SMS Notification Gateway</span>
+                      <span className="text-green-500">Live</span>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="text-[7.5px] font-bold text-gray-400">
+                        To: +44 7700 900077
+                      </div>
+                      <p className="text-[9.5px] text-gray-200 leading-normal font-semibold">
+                        "Your vehicle AB12 CDE is booked for MOT on Tue, Oct 24th at 09:00 AM. Reply CONFIRM to secure."
                       </p>
+                      <div className="flex justify-between items-center text-[7px] text-gray-500 pt-1 font-bold">
+                        <span>Delivered</span>
+                        <span className="text-blue-400">Auto-sent by AGN Scheduler</span>
+                      </div>
                     </div>
                   </motion.div>
-                );
-              })}
-            </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full md:w-auto text-center px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-[0_0_20px_rgba(30,115,190,0.3)] transition-all cursor-pointer block md:inline-block"
-            >
-              Explore MOT Features
-            </motion.button>
-          </div>
+        {/* Explore Button */}
+        <div className="flex justify-center">
+          <motion.button
+            onClick={() => setShowAllFeatures(!showAllFeatures)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(30,115,190,0.3)] transition-all cursor-pointer"
+          >
+            {showAllFeatures ? "Show Less Features" : "Explore More Features"}
+            <FiCalendar className="w-5 h-5" />
+          </motion.button>
         </div>
       </div>
     </section>

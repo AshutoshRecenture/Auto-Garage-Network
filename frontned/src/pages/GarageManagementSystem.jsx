@@ -155,6 +155,7 @@ const getFeatureLogoOrIcon = (name, idx) => {
 
 const GarageManagementSystem = () => {
   useBackendOnline();
+  const [showAllGMSFeatures, setShowAllGMSFeatures] = useState(false);
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
@@ -501,14 +502,15 @@ const GarageManagementSystem = () => {
       />
       <Navbar />
 
-      <main className="flex-grow pt-24">
+      <main className="flex-grow pt-16">
         {/* ══════════════════════════════════════════
             HERO SECTION + BOOKING FORM
         ══════════════════════════════════════════ */}
-        <section className="relative py-16 md:py-24 px-6 md:px-12 overflow-hidden border-b border-white/5">
+        <section className="relative pt-6 pb-16 md:pt-8 md:pb-20 px-6 md:px-12 overflow-hidden border-b border-white/5">
           {/* background glows */}
           <div className="hidden md:block absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="hidden md:block absolute bottom-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className="hidden md:block absolute top-12 left-6 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-start relative z-10">
             {/* Left Column: Heading, intro & bullet points */}
@@ -522,12 +524,11 @@ const GarageManagementSystem = () => {
               </div>
               <h1 className="text-3xl md:text-5xl lg:text-[52px] font-black tracking-tight text-white leading-[1.2] lg:max-w-4xl">
                 Explore the Features of AGN's <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+                <span className="block text-4xl md:text-6xl font-extrabold tracking-tight mt-3 mb-3 bg-clip-text text-transparent animate-gradient gms-hero-gradient-1">
                   Garage Management System
                 </span>{" "}
-                <br />
                 for{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-400">
+                <span className="bg-clip-text text-transparent gms-hero-gradient-2 font-extrabold">
                   Excellent Tyre Fitting, MOT & Repair Garages
                 </span>
               </h1>
@@ -540,11 +541,39 @@ const GarageManagementSystem = () => {
 
               <div className="space-y-4 pt-2">
                 {[
-                  "Acquire completely Free Setup & Free Training",
-                  "Accessibility to a thorough comparison with our competitors",
-                  "Advanced Autodata services will be at your disposal",
-                  "1000+ people using AGN’s Garage Management System",
-                  "With so many features you can rest assured, there is no match for us & we have the best system ever.",
+                  <>
+                    Acquire completely{" "}
+                    <span className="text-indigo-400 font-extrabold">
+                      Free Setup & Free Training
+                    </span>
+                  </>,
+                  <>
+                    Accessibility to a{" "}
+                    <span className="text-indigo-400 font-extrabold">
+                      thorough comparison
+                    </span>{" "}
+                    with our competitors
+                  </>,
+                  <>
+                    Advanced{" "}
+                    <span className="text-indigo-400 font-extrabold">
+                      Autodata services
+                    </span>{" "}
+                    will be at your disposal
+                  </>,
+                  <>
+                    <span className="text-indigo-400 font-extrabold">
+                      1000+ people
+                    </span>{" "}
+                    using AGN’s Garage Management System
+                  </>,
+                  <>
+                    With so many features, you can rest assured there is{" "}
+                    <span className="text-indigo-400 font-extrabold">
+                      no match for our system
+                    </span>
+                    .
+                  </>,
                 ].map((bullet, i) => (
                   <motion.div
                     key={i}
@@ -610,7 +639,10 @@ const GarageManagementSystem = () => {
                       <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Name */}
                         <div className="space-y-1">
-                          <label htmlFor="form-name" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label
+                            htmlFor="form-name"
+                            className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1"
+                          >
                             Full Name *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -632,7 +664,10 @@ const GarageManagementSystem = () => {
 
                         {/* Garage Name */}
                         <div className="space-y-1">
-                          <label htmlFor="form-garagename" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label
+                            htmlFor="form-garagename"
+                            className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1"
+                          >
                             Company / Garage Name *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -655,7 +690,10 @@ const GarageManagementSystem = () => {
                         {/* Email & Phone side-by-side */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-1">
-                            <label htmlFor="form-email" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                            <label
+                              htmlFor="form-email"
+                              className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1"
+                            >
                               Email Address *
                             </label>
                             <div className="relative flex items-center group/field">
@@ -675,7 +713,10 @@ const GarageManagementSystem = () => {
                             </div>
                           </div>
                           <div className="space-y-1">
-                            <label htmlFor="form-phone" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                            <label
+                              htmlFor="form-phone"
+                              className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1"
+                            >
                               Phone Number *
                             </label>
                             <div className="relative flex items-center group/field">
@@ -698,7 +739,10 @@ const GarageManagementSystem = () => {
 
                         {/* Dropdown: Interested in */}
                         <div className="space-y-1">
-                          <label htmlFor="interestedin" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label
+                            htmlFor="interestedin"
+                            className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1"
+                          >
                             Interested In *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -751,7 +795,10 @@ const GarageManagementSystem = () => {
 
                         {/* Address */}
                         <div className="space-y-1">
-                          <label htmlFor="form-address" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label
+                            htmlFor="form-address"
+                            className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1"
+                          >
                             Garage Address *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -773,7 +820,10 @@ const GarageManagementSystem = () => {
 
                         {/* Message */}
                         <div className="space-y-1">
-                          <label htmlFor="form-message" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label
+                            htmlFor="form-message"
+                            className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1"
+                          >
                             Inquiry Message
                           </label>
                           <div className="relative flex items-start group/field">
@@ -857,8 +907,10 @@ const GarageManagementSystem = () => {
                     <th className="p-5 font-black uppercase text-xs tracking-wider">
                       Features Suite
                     </th>
-                    <th className="p-5 font-black uppercase text-xs tracking-wider text-center bg-white/5">
-                      <div className="text-white text-sm">Elite Workshop</div>
+                    <th className="p-5 font-black uppercase text-xs tracking-wider text-center bg-white/5 gms-table-header-standard">
+                      <div className="text-white text-sm gms-table-header-title">
+                        Elite Workshop
+                      </div>
                       <div className="text-emerald-400 text-lg font-black mt-1">
                         £135
                         <span className="text-xs font-normal text-gray-400">
@@ -868,7 +920,7 @@ const GarageManagementSystem = () => {
                       <button
                         type="button"
                         onClick={() => scrollToForm("Elite Workshop")}
-                        className="mt-3 px-4 py-2 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-indigo-600 hover:text-white border border-white/10 text-white font-bold transition-all text-xs cursor-pointer"
+                        className="mt-3 px-4 py-2 rounded-xl gms-table-select-btn font-bold transition-all text-xs cursor-pointer"
                       >
                         Select Plan
                       </button>
@@ -891,8 +943,8 @@ const GarageManagementSystem = () => {
                         Select Plan
                       </button>
                     </th>
-                    <th className="p-5 font-black uppercase text-xs tracking-wider text-center bg-white/5">
-                      <div className="text-white text-sm">
+                    <th className="p-5 font-black uppercase text-xs tracking-wider text-center bg-white/5 gms-table-header-standard">
+                      <div className="text-white text-sm gms-table-header-title">
                         Elite ProMax Plus
                       </div>
                       <div className="text-emerald-400 text-lg font-black mt-1">
@@ -904,7 +956,7 @@ const GarageManagementSystem = () => {
                       <button
                         type="button"
                         onClick={() => scrollToForm("Elite ProMax Plus")}
-                        className="mt-3 px-4 py-2 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-indigo-600 hover:text-white border border-white/10 text-white font-bold transition-all text-xs cursor-pointer"
+                        className="mt-3 px-4 py-2 rounded-xl gms-table-select-btn font-bold transition-all text-xs cursor-pointer"
                       >
                         Select Plan
                       </button>
@@ -917,10 +969,10 @@ const GarageManagementSystem = () => {
                       key={idx}
                       className="border-b border-white/5 hover:bg-white/[0.02] transition-colors font-medium text-gray-300"
                     >
-                      <td className="p-4 font-bold text-gray-100 border-r border-white/5">
+                      <td className="p-4 font-bold text-gray-100 border-r border-white/5 gms-table-cell-standard">
                         {row.name}
                       </td>
-                      <td className="p-4 text-center border-r border-white/5 bg-white/[0.01] text-gray-100">
+                      <td className="p-4 text-center border-r border-white/5 bg-white/[0.01] gms-table-cell-standard">
                         {row.p1 === "Yes" ? (
                           <FiCheck className="text-blue-400 w-4.5 h-4.5 mx-auto" />
                         ) : row.p1 === "No" ? (
@@ -938,7 +990,7 @@ const GarageManagementSystem = () => {
                           row.p2
                         )}
                       </td>
-                      <td className="p-4 text-center bg-white/[0.01] text-gray-100">
+                      <td className="p-4 text-center bg-white/[0.01] gms-table-cell-standard">
                         {row.p3 === "Yes" ? (
                           <FiCheck className="text-blue-400 w-4.5 h-4.5 mx-auto" />
                         ) : row.p3 === "No" ? (
@@ -973,7 +1025,7 @@ const GarageManagementSystem = () => {
                     </span>
                   </div>
                   <ul className="space-y-3.5 text-sm text-gray-400">
-                    {pricingFeatures.slice(0, 10).map((row, idx) => (
+                    {pricingFeatures.map((row, idx) => (
                       <li key={idx} className="flex justify-between">
                         <span className="font-medium">{row.name}</span>
                         <span className="font-bold text-white">
@@ -997,7 +1049,6 @@ const GarageManagementSystem = () => {
           </div>
         </section>
 
-
         {/* ══════════════════════════════════════════
             FAIR USAGE POLICY BLOCK
         ══════════════════════════════════════════ */}
@@ -1007,7 +1058,7 @@ const GarageManagementSystem = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-br from-[#0c1222]/95 via-[#0c1222]/95 to-indigo-950/20 border border-white/10 rounded-[28px] p-6 md:p-10 shadow-2xl relative overflow-hidden dark-card-preserve"
+              className="fup-container-bg border rounded-[28px] p-6 md:p-10 shadow-2xl relative overflow-hidden"
             >
               <div className="hidden md:block absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none" />
 
@@ -1020,45 +1071,129 @@ const GarageManagementSystem = () => {
                   Fair Usage Policy for SMS Messages and VRM Lookups
                 </h3>
                 <p className="text-xs md:text-sm text-gray-400 leading-relaxed font-semibold">
-                  This Fair Usage Policy (FUP) outlines the acceptable use of SMS messages and VRM (Vehicle Registration Mark) lookups provided under your subscribed package. The purpose of this policy is to ensure fair and reasonable use of these services for all customers while maintaining the quality and reliability of our services.
+                  This Fair Usage Policy (FUP) outlines the acceptable use of
+                  SMS messages and VRM (Vehicle Registration Mark) lookups
+                  provided under your subscribed package. The purpose of this
+                  policy is to ensure fair and reasonable use of these services
+                  for all customers while maintaining the quality and
+                  reliability of our services.
                 </p>
                 <div className="space-y-5 text-xs md:text-sm text-gray-400 leading-relaxed font-medium">
                   <div>
-                    <strong className="text-white block mb-1">1. Allocation of SMS Messages and VRM Lookups</strong>
-                    <p>Your subscribed package includes a specific allocation of SMS messages and VRM lookups per billing cycle (e.g., monthly). The allocation is designed to meet the needs of typical usage for your package tier. Unused allocations do not roll over to the next billing cycle.</p>
+                    <strong className="text-white block mb-1">
+                      1. Allocation of SMS Messages and VRM Lookups
+                    </strong>
+                    <p>
+                      Your subscribed package includes a specific allocation of
+                      SMS messages and VRM lookups per billing cycle (e.g.,
+                      monthly). The allocation is designed to meet the needs of
+                      typical usage for your package tier. Unused allocations do
+                      not roll over to the next billing cycle.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">2. Fair Usage</strong>
-                    <p>Customers are expected to use SMS messages and VRM lookups in a manner consistent with the intended purpose of their subscribed package. Usage should align with standard business or personal needs, as applicable to your subscription type.</p>
+                    <strong className="text-white block mb-1">
+                      2. Fair Usage
+                    </strong>
+                    <p>
+                      Customers are expected to use SMS messages and VRM lookups
+                      in a manner consistent with the intended purpose of their
+                      subscribed package. Usage should align with standard
+                      business or personal needs, as applicable to your
+                      subscription type.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">3. Excessive Usage</strong>
-                    <p>Usage beyond your allocated amount will be considered excessive. Excessive usage may impact the performance and availability of services for other customers. We reserve the right to monitor usage patterns and identify any activity that exceeds fair usage limits.</p>
+                    <strong className="text-white block mb-1">
+                      3. Excessive Usage
+                    </strong>
+                    <p>
+                      Usage beyond your allocated amount will be considered
+                      excessive. Excessive usage may impact the performance and
+                      availability of services for other customers. We reserve
+                      the right to monitor usage patterns and identify any
+                      activity that exceeds fair usage limits.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">4. Charges for Excessive Usage</strong>
-                    <p>If your usage exceeds the allocated amount, additional charges will apply. Excess usage charges will be calculated based on the standard rates for SMS (10p) messages and VRM (10p) lookups, as outlined in your subscription agreement or pricing plan. You will be notified of any excess usage charges incurred during the billing cycle.</p>
+                    <strong className="text-white block mb-1">
+                      4. Charges for Excessive Usage
+                    </strong>
+                    <p>
+                      If your usage exceeds the allocated amount, additional
+                      charges will apply. Excess usage charges will be
+                      calculated based on the standard rates for SMS (10p)
+                      messages and VRM (10p) lookups, as outlined in your
+                      subscription agreement or pricing plan. You will be
+                      notified of any excess usage charges incurred during the
+                      billing cycle.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">5. Monitoring and Notifications</strong>
-                    <p>We will monitor your usage to ensure compliance with this Fair Usage Policy. If your usage approaches or exceeds the allocated amount, we may notify you via email or SMS to inform you of potential additional charges. It is your responsibility to monitor your usage and ensure it remains within the allocated limits.</p>
+                    <strong className="text-white block mb-1">
+                      5. Monitoring and Notifications
+                    </strong>
+                    <p>
+                      We will monitor your usage to ensure compliance with this
+                      Fair Usage Policy. If your usage approaches or exceeds the
+                      allocated amount, we may notify you via email or SMS to
+                      inform you of potential additional charges. It is your
+                      responsibility to monitor your usage and ensure it remains
+                      within the allocated limits.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">6. Prohibited Use</strong>
-                    <p>The use of SMS messages and VRM lookups for unlawful, fraudulent, or abusive purposes is strictly prohibited. Reselling, redistributing, or otherwise commercialising the services outside the scope of your subscription is not permitted.</p>
+                    <strong className="text-white block mb-1">
+                      6. Prohibited Use
+                    </strong>
+                    <p>
+                      The use of SMS messages and VRM lookups for unlawful,
+                      fraudulent, or abusive purposes is strictly prohibited.
+                      Reselling, redistributing, or otherwise commercialising
+                      the services outside the scope of your subscription is not
+                      permitted.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">7. Policy Enforcement</strong>
-                    <p>We reserve the right to take action if this Fair Usage Policy is violated, including but not limited to: Applying additional charges for excessive usage, suspending or restricting access to services, and terminating your subscription in cases of severe or repeated violations.</p>
+                    <strong className="text-white block mb-1">
+                      7. Policy Enforcement
+                    </strong>
+                    <p>
+                      We reserve the right to take action if this Fair Usage
+                      Policy is violated, including but not limited to: Applying
+                      additional charges for excessive usage, suspending or
+                      restricting access to services, and terminating your
+                      subscription in cases of severe or repeated violations.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">8. Changes to This Policy</strong>
-                    <p>We may update this Fair Usage Policy from time to time. Any changes will be communicated to you via email or through your account portal. Continued use of the services after changes to this policy constitutes acceptance of the updated terms.</p>
+                    <strong className="text-white block mb-1">
+                      8. Changes to This Policy
+                    </strong>
+                    <p>
+                      We may update this Fair Usage Policy from time to time.
+                      Any changes will be communicated to you via email or
+                      through your account portal. Continued use of the services
+                      after changes to this policy constitutes acceptance of the
+                      updated terms.
+                    </p>
                   </div>
                   <div>
-                    <strong className="text-white block mb-1">9. Contact Us</strong>
-                    <p>If you have any questions about this Fair Usage Policy or need assistance managing your usage, please contact our customer support team at <strong>01702 655556</strong> / <strong>+91 9667108961</strong> / <strong>support@autogaragenetwork.com</strong>.</p>
-                    <p className="mt-2 text-indigo-300 font-bold">By adhering to this Fair Usage Policy, you help us maintain a high-quality service for all customers. Thank you for your cooperation.</p>
+                    <strong className="text-white block mb-1">
+                      9. Contact Us
+                    </strong>
+                    <p>
+                      If you have any questions about this Fair Usage Policy or
+                      need assistance managing your usage, please contact our
+                      customer support team at <strong>01702 655556</strong> /{" "}
+                      <strong>+91 9667108961</strong> /{" "}
+                      <strong>support@autogaragenetwork.com</strong>.
+                    </p>
+                    <p className="mt-2 text-indigo-300 font-bold">
+                      By adhering to this Fair Usage Policy, you help us
+                      maintain a high-quality service for all customers. Thank
+                      you for your cooperation.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1074,9 +1209,7 @@ const GarageManagementSystem = () => {
 
           <div className="max-w-7xl mx-auto space-y-16">
             <div className="text-center space-y-4 max-w-3xl mx-auto">
-              <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block">
-                All Capabilities
-              </span>
+             
               <h2 className="text-3xl md:text-5xl font-black text-white">
                 GMS Features Grid
               </h2>
@@ -1087,26 +1220,28 @@ const GarageManagementSystem = () => {
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-              {keyFeatures
-                .filter(
-                  (item) =>
-                    featureLogos[item.name] ||
-                    item.name === "Xero Integration" ||
-                    item.name === "Sage Integration",
-                )
-                .map((item, idx) => {
+              {(showAllGMSFeatures ? keyFeatures : keyFeatures.slice(0, 6)).map(
+                (item, idx) => {
+                  const originalIdx = keyFeatures.indexOf(item);
                   const isHighlighted = item.name === "Automated Reminders";
                   return (
                     <motion.div
-                      key={idx}
+                      key={originalIdx}
                       whileHover={{
                         y: -12,
                         scale: 1.025,
                         rotateX: 4,
                         rotateY: -4,
                       }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20,
+                      }}
+                      style={{
+                        transformStyle: "preserve-3d",
+                        perspective: 1000,
+                      }}
                       className={`backdrop-blur-md rounded-[24px] p-5 md:p-6 text-left flex flex-col justify-between border transition-all duration-300 cursor-default group relative overflow-hidden h-full ${
                         isHighlighted
                           ? "bg-gradient-to-br from-[#ffe9ec] via-[#e7e5ff] to-[#e1f5fe] dark:bg-gradient-to-br dark:from-[#2a1b40] dark:via-[#171b3c] dark:to-[#142d4a] border-indigo-500/30 dark:border-indigo-500/40 shadow-[0_15px_35px_rgba(99,102,241,0.18),inset_0_1.5px_0_rgba(255,255,255,0.7)] dark:shadow-[0_18px_40px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_30px_55px_rgba(99,102,241,0.32),inset_0_2px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_35px_60px_rgba(99,102,241,0.42),inset_0_2px_0_rgba(255,255,255,0.28)]"
@@ -1128,26 +1263,48 @@ const GarageManagementSystem = () => {
 
                       <div>
                         <div className="h-14 flex items-center mb-4 select-none relative z-10">
-                          {getFeatureLogoOrIcon(item.name, idx)}
+                          {getFeatureLogoOrIcon(item.name, originalIdx)}
                         </div>
-                        <h4 className={`font-extrabold text-xs md:text-sm mb-2 transition-colors duration-300 relative z-10 ${
-                          isHighlighted
-                            ? "text-indigo-950 dark:text-indigo-200 group-hover:text-indigo-600 dark:group-hover:text-white"
-                            : "text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300"
-                        }`}>
+                        <h4
+                          className={`font-extrabold text-xs md:text-sm mb-2 transition-colors duration-300 relative z-10 ${
+                            isHighlighted
+                              ? "text-indigo-950 dark:text-indigo-200 group-hover:text-indigo-600 dark:group-hover:text-white"
+                              : "text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300"
+                          }`}
+                        >
                           {item.name}
                         </h4>
-                        <p className={`text-[10px] md:text-xs leading-relaxed font-medium relative z-10 ${
-                          isHighlighted
-                            ? "text-indigo-950/80 dark:text-indigo-300/80"
-                            : "text-slate-600 dark:text-gray-400"
-                        }`}>
+                        <p
+                          className={`text-[10px] md:text-xs leading-relaxed font-medium relative z-10 ${
+                            isHighlighted
+                              ? "text-indigo-950/80 dark:text-indigo-300/80"
+                              : "text-slate-600 dark:text-gray-400"
+                          }`}
+                        >
                           {item.desc}
                         </p>
                       </div>
                     </motion.div>
                   );
-                })}
+                },
+              )}
+            </div>
+
+            {/* Toggle Expand Button */}
+            <div className="flex justify-center">
+              <motion.button
+                onClick={() => setShowAllGMSFeatures(!showAllGMSFeatures)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(30,115,190,0.3)] transition-all cursor-pointer"
+              >
+                {showAllGMSFeatures
+                  ? "Show Less Features"
+                  : "Explore More GMS Features"}
+                <FiChevronDown
+                  className={`w-5 h-5 transition-transform duration-300 ${showAllGMSFeatures ? "rotate-180" : ""}`}
+                />
+              </motion.button>
             </div>
           </div>
         </section>

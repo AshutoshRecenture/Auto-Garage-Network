@@ -55,7 +55,7 @@ const ChatBubbleIcon = ({ className = "w-10 h-10" }) => (
 const Footer = () => {
   // Chatbot State
   const [isOpen, setIsOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [leadStep, setLeadStep] = useState(0); 
@@ -79,6 +79,11 @@ const Footer = () => {
         window.innerHeight + Math.round(window.scrollY) >=
         document.documentElement.scrollHeight - 50;
       setIsAtBottom(isBottom);
+
+      // Hide welcoming chatbot tooltip if user scrolls down at all
+      if (window.scrollY > 20) {
+        setShowTooltip(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -136,13 +141,7 @@ const Footer = () => {
 
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    // Show welcoming tooltip after 4 seconds
-    const timer = setTimeout(() => {
-      setShowTooltip(true);
-    }, 4000);
-    return () => clearTimeout(timer);
-  }, []);
+
 
   useEffect(() => {
     // Auto scroll to bottom
@@ -162,6 +161,13 @@ const Footer = () => {
     { text: "AI Solutions 🤖", value: "AI Solutions" },
     { text: "Get a Free Quote 🚀", value: "Quote" },
     { text: "Contact Support 🛠️", value: "Support" },
+  ];
+
+  const completedMenuOptions = [
+    { text: "Explore GMS Features ⚙️", value: "navigate_gms" },
+    { text: "Read Latest Insights 📚", value: "navigate_blog" },
+    { text: "Follow Our Socials 📱", value: "show_socials" },
+    { text: "Start New Inquiry 🔄", value: "restart_chat" },
   ];
 
   const handleUserMessage = (text, optionValue = null) => {
@@ -189,6 +195,66 @@ const Footer = () => {
 
       // Lead capture flow state machine
       if (leadStep === 0) {
+        if (query === "navigate_gms") {
+          botText1 = "Certainly! Redirecting you to our Garage Management System page to explore dynamic workshop schedules and CRM tools...";
+          setMessages((prev) => [
+            ...prev,
+            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() }
+          ]);
+          setIsTyping(false);
+          setTimeout(() => {
+            window.location.href = "/garage-management-system";
+          }, 1500);
+          return;
+        } else if (query === "navigate_blog") {
+          botText1 = "Sure! Redirecting you to our insights and blogs page...";
+          setMessages((prev) => [
+            ...prev,
+            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() }
+          ]);
+          setIsTyping(false);
+          setTimeout(() => {
+            window.location.href = "/blog";
+          }, 1500);
+          return;
+        } else if (query === "show_socials") {
+          botText1 = "Follow us to stay updated with our latest releases and news:\n\n• [Facebook](https://www.facebook.com/autogaragenetworkltd) ➔\n• [Instagram](https://www.instagram.com/autogaragenetworkltd.uk) ➔\n• [LinkedIn](https://www.linkedin.com/company/auto-garage-network-ltd/) ➔\n• [YouTube](https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ) ➔";
+          botText2 = "Is there anything else I can assist you with?";
+          setMessages((prev) => [
+            ...prev,
+            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() },
+            { id: Date.now() + 2, sender: "bot", text: botText2, time: getFormattedTime() },
+            { id: Date.now() + 3, sender: "bot", text: "", isCompletedMenu: true, time: getFormattedTime() }
+          ]);
+          setIsTyping(false);
+          return;
+        } else if (query === "restart_chat") {
+          botText1 = "Restarting chat assistant. How can I help you improve or grow your business today?";
+          setMessages([
+            {
+              id: 1,
+              sender: "bot",
+              text: "Hello! Welcome to Auto Garage Network Assistant. 👋",
+              time: getFormattedTime(),
+            },
+            {
+              id: 2,
+              sender: "bot",
+              text: botText1,
+              time: getFormattedTime(),
+            },
+            {
+              id: 3,
+              sender: "bot",
+              text: "",
+              isMenu: true,
+              time: getFormattedTime(),
+            },
+          ]);
+          setIsTyping(false);
+          return;
+        }
+
         if (query === "faq_about") {
           botText1 = "Auto Garage Network provides state-of-the-art Garage Management Systems, bespoke websites for garages, MOT diaries, and digital marketing/SEO solutions specifically tailored for auto-garages in the UK to help them streamline operations, manage customers, and grow revenue.";
           botText2 = "What service or information are you looking for today?";
@@ -616,7 +682,7 @@ const Footer = () => {
           id: Date.now() + 4,
           sender: "bot",
           text: "",
-          isMenu: true,
+          isCompletedMenu: true,
           time: getFormattedTime(),
         });
       }
@@ -1153,6 +1219,39 @@ const Footer = () => {
                     );
                   }
 
+                  if (msg.isCompletedMenu) {
+                    return (
+                      <div key={msg.id} className="flex justify-start">
+                        <div className="flex flex-col items-start max-w-[85%]">
+                          <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-none shadow-md overflow-hidden w-full">
+                            {completedMenuOptions.map((opt, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() =>
+                                  handleUserMessage(opt.text, opt.value)
+                                }
+                                className={`w-full text-left px-4 py-3.5 text-xs font-semibold text-blue-600 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer ${
+                                  idx < completedMenuOptions.length - 1
+                                    ? "border-b border-gray-150"
+                                    : ""
+                                }`}
+                              >
+                                <span>{opt.text}</span>
+                                <span className="text-gray-400 text-[10px]">
+                                  ➔
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                          <span className="text-[9px] text-gray-400 mt-1 ml-1 select-none">
+                            {msg.time}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+
                   const isUser = msg.sender === "user";
                   return (
                     <div
@@ -1213,7 +1312,7 @@ const Footer = () => {
                       key={budget}
                       type="button"
                       onClick={() => handleUserMessage(budget)}
-                      className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                      className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
                     >
                       {budget}
                     </button>
@@ -1228,7 +1327,7 @@ const Footer = () => {
                       key={deadline}
                       type="button"
                       onClick={() => handleUserMessage(deadline)}
-                      className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                      className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
                     >
                       {deadline}
                     </button>

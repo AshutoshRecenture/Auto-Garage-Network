@@ -23,8 +23,22 @@ const WebsiteSolutions = () => {
   useEffect(() => {
     if (!isAutoPlaying) return;
     const interval = setInterval(() => {
-      setActivePage((prev) => (prev + 1) % 3);
-    }, 6000);
+      setBookingStep((prev) => {
+        if (prev === 0) {
+          setBookingService("MOT & Interim Service");
+          return 1;
+        } else if (prev === 1) {
+          setBookingTime("Tue Jun 16 - 11:30 AM");
+          setBookingReg("GB22 XYZ");
+          return 2;
+        } else {
+          setBookingService("");
+          setBookingTime("");
+          setBookingReg("");
+          return 0;
+        }
+      });
+    }, 4000);
     return () => clearInterval(interval);
   }, [isAutoPlaying]);
 
@@ -50,12 +64,12 @@ const WebsiteSolutions = () => {
     <div className="flex-grow flex flex-col bg-slate-50 text-slate-800 font-sans select-none h-full">
       {/* Website Nav */}
       <div className="h-10 border-b border-slate-200/80 flex items-center justify-between px-4 bg-white shrink-0">
-        <div className="flex items-center space-x-1.5">
-          <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white text-[10px] font-black">
-            E
+        <div className="flex items-center space-x-2">
+          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[11px] font-black shadow-md shadow-blue-500/30">
+            A
           </div>
-          <span className="text-blue-600 font-black text-xs tracking-tight">
-            Elite Garage
+          <span className="text-slate-900 font-extrabold text-xs tracking-tight">
+            Auto Garage
           </span>
         </div>
         <div className="flex space-x-3 text-[7.5px] font-bold text-slate-500">
@@ -105,7 +119,11 @@ const WebsiteSolutions = () => {
           </div>
 
           {/* Right car visual */}
-          <div className="flex justify-center items-center relative h-full min-h-[90px]">
+          <motion.div
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="flex justify-center items-center relative h-full min-h-[90px]"
+          >
             <div className="absolute inset-0 bg-blue-500/5 blur-xl rounded-full"></div>
             <svg
               viewBox="0 0 120 60"
@@ -156,7 +174,7 @@ const WebsiteSolutions = () => {
               <path d="M110 38 L114 39 L114 41 Z" fill="#fef08a" />
               <path d="M110 11 L114 12" fill="#fff" />
             </svg>
-          </div>
+          </motion.div>
         </div>
 
         {/* Services grid */}
@@ -250,12 +268,12 @@ const WebsiteSolutions = () => {
       <div className="flex-grow flex flex-col bg-slate-50 text-slate-800 font-sans select-none h-full overflow-hidden">
         {/* Nav header */}
         <div className="h-10 border-b border-slate-200/80 flex items-center justify-between px-4 bg-white shrink-0">
-          <div className="flex items-center space-x-1.5">
-            <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white text-[10px] font-black">
-              E
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[11px] font-black shadow-md shadow-blue-500/30">
+              A
             </div>
-            <span className="text-blue-600 font-black text-xs tracking-tight">
-              Elite Garage
+            <span className="text-slate-900 font-extrabold text-xs tracking-tight">
+              Auto Garage
             </span>
           </div>
           <div className="flex items-center space-x-2 text-[6.5px] font-extrabold text-slate-400">
@@ -319,6 +337,7 @@ const WebsiteSolutions = () => {
                     onClick={() => {
                       setBookingService(s.name);
                       setBookingStep(1);
+                      setIsAutoPlaying(false);
                     }}
                     className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-white hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-200 group w-full"
                   >
@@ -377,9 +396,10 @@ const WebsiteSolutions = () => {
                         id="booking-reg"
                         type="text"
                         value={bookingReg}
-                        onChange={(e) =>
-                          setBookingReg(e.target.value.toUpperCase())
-                        }
+                        onChange={(e) => {
+                          setBookingReg(e.target.value.toUpperCase());
+                          setIsAutoPlaying(false);
+                        }}
                         placeholder="GB22 XYZ"
                         className="bg-transparent border-none text-center font-black tracking-widest text-slate-900 focus:outline-none w-full text-xs uppercase pl-3"
                         maxLength="8"
@@ -398,7 +418,10 @@ const WebsiteSolutions = () => {
                       return (
                         <div
                           key={i}
-                          onClick={() => setBookingTime(s)}
+                          onClick={() => {
+                            setBookingTime(s);
+                            setIsAutoPlaying(false);
+                          }}
                           className={`p-1.5 rounded-lg border text-center text-[7px] font-extrabold cursor-pointer transition-all ${
                             isSelected
                               ? "bg-blue-600 text-white border-blue-600 shadow-sm"
@@ -415,14 +438,20 @@ const WebsiteSolutions = () => {
 
               <div className="flex justify-between items-center pt-2 border-t border-slate-100">
                 <button
-                  onClick={() => setBookingStep(0)}
+                  onClick={() => {
+                    setBookingStep(0);
+                    setIsAutoPlaying(false);
+                  }}
                   className="h-6 px-2 text-slate-500 font-bold text-[7.5px] hover:text-slate-700 cursor-pointer"
                 >
                   ← Back
                 </button>
                 <button
                   disabled={!bookingTime}
-                  onClick={() => setBookingStep(2)}
+                  onClick={() => {
+                    setBookingStep(2);
+                    setIsAutoPlaying(false);
+                  }}
                   className={`h-7 px-4 rounded-lg text-[8px] font-extrabold shadow-sm transition-all ${
                     bookingTime
                       ? "bg-blue-600 text-white hover:bg-blue-500 cursor-pointer"
@@ -500,6 +529,7 @@ const WebsiteSolutions = () => {
                   setBookingService("");
                   setBookingTime("");
                   setBookingReg("");
+                  setIsAutoPlaying(false);
                 }}
                 className="h-6 px-4 bg-slate-950 text-white rounded text-[7.5px] font-extrabold hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
               >
@@ -516,12 +546,12 @@ const WebsiteSolutions = () => {
     <div className="flex-grow flex flex-col bg-slate-50 text-slate-800 font-sans select-none h-full overflow-hidden">
       {/* Mobile Site Nav */}
       <div className="h-9 border-b border-slate-200/80 flex items-center justify-between px-3 bg-white shrink-0">
-        <div className="flex items-center space-x-1">
-          <div className="w-4 h-4 rounded bg-blue-600 flex items-center justify-center text-white text-[8px] font-black">
-            E
+        <div className="flex items-center space-x-1.5">
+          <div className="w-5 h-5 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[9px] font-black shadow-sm">
+            A
           </div>
-          <span className="text-blue-600 font-black text-[9px] tracking-tight">
-            Elite
+          <span className="text-slate-900 font-black text-[10px] tracking-tight">
+            Auto
           </span>
         </div>
 
@@ -567,8 +597,12 @@ const WebsiteSolutions = () => {
         <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.01)] text-[7px] text-slate-600 space-y-1.5 font-semibold">
           <div className="flex justify-between items-center text-[6px] text-slate-400 font-medium">
             <span>ACTIVE STATUS:</span>
-            <span className="text-green-500 font-black flex items-center">
-              ● Live Diagnostic Sync
+            <span className="text-green-500 font-black flex items-center gap-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+              </span>
+              <span>Live Diagnostic Sync</span>
             </span>
           </div>
           <div className="flex items-center space-x-2 bg-slate-50 p-1 rounded-lg border border-slate-100">
@@ -617,165 +651,169 @@ const WebsiteSolutions = () => {
   return (
     <section
       id="products"
-      className="py-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden"
+      className="py-16 px-6 md:px-12 bg-[#050816] relative overflow-hidden"
     >
       <div id="latest-work" className="absolute top-0 left-0" />
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          {/* Left Column: Descriptions and interactive cards */}
-          <div className="order-2 md:order-1 space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                High-Performance <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-                  Website Solutions
-                </span>
-              </h2>
-              <p className="text-gray-400 text-lg">
-                Turn your garage's website into a lead-generation machine.
-                Beautifully designed, lightning-fast, and optimized for
-                conversions.
-              </p>
-            </motion.div>
+        {/* Header Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+        >
+          <h2 className="text-3xl md:text-5xl font-bold text-white">
+            High-Performance <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
+              Website Solutions
+            </span>
+          </h2>
+          <p className="text-gray-400 text-lg">
+            Turn your garage's website into a lead-generation machine.
+            Beautifully designed, lightning-fast, and optimized for
+            conversions.
+          </p>
+        </motion.div>
 
-            <div className="hidden md:block space-y-4">
-              {features.map((item, idx) => {
-                const isActive = idx === activePage;
-                return (
-                  <motion.div
-                    key={idx}
-                    onClick={() => {
-                      setActivePage(idx);
-                      setIsAutoPlaying(false);
-                    }}
-                    whileHover={{ scale: 1.02 }}
-                    className={`flex gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-300 relative overflow-hidden ${
-                      isActive
-                        ? "bg-[#111827]/80 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.1)]"
-                        : "bg-[#111827]/20 border-white/5 hover:bg-[#111827]/40 hover:border-white/10"
-                    }`}
-                  >
-                    {isActive && isAutoPlaying && (
-                      <motion.div
-                        key={idx}
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 6, ease: "linear" }}
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 origin-left"
-                      />
-                    )}
-
-                    <div
-                      className={`flex-shrink-0 w-12 h-12 rounded-xl border flex items-center justify-center transition-all ${
-                        isActive
-                          ? "bg-blue-500/20 border-blue-500/40 text-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
-                          : "bg-[#111827] border-white/10 text-gray-500"
-                      }`}
-                    >
-                      {item.icon}
-                    </div>
-                    <div>
-                      <h3
-                        className={`text-xl font-bold transition-all mb-1 ${isActive ? "text-blue-400" : "text-white"}`}
-                      >
-                        {item.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+        {/* 3-Column Grid representing all three features and mockups */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          {/* Card 1: Custom Branded Design */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -8, scale: 1.015, borderColor: "rgba(59, 130, 246, 0.4)", boxShadow: "0 20px 40px rgba(59, 130, 246, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="bg-[#111827]/40 border border-white/5 rounded-3xl p-6 md:p-8 flex flex-col justify-between space-y-8 shadow-xl relative transition-all group duration-300"
+          >
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-50/5 border border-white/10 text-blue-400 flex items-center justify-center">
+                <FiAward className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                  Custom Branded Design
+                </h3>
+                <p className="text-gray-400 text-xs md:text-sm leading-relaxed mt-2">
+                  Stand out from the competition with a premium, tailored design that builds trust with your customers.
+                </p>
+              </div>
             </div>
 
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="hidden md:flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all cursor-pointer"
-            >
-              View Website Templates
-              <FiArrowRight className="w-5 h-5" />
-            </motion.button>
-          </div>
+            {/* Desktop Mockup Preview */}
+            <div className="relative pt-4">
+              <div className="relative border-[4px] border-slate-700 bg-slate-900 shadow-2xl overflow-hidden flex flex-col w-full h-[250px] rounded-xl shadow-indigo-500/10">
+                <div className="bg-[#1e293b] px-3 py-2 flex items-center space-x-1.5 border-b border-white/5 select-none shrink-0">
+                  <div className="flex space-x-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto w-1/2 h-3.5 bg-slate-900 rounded text-[7px] font-black text-gray-400 flex items-center justify-center border border-white/5">
+                    your-garage.co.uk
+                  </div>
+                </div>
+                <div className="flex-grow bg-white relative overflow-hidden flex flex-col">
+                  {renderDesktopPage()}
+                </div>
+              </div>
+            </div>
+          </motion.div>
 
-          {/* Right Column: Web/Mobile Mockup */}
+          {/* Card 2: Online Booking Integration */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="order-1 md:order-2 relative perspective-1000 w-full flex justify-center items-center"
+            whileHover={{ y: -8, scale: 1.015, borderColor: "rgba(59, 130, 246, 0.4)", boxShadow: "0 20px 40px rgba(59, 130, 246, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}
+            className="bg-[#111827]/40 border border-white/5 rounded-3xl p-6 md:p-8 flex flex-col justify-between space-y-8 shadow-xl relative transition-all group duration-300"
           >
-            <div className="absolute inset-0 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none"></div>
-
-            {/* Website Mockup Window (desktop width default, transforms to mobile width) */}
-            <motion.div
-              animate={{
-                width: activePage === 2 ? 300 : "100%",
-                height: activePage === 2 ? 540 : 450,
-                borderRadius: activePage === 2 ? "32px" : "16px",
-              }}
-              transition={{ type: "spring", stiffness: 100, damping: 18 }}
-              className="relative border-[6px] border-[#0c1222] bg-[#0c1222] shadow-2xl overflow-hidden flex flex-col w-full shadow-blue-500/5"
-            >
-              {/* Browser Bar / Phone status bar */}
-              <div className="relative">
-                {activePage === 2 ? (
-                  /* Mobile Phone Status Bar */
-                  <div className="bg-[#111827] px-4 py-2.5 flex items-center justify-between text-white/40 text-[9px] font-bold border-b border-white/5 select-none shrink-0">
-                    <span>09:41</span>
-                    {/* Speaker Notch */}
-                    <div className="w-16 h-3.5 bg-[#0c1222] rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 flex items-center justify-center border border-white/5">
-                      <div className="w-6 h-1 bg-white/10 rounded-full"></div>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <FiWifi className="w-2.5 h-2.5" />
-                      <span className="text-[7.5px]">5G</span>
-                      <FiBattery className="w-3.5 h-2" />
-                    </div>
-                  </div>
-                ) : (
-                  /* Desktop Browser Header */
-                  <div className="bg-[#111827] px-4 py-3 flex items-center space-x-2 border-b border-white/5 select-none shrink-0">
-                    <div className="flex space-x-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                    </div>
-                    <div className="mx-auto w-1/2 h-4.5 bg-[#0c1222] rounded text-[8px] font-bold text-gray-500 flex items-center justify-center border border-white/5">
-                      your-garage.co.uk
-                    </div>
-                  </div>
-                )}
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-50/5 border border-white/10 text-blue-400 flex items-center justify-center">
+                <FiCalendar className="w-6 h-6" />
               </div>
+              <div>
+                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                  Online Booking Integration
+                </h3>
+                <p className="text-gray-400 text-xs md:text-sm leading-relaxed mt-2">
+                  Allow customers to book MOTs, services, and repairs directly from your website 24/7.
+                </p>
+              </div>
+            </div>
 
-              {/* Fake Website Content Viewport */}
-              <div className="flex-grow bg-white relative overflow-hidden flex flex-col">
-                <AnimatePresence mode="wait">
+            {/* Desktop Mockup Preview (Booking) */}
+            <div className="relative pt-4">
+              <div className="relative border-[4px] border-slate-700 bg-slate-900 shadow-2xl overflow-hidden flex flex-col w-full h-[250px] rounded-xl shadow-indigo-500/10">
+                <div className="bg-[#1e293b] px-3 py-2 flex items-center space-x-1.5 border-b border-white/5 select-none shrink-0">
+                  <div className="flex space-x-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto w-1/2 h-3.5 bg-slate-900 rounded text-[7px] font-black text-gray-400 flex items-center justify-center border border-white/5">
+                    your-garage.co.uk/book
+                  </div>
+                </div>
+                <div className="flex-grow bg-white relative overflow-hidden flex flex-col">
+                  {renderBookingPage()}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Card 3: Mobile Responsive */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -8, scale: 1.015, borderColor: "rgba(59, 130, 246, 0.4)", boxShadow: "0 20px 40px rgba(59, 130, 246, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.2 }}
+            className="bg-[#111827]/40 border border-white/5 rounded-3xl p-6 md:p-8 flex flex-col justify-between space-y-8 shadow-xl relative transition-all group duration-300"
+          >
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-50/5 border border-white/10 text-blue-400 flex items-center justify-center">
+                <FiSmartphone className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                  Mobile Responsive
+                </h3>
+                <p className="text-gray-400 text-xs md:text-sm leading-relaxed mt-2">
+                  Flawless experience across all devices, ensuring you never miss a mobile customer.
+                </p>
+              </div>
+            </div>
+
+            {/* Mobile Mockup Preview */}
+            <div className="relative pt-4 flex justify-center w-full">
+              <div className="relative border-[4px] border-slate-700 bg-slate-900 shadow-2xl overflow-hidden flex flex-col w-[150px] h-[250px] rounded-[20px] shadow-indigo-500/10">
+                <div className="bg-[#1e293b] px-2 py-1 flex items-center justify-between text-white/80 text-[7px] font-bold border-b border-white/5 select-none shrink-0 relative">
+                  <span className="font-extrabold">09:41</span>
+                  <div className="w-8 h-2 bg-slate-900 rounded-full absolute left-1/2 -translate-x-1/2 top-0.5 flex items-center justify-center border border-white/5">
+                    <div className="w-3.5 h-[1px] bg-white/30 rounded-full"></div>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <FiWifi className="w-2 h-2 text-white/80" />
+                    <FiBattery className="w-2.5 h-2 text-white/80" />
+                  </div>
+                </div>
+                <div className="flex-grow bg-white relative overflow-hidden flex flex-col">
+                  {renderMobilePage()}
+                  {/* Real-time scanner overlay */}
                   <motion.div
-                    key={activePage}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                    className="flex-grow flex flex-col h-full"
-                  >
-                    {activePage === 0 && renderDesktopPage()}
-                    {activePage === 1 && renderBookingPage()}
-                    {activePage === 2 && renderMobilePage()}
-                  </motion.div>
-                </AnimatePresence>
+                    animate={{ y: [0, 210, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute left-0 right-0 h-1.5 bg-blue-500/40 shadow-[0_0_8px_#3b82f6] pointer-events-none z-30"
+                    style={{ top: 0 }}
+                  />
+                </div>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
+
       </div>
     </section>
   );

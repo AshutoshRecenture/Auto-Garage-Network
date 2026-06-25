@@ -18,7 +18,9 @@ const ScrollToTop = () => {
 // 1. Lazy load other pages to keep the initial bundle small (improving Lighthouse score)
 const AboutUs = lazy(() => import("./pages/AboutUs.jsx"));
 const Pricing = lazy(() => import("./pages/Pricing.jsx"));
-const GarageManagementSystem = lazy(() => import("./pages/GarageManagementSystem.jsx"));
+const GarageManagementSystem = lazy(
+  () => import("./pages/GarageManagementSystem.jsx"),
+);
 const WebsiteForGarages = lazy(() => import("./pages/WebsiteForGarages.jsx"));
 const AutotechData = lazy(() => import("./pages/AutotechData.jsx"));
 const MOTDiary = lazy(() => import("./pages/MOTDiary.jsx"));

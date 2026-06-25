@@ -23,142 +23,275 @@ const ProjectCard = ({ project, idx }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const renderMockup = () => {
-    // 1. APEX TYRES & AUTOCENTRE - Tyre Finder Selector Widget
+    // 1. CarFix Garage
     if (idx === 0) {
       return (
-        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-[#0a0f24]/90">
-          <div className="flex items-center justify-between border-b border-white/5 pb-2">
-            <span className="text-[9px] font-black uppercase text-indigo-400 tracking-wider flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping" />
-              Tyre Search Live
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#0c1222] text-white">
+          <div className="flex items-center justify-between border-b border-white/5 pb-1">
+            <span className="text-[9.5px] font-black tracking-wide text-blue-500">
+              CarFix <span className="text-yellow-400">Garage</span>
             </span>
-            <div className="flex gap-1">
-              <div className="w-6 h-3 rounded-full bg-white/5 text-[7px] text-center font-bold text-gray-500">Size</div>
-              <div className="w-6 h-3 rounded-full bg-indigo-500/20 text-[7px] text-center font-bold text-indigo-400">VRM</div>
+            <span className="text-[6px] text-gray-400 font-bold">020 8200 8100</span>
+          </div>
+          <div className="flex flex-col items-center justify-center my-auto text-center space-y-1">
+            <h4 className="text-[7.5px] font-bold text-white leading-tight">
+              MOT, Repair, Servicing & Free Quotes
+            </h4>
+            <div className="flex w-full max-w-[150px] rounded overflow-hidden border border-yellow-500/30">
+              <div className="bg-yellow-400 text-black font-black text-[6.5px] px-1.5 py-0.5 flex items-center justify-center">
+                ENTER REG
+              </div>
+              <div className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-[6.5px] py-0.5 flex-grow text-center flex items-center justify-center cursor-pointer">
+                QUOTE & BOOK
+              </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-3 gap-1.5 my-auto">
-            {["Width", "Profile", "Rim"].map((label, i) => (
-              <div key={i} className="flex flex-col text-left">
-                <span className="text-[6.5px] text-gray-500 font-extrabold uppercase mb-0.5">{label}</span>
-                <div className="bg-slate-950 border border-white/10 rounded px-1.5 py-1 text-[8px] text-white/80 flex justify-between items-center">
-                  <span>{i === 0 ? "205" : i === 1 ? "55" : "R16"}</span>
-                  <span className="text-[6px] text-gray-600">▼</span>
-                </div>
-              </div>
+          <div className="grid grid-cols-4 gap-1 text-center">
+            {["Tyre Fitting", "Body Repairs", "Car Services", "Book MOT"].map((txt, i) => (
+              <span key={i} className="bg-white/5 text-[5.5px] py-0.5 rounded text-gray-300 font-semibold border border-white/5 truncate">
+                {txt}
+              </span>
             ))}
           </div>
-
-          <motion.button
-            animate={isHovered ? {
-              scale: [1, 1.03, 1],
-              boxShadow: "0 0 10px rgba(99, 102, 241, 0.4)",
-            } : {}}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-full bg-indigo-600 text-white rounded py-1 text-[9px] font-bold flex items-center justify-center gap-1 shadow-md"
-          >
-            <FiSearch size={8} />
-            <span>Search Tyres</span>
-          </motion.button>
         </div>
       );
     }
 
-    // 2. MELTON MOWBRAY MOT CLINIC - Calendar Scheduler Grid
+    // 2. Kilnhurst Tyres
     if (idx === 1) {
       return (
-        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-[#090b16]/90">
-          <div className="flex items-center justify-between border-b border-white/5 pb-2">
-            <span className="text-[9px] font-black uppercase text-purple-400 tracking-wider flex items-center gap-1">
-              <FiCalendar size={9} />
-              MOT Booking Calendar
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#0f1519] text-white">
+          <div className="flex items-center justify-between border-b border-white/5 pb-1">
+            <span className="text-[9px] font-black uppercase text-emerald-400 tracking-wider">
+              KILNHURST <span className="text-white text-[7px]">TYRES</span>
             </span>
-            <span className="text-[7px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded font-black">
-              LIVE SLOTS
-            </span>
+            <span className="text-[6px] text-emerald-400 font-bold bg-emerald-500/10 px-1 py-0.2 rounded">EMERGENCY CALL OUT</span>
           </div>
-
-          <div className="grid grid-cols-3 gap-1.5 my-auto">
-            {[
-              { time: "09:00", status: "booked" },
-              { time: "10:30", status: "available" },
-              { time: "12:00", status: "booked" },
-              { time: "13:30", status: "available" },
-              { time: "15:00", status: "available" },
-              { time: "16:30", status: "booked" },
-            ].map((slot, i) => (
-              <motion.div
-                key={i}
-                animate={isHovered && slot.status === "available" ? {
-                  borderColor: ["rgba(168,85,247,0.2)", "rgba(168,85,247,0.7)", "rgba(168,85,247,0.2)"],
-                } : {}}
-                transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
-                className={`rounded border p-1 text-center flex flex-col justify-center ${
-                  slot.status === "booked"
-                    ? "bg-white/[0.02] border-white/5 text-gray-600"
-                    : "bg-purple-500/5 border-purple-500/20 text-purple-400 cursor-pointer hover:bg-purple-500/15"
-                }`}
-              >
-                <span className="text-[8px] font-bold">{slot.time}</span>
-                <span className="text-[5.5px] font-extrabold uppercase mt-0.5 tracking-wider">
-                  {slot.status === "booked" ? "FULL" : "BOOK"}
-                </span>
-              </motion.div>
+          <div className="my-auto flex flex-col space-y-1">
+            <div className="flex justify-between items-center bg-[#172025] rounded p-1.5 border border-white/5">
+              <span className="text-[7px] font-extrabold text-emerald-400">TYRE FINDER</span>
+              <div className="flex gap-1">
+                {["205", "55", "R16"].map((val, i) => (
+                  <div key={i} className="bg-slate-900 border border-white/10 rounded px-1 py-0.5 text-[6.5px] text-white flex items-center font-bold">
+                    {val}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-1">
+            {["Tyre Fitting", "Mobile Fitting", "Wheel Align"].map((btn, i) => (
+              <span key={i} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[5.5px] py-0.5 rounded text-center font-bold">
+                {btn}
+              </span>
             ))}
           </div>
         </div>
       );
     }
 
-    // 3. MIDLAND CAR REPAIRS - Diagnostics Report & Tracking
+    // 3. MS Auto Centre Ltd
     if (idx === 2) {
       return (
-        <div className="absolute inset-0 flex flex-col justify-between p-4 bg-[#0a0615]/95">
-          <div className="flex items-center justify-between border-b border-white/5 pb-2">
-            <span className="text-[9px] font-black uppercase text-pink-400 tracking-wider flex items-center gap-1">
-              <FiCheckCircle size={9} />
-              Vehicle Diagnosis
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#0a0606] text-white">
+          <div className="flex items-center justify-between border-b border-white/5 pb-1">
+            <span className="text-[9px] font-extrabold text-red-500 flex items-center gap-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block animate-pulse" />
+              MS AUTO CENTRE
             </span>
-            <span className="text-[7.5px] text-gray-500 font-extrabold uppercase tracking-wide">
-              Job #4829
+            <span className="text-[6px] text-gray-500 font-bold">Birmingham</span>
+          </div>
+          <div className="my-auto text-center space-y-1.5">
+            <span className="text-[7.5px] text-gray-300 font-semibold block">MOT & Repair Services</span>
+            <div className="flex max-w-[140px] mx-auto rounded overflow-hidden border border-red-600/30">
+              <div className="bg-yellow-400 text-black font-black text-[6.5px] w-1/2 px-1 py-0.5 text-center">
+                ENTER REG
+              </div>
+              <div className="bg-red-600 text-white font-black text-[6.5px] flex-grow py-0.5 flex items-center justify-center">
+                BOOK ONLINE
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-around text-[6px] text-gray-400 border-t border-white/5 pt-1">
+            <span>• Tyre Fitting</span>
+            <span>• Wheel Balancing</span>
+            <span>• MOT Prep</span>
+          </div>
+        </div>
+      );
+    }
+
+    // 4. Kingz Automotive
+    if (idx === 3) {
+      return (
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#0a0a0a] text-white">
+          <div className="flex flex-col items-center pt-1 border-b border-white/5 pb-1">
+            <span className="text-[9.5px] font-black uppercase text-amber-500 tracking-widest">
+              KINGZ CUSTOMZ
+            </span>
+            <span className="text-[5.5px] font-black text-amber-400/70 tracking-widest uppercase">
+              Where Royalty Belongs
             </span>
           </div>
+          <div className="my-auto flex gap-1 justify-center">
+            <div className="border border-amber-500/25 bg-amber-500/5 rounded p-1 text-center w-16">
+              <span className="text-[6px] text-amber-400 block font-black">AUTO CENTRE</span>
+              <span className="text-[4px] text-gray-500 uppercase block mt-0.5">Click Here</span>
+            </div>
+            <div className="border border-amber-500/25 bg-amber-500/5 rounded p-1 text-center w-16">
+              <span className="text-[6px] text-amber-400 block font-black">CUSTOMISATION</span>
+              <span className="text-[4px] text-gray-500 uppercase block mt-0.5">Click Here</span>
+            </div>
+          </div>
+          <div className="text-center text-[5.5px] font-extrabold text-gray-500 uppercase tracking-wider">
+            Beyond Factory Limits
+          </div>
+        </div>
+      );
+    }
 
-          <div className="flex flex-col gap-1.5 my-auto text-left">
-            {[
-              { label: "Engine Diagnostic Scan", status: "Done" },
-              { label: "Brake Wear System Check", status: "Done" },
-              { label: "Digital Invoice Generated", status: "Pending" },
-            ].map((item, i) => (
-              <div key={i} className="flex justify-between items-center bg-white/[0.02] border border-white/5 rounded p-1">
-                <span className="text-[7.5px] text-gray-300 font-semibold">{item.label}</span>
-                <div className="flex items-center gap-1">
-                  <motion.div
-                    animate={isHovered ? {
-                      scale: [1, 1.2, 1],
-                    } : {}}
-                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
-                    className={`w-1.5 h-1.5 rounded-full ${item.status === "Done" ? "bg-emerald-500" : "bg-amber-500"}`}
-                  />
-                  <span className={`text-[6.5px] font-black uppercase ${item.status === "Done" ? "text-emerald-400" : "text-amber-400"}`}>
-                    {item.status}
-                  </span>
-                </div>
+    // 5. Solent MOT Centre
+    if (idx === 4) {
+      return (
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#050e1c] text-white">
+          <div className="flex items-center justify-between border-b border-white/5 pb-1">
+            <span className="text-[9px] font-black tracking-wide text-cyan-400">
+              SOLENT MOT CENTRE
+            </span>
+            <span className="text-[5.5px] text-cyan-400 font-bold bg-cyan-400/10 px-1 py-0.2 rounded">Class 4 & 7</span>
+          </div>
+          <div className="my-auto text-center space-y-1.5">
+            <span className="text-[7.5px] font-semibold text-gray-300">Book MOT & Servicing Online</span>
+            <div className="bg-[#0b1b33] border border-cyan-400/20 rounded p-1 flex justify-between items-center max-w-[130px] mx-auto">
+              <span className="text-[6px] text-gray-400 font-bold">Select Appointment Slot</span>
+              <span className="text-[5.5px] bg-cyan-500 text-white font-extrabold px-1 py-0.2 rounded cursor-pointer">GO</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-1 text-center text-[5.5px] text-gray-400 font-bold">
+            <span className="bg-[#0c1c30] py-0.5 rounded">MOT Prep</span>
+            <span className="bg-[#0c1c30] py-0.5 rounded">Brakes</span>
+            <span className="bg-[#0c1c30] py-0.5 rounded">Tyres</span>
+          </div>
+        </div>
+      );
+    }
+
+    // 6. Smart MOT
+    if (idx === 5) {
+      return (
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#08100c] text-white">
+          <div className="flex items-center justify-between border-b border-[#1b3528] pb-1">
+            <span className="text-[9px] font-black text-green-400 tracking-wide">
+              SMART <span className="text-white">MOT</span>
+            </span>
+            <span className="text-[5.5px] text-green-400 bg-green-500/10 border border-green-500/20 px-1 py-0.2 rounded font-bold">ONLINE DIARY</span>
+          </div>
+          <div className="my-auto text-center space-y-1">
+            <span className="text-[7px] text-gray-400 block font-bold">Search Service by Reg No</span>
+            <div className="flex max-w-[130px] mx-auto rounded overflow-hidden border border-green-500/30">
+              <div className="bg-yellow-400 text-black text-[6.5px] font-black px-1.5 py-0.5">
+                ENTER REG
               </div>
-            ))}
+              <div className="bg-green-600 text-white text-[6.5px] font-bold flex-grow py-0.5 flex items-center justify-center">
+                Search
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-around text-[6px] text-gray-500 border-t border-green-500/10 pt-1">
+            <span>• Smart Pricing</span>
+            <span>• Diagnostics</span>
+          </div>
+        </div>
+      );
+    }
+
+    // 7. Roberts Tyres
+    if (idx === 6) {
+      return (
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#0f1c12] text-white">
+          <div className="flex items-center justify-between border-b border-[#25462c] pb-1">
+            <span className="text-[9px] font-black text-emerald-400 tracking-widest flex items-center gap-0.5">
+              ROBERTS TYRES
+            </span>
+            <span className="text-[5.5px] text-emerald-300 font-bold bg-emerald-500/10 px-1 py-0.2 rounded">Mobile Fitting</span>
+          </div>
+          <div className="my-auto text-center space-y-1">
+            <span className="text-[6.5px] font-black text-white bg-emerald-500/20 border border-emerald-500/30 py-0.5 px-1 rounded inline-block uppercase tracking-wider text-center">
+              BUY 2+ NEXEN TYRES GET £5 OFF
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-1 text-center">
+            <span className="bg-[#1b3420] text-emerald-300 text-[6px] font-bold py-0.5 rounded border border-emerald-500/10">
+              TYRE FITTING
+            </span>
+            <span className="bg-[#1b3420] text-emerald-300 text-[6px] font-bold py-0.5 rounded border border-emerald-500/10">
+              CAR SERVICES
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    // 8. Treadmark Wheels and Tyres
+    if (idx === 7) {
+      return (
+        <div className="absolute inset-0 flex flex-col justify-between p-3 bg-[#061021] text-white">
+          <div className="flex items-center justify-between border-b border-[#1b365e] pb-1">
+            <span className="text-[9px] font-black tracking-wide text-blue-400">
+              TreadMark <span className="text-white text-[7px]">Wheels</span>
+            </span>
+            <span className="text-[5.5px] text-emerald-400 bg-emerald-500/10 px-1 py-0.2 rounded font-extrabold">25,000+ FITTED</span>
+          </div>
+          <div className="my-auto text-center space-y-1">
+            <span className="text-[7px] font-bold text-gray-300">Premium Tyres & Alloys</span>
+            <div className="bg-[#0d2244] border border-[#1b365e] rounded p-1 flex justify-between items-center max-w-[140px] mx-auto">
+              <span className="text-[5.5px] text-gray-400">Find tyres by size or reg</span>
+              <span className="text-[5.5px] bg-blue-600 text-white font-extrabold px-1 rounded">FIND</span>
+            </div>
+          </div>
+          <div className="flex justify-around text-[5.5px] text-gray-400 border-t border-[#1b365e] pt-1">
+            <span>• Alloy Refurb</span>
+            <span>• Laser Alignment</span>
           </div>
         </div>
       );
     }
   };
 
+  const getMetricElement = () => {
+    if (idx % 3 === 0) {
+      return (
+        <>
+          <FiTrendingUp className="text-emerald-400 w-3.5 h-3.5" />
+          <span className="text-emerald-400">{project.metrics}</span>
+        </>
+      );
+    } else if (idx % 3 === 1) {
+      return (
+        <>
+          <FiCheckCircle className="text-purple-400 w-3.5 h-3.5" />
+          <span className="text-purple-400">{project.metrics}</span>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <FiGlobe className="text-cyan-400 w-3.5 h-3.5" />
+          <span className="text-cyan-400">{project.metrics}</span>
+        </>
+      );
+    }
+  };
+
   return (
-    <motion.div
+    <motion.a
+      href={project.url}
+      target="_blank"
+      rel="noopener noreferrer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ y: -6 }}
-      className="bg-[#0c1222] border border-white/5 hover:border-white/10 rounded-3xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(99,102,241,0.15)] flex flex-col h-full cursor-pointer transition-all duration-500 group"
+      className="bg-[#0c1222] border border-white/5 hover:border-white/10 rounded-3xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(99,102,241,0.15)] flex flex-col h-full cursor-pointer transition-all duration-500 group no-underline text-inherit"
     >
       {/* Mock screenshot representation */}
       <div className={`aspect-[1.55] bg-gradient-to-tr ${project.bgClass} p-4 flex flex-col justify-between relative overflow-hidden`}>
@@ -181,8 +314,8 @@ const ProjectCard = ({ project, idx }) => {
             <div className="w-1.5 h-1.5 rounded-full bg-[#ff5f56]" />
             <div className="w-1.5 h-1.5 rounded-full bg-[#ffbd2e]" />
             <div className="w-1.5 h-1.5 rounded-full bg-[#27c93f]" />
-            <div className="h-3.5 bg-white/5 rounded px-2 text-[6.5px] text-gray-500 flex items-center ml-2 w-32 truncate font-medium">
-              {project.title.toLowerCase().replace(/\s+/g, "")}.co.uk
+            <div className="h-3.5 bg-white/5 rounded px-2 text-[6.5px] text-gray-500 flex items-center ml-2 w-44 truncate font-medium">
+              {project.displayUrl}
             </div>
           </div>
           {/* Render Mock Interface */}
@@ -207,42 +340,90 @@ const ProjectCard = ({ project, idx }) => {
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-4 flex items-center justify-between text-xs text-indigo-400 font-extrabold">
+        <div className="border-t border-white/5 pt-4 flex items-center justify-between text-xs font-extrabold">
           <div className="flex items-center gap-1.5">
-            {idx === 0 ? <FiTrendingUp className="text-emerald-400" /> : idx === 1 ? <FiCheckCircle className="text-purple-400" /> : <FiClock className="text-pink-400" />}
-            <span className={idx === 0 ? "text-emerald-400" : idx === 1 ? "text-purple-400" : "text-pink-400"}>
-              {project.metrics}
-            </span>
+            {getMetricElement()}
           </div>
-          <FiArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+          <FiArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-indigo-400" />
         </div>
       </div>
-    </motion.div>
+    </motion.a>
   );
 };
 
 const LatestWork = () => {
   const projects = [
     {
-      title: "Apex Tyres & Autocentre",
+      title: "CarFix Garage",
+      url: "https://www.carfixgarage.co.uk/",
+      displayUrl: "www.carfixgarage.co.uk",
       location: "London, UK",
-      features: ["Filter-Specific Tyre Booking", "Autotech VRM Integration", "SMS Alerts"],
-      metrics: "25% Increase in Online bookings",
-      bgClass: "from-blue-600 to-indigo-700",
+      features: ["Tyre Fitting", "MOT & Services", "Instant Reg Quote"],
+      metrics: "35% Growth in Bookings",
+      bgClass: "from-blue-600 to-indigo-800",
     },
     {
-      title: "Melton Mowbray MOT Clinic",
-      location: "Leicestershire, UK",
-      features: ["Live Booking Calendar", "MOT Database Sync", "Service Reminders"],
-      metrics: "Zero booking conflicts over 12 months",
-      bgClass: "from-indigo-600 to-purple-700",
+      title: "Kilnhurst Tyres",
+      url: "https://www.kilnhursttyres.co.uk/",
+      displayUrl: "www.kilnhursttyres.co.uk",
+      location: "Rotherham, UK",
+      features: ["Wheel Alignment", "Mobile Tyre Fitting", "Live Slot Scheduler"],
+      metrics: "Ranked #1 Locally for Tyres",
+      bgClass: "from-slate-800 to-emerald-950",
     },
     {
-      title: "Midland Car Repairs",
+      title: "MS Auto Centre Ltd",
+      url: "https://www.msautocentreltd.co.uk/",
+      displayUrl: "www.msautocentreltd.co.uk",
       location: "Birmingham, UK",
-      features: ["Live Diagnostic Pricing", "Courtesy Fleet logs", "E-invoices"],
-      metrics: "Reclaimed 14 management hours weekly",
-      bgClass: "from-purple-600 to-pink-700",
+      features: ["MOT & Servicing", "Brakes & Exhausts", "E-Commerce System"],
+      metrics: "2.5x Increase in Web Traffic",
+      bgClass: "from-red-600 to-neutral-900",
+    },
+    {
+      title: "Kingz Automotive",
+      url: "https://www.kingzautomotive.com/",
+      displayUrl: "www.kingzautomotive.com",
+      location: "London, UK",
+      features: ["Custom Wrapping", "Alloy Wheels", "Luxury Tuning Portal"],
+      metrics: "180+ High-End Builds Streamlined",
+      bgClass: "from-amber-600 via-amber-800 to-stone-950",
+    },
+    {
+      title: "Solent MOT Centre",
+      url: "https://www.solentmotcentre.co.uk/",
+      displayUrl: "www.solentmotcentre.co.uk",
+      location: "Southampton, UK",
+      features: ["Class 4 & 7 MOTs", "Vehicle Diagnostics", "Integrated Diary"],
+      metrics: "Over 5,000 Bookings Processed",
+      bgClass: "from-cyan-600 to-blue-800",
+    },
+    {
+      title: "Smart MOT",
+      url: "https://www.smartmot.com/",
+      displayUrl: "www.smartmot.com",
+      location: "Birmingham, UK",
+      features: ["Online Slot Booking", "Tyre Finder Widget", "Fleet Logs"],
+      metrics: "Zero Double-Bookings",
+      bgClass: "from-green-600 to-teal-800",
+    },
+    {
+      title: "Roberts Tyres",
+      url: "https://www.robertstyres.co.uk/",
+      displayUrl: "www.robertstyres.co.uk",
+      location: "Sleaford, UK",
+      features: ["Mobile Fitting", "Nexen Tyres Discount", "Instant VRM Search"],
+      metrics: "40% E-Commerce Sales Uplift",
+      bgClass: "from-green-500 to-zinc-900",
+    },
+    {
+      title: "Treadmark Wheels and Tyres",
+      url: "https://www.treadmarkwheelsandtyres.co.uk/",
+      displayUrl: "www.treadmarkwheelsandtyres.co.uk",
+      location: "Spalding, UK",
+      features: ["Alloy Refurbishment", "Tyre Finder Widget", "Brakes Fitting"],
+      metrics: "300+ Google Reviews (4.9 Star)",
+      bgClass: "from-blue-700 to-slate-900",
     },
   ];
 
@@ -257,26 +438,22 @@ const LatestWork = () => {
       <Navbar />
       <main className="flex-grow pt-24">
         {/* Banner */}
-        <section className="relative py-24 px-6 md:px-12 overflow-hidden text-center">
+        <section className="relative pt-16 pb-6 px-6 md:px-12 overflow-hidden text-center">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="max-w-4xl mx-auto z-10 relative">
-            <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block mb-6">
-              Our Portfolio
-            </span>
+            
             <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
               Bespoke Websites Crafted for <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-400 to-cyan-400">
                 UK Workshops & Garages
               </span>
             </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
-              Explore some of the dynamic, high-performance websites we've deployed. Built to scale your business, rank on Google, and drive booking conversions.
-            </p>
+            
           </div>
         </section>
 
         {/* Project Grid */}
-        <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto z-10 relative">
+        <section className="pt-4 pb-16 px-6 md:px-12 max-w-7xl mx-auto z-10 relative">
           <div className="grid md:grid-cols-3 gap-8">
             {projects.map((project, idx) => (
               <ProjectCard key={idx} project={project} idx={idx} />

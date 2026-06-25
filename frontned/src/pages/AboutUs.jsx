@@ -125,7 +125,7 @@ const AboutUs = () => {
         {/* ══════════════════════════════════════════
             HERO BANNER
         ══════════════════════════════════════════ */}
-        <section className="relative py-20 md:py-28 px-6 md:px-12 overflow-hidden">
+        <section className="relative pt-10 pb-2 px-6 md:px-12 overflow-hidden">
           {/* ambient glows */}
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-indigo-600/10 blur-[140px] pointer-events-none" />
           <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full bg-blue-500/5 blur-[80px] pointer-events-none" />
@@ -137,22 +137,12 @@ const AboutUs = () => {
               animate="visible"
               transition={{ duration: 0.8 }}
             >
-              <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block mb-6">
-                About Auto Garage Network
-              </span>
-              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-8 leading-tight">
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 leading-tight">
                 Transforming UK Garages through{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-400 to-cyan-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-400 to-cyan-400">
                   Digital Innovation
                 </span>
               </h1>
-              <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Auto Garage Network provides special, tailor-made solutions for
-                garage owners' website needs. We aim at creating the best
-                websites that prompt high-performance and digital transformation
-                for independent workshops, MOT centres, and tyre specialists
-                across the UK.
-              </p>
             </motion.div>
           </div>
         </section>
@@ -160,17 +150,45 @@ const AboutUs = () => {
         {/* ══════════════════════════════════════════
             OUR STORY  +  STATS GRID (square cards)
         ══════════════════════════════════════════ */}
-        <section className="py-16 md:py-24 px-6 md:px-12">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
-            {/* ── LEFT: Square stat cards ── */}
+        <section className="pt-2 pb-10 px-6 md:px-12">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* ── LEFT: Story text + Stats boxes ── */}
             <motion.div
               variants={fadeLeft}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
+              className="lg:col-span-7 space-y-6"
             >
-              <div className="grid grid-cols-2 gap-4">
+              {/* Section label & Story text */}
+              <div>
+                <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1 block">
+                  Our Story
+                </span>
+                <h2 className="text-xl md:text-2xl font-extrabold text-white leading-tight mb-3">
+                  Every Great Story Starts with a Friendly Team
+                </h2>
+                <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                  At Auto Garage Network, we specialise in delivering
+                  tailor-made solutions for garage owners' website needs. Our
+                  mission is to create high-performing, user-friendly websites
+                  that drive digital transformation for major tyre companies
+                  across the UK, enabling them to run their businesses
+                  seamlessly online.
+                </p>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  Established in Melton Mowbray, Leicestershire, we were founded
+                  with a singular focus: to modernise workshop administrative
+                  workflows and digital customer engagement. Today, we support
+                  workshops across the UK, allowing managers to reclaim wasted
+                  hours, reduce no-shows, and compete effectively with national
+                  dealer networks.
+                </p>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-3 gap-3">
                 {stats.map((stat, idx) => (
                   <motion.div
                     key={idx}
@@ -182,15 +200,15 @@ const AboutUs = () => {
                       y: -4,
                       boxShadow: "0 12px 40px rgba(99,102,241,0.18)",
                     }}
-                    className="aspect-square flex flex-col items-center justify-center bg-[#0c1222] border border-white/5 hover:border-indigo-500/30 rounded-2xl p-6 transition-all duration-300 cursor-default"
+                    className="flex flex-col items-center justify-center bg-[#0c1222]/80 border border-white/5 hover:border-indigo-500/30 rounded-xl py-3 px-2 transition-all duration-300 cursor-default"
                   >
                     <span
-                      className="text-4xl md:text-5xl font-black mb-3 leading-none"
+                      className="text-xl md:text-2xl font-black mb-1 leading-none"
                       style={{ color: stat.color }}
                     >
                       {stat.value}
                     </span>
-                    <span className="text-gray-400 text-sm font-semibold text-center leading-tight">
+                    <span className="text-gray-400 text-[10px] md:text-xs font-semibold text-center leading-tight">
                       {stat.label}
                     </span>
                   </motion.div>
@@ -198,53 +216,26 @@ const AboutUs = () => {
               </div>
             </motion.div>
 
-            {/* ── RIGHT: Story text + image ── */}
+            {/* ── RIGHT: Team Image ── */}
             <motion.div
               variants={fadeRight}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="flex flex-col gap-8"
+              className="lg:col-span-5 flex items-center justify-center"
             >
-              {/* Section label */}
-              <div>
-                <span className="text-sm font-bold text-indigo-400 uppercase tracking-widest mb-2 block">
-                  Our Story
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-5">
-                  Every Great Story Starts with a Friendly Team
-                </h2>
-                <p className="text-gray-400 text-base leading-relaxed mb-4">
-                  At Auto Garage Network, we specialise in delivering
-                  tailor-made solutions for garage owners' website needs. Our
-                  mission is to create high-performing, user-friendly websites
-                  that drive digital transformation for major tyre companies
-                  across the UK, enabling them to run their businesses
-                  seamlessly online.
-                </p>
-                <p className="text-gray-400 text-base leading-relaxed">
-                  Established in Melton Mowbray, Leicestershire, we were founded
-                  with a singular focus: to modernise workshop administrative
-                  workflows and digital customer engagement. Today, we support
-                  workshops across the UK, allowing managers to reclaim wasted
-                  hours, reduce no-shows, and compete effectively with national
-                  dealer networks.
-                </p>
-              </div>
-
-              {/* about-img-add.jpg image */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: 0.2 }}
-                className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/5 bg-[#0c1222]"
+                className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/5 bg-[#0c1222] w-full"
               >
                 <img
                   src={aboutImg}
                   alt="Auto Garage Network team collaboration"
-                  className="w-full h-auto block"
+                  className="w-full h-auto object-cover rounded-3xl min-h-[300px] lg:min-h-[380px] max-h-[350px] lg:max-h-[420px]"
                 />
               </motion.div>
             </motion.div>

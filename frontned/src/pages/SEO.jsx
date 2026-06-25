@@ -21,9 +21,6 @@ const SEO = () => {
           <h1 className="text-4xl md:text-5xl font-black mb-4 px-4 leading-tight">
             Search Engine Optimisation
           </h1>
-          <p className="text-gray-400 max-w-2xl mx-auto px-4">
-            Position your workshop at the top of local rankings, helping garage owners attract organic leads and drive tyre fitting and MOT checkins.
-          </p>
         </div>
         <SEOSection />
       </main>
