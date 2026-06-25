@@ -653,7 +653,7 @@ const MOTDiary = () => {
                     className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                       idx === activeFeature ? "bg-blue-500 w-5" : "bg-gray-600 w-2 hover:bg-gray-500"
                     }`}
-                    aria-label={`Go to feature ${idx + 1}`}
+                    aria-label={`View feature ${idx + 1}`}
                   />
                 ))}
               </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { API_URL } from "../config";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
@@ -45,7 +46,7 @@ const ContactUs = () => {
     setSubmitted(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
+      const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -213,6 +214,7 @@ const ContactUs = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#1877F2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                  aria-label="Visit our Facebook page"
                 >
                   <FaFacebookF size={14} />
                 </a>
@@ -221,6 +223,7 @@ const ContactUs = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#E1306C] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                  aria-label="Visit our Instagram profile"
                 >
                   <FaInstagram size={14} />
                 </a>
@@ -229,6 +232,7 @@ const ContactUs = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#1DA1F2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                  aria-label="Visit our Twitter profile"
                 >
                   <FaTwitter size={14} />
                 </a>
@@ -237,6 +241,7 @@ const ContactUs = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#0A66C2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                  aria-label="Visit our LinkedIn page"
                 >
                   <FaLinkedinIn size={14} />
                 </a>
@@ -245,6 +250,7 @@ const ContactUs = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#FF0000] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                  aria-label="Visit our YouTube channel"
                 >
                   <FaYoutube size={14} />
                 </a>
@@ -264,10 +270,11 @@ const ContactUs = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-gray-500">
+                    <label htmlFor="company-name" className="text-[10px] uppercase font-bold text-slate-400">
                       Company/Garage Name *
                     </label>
                     <input
+                      id="company-name"
                       type="text"
                       required
                       value={formData.name}
@@ -279,10 +286,11 @@ const ContactUs = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-gray-500">
+                    <label htmlFor="phone-number" className="text-[10px] uppercase font-bold text-slate-400">
                       Phone Number *
                     </label>
                     <input
+                      id="phone-number"
                       type="tel"
                       required
                       value={formData.phone}
@@ -297,10 +305,11 @@ const ContactUs = () => {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-gray-500">
+                    <label htmlFor="email-address" className="text-[10px] uppercase font-bold text-slate-400">
                       Email Address *
                     </label>
                     <input
+                      id="email-address"
                       type="email"
                       required
                       value={formData.email}
@@ -312,10 +321,11 @@ const ContactUs = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-gray-500">
+                    <label htmlFor="interested-in" className="text-[10px] uppercase font-bold text-slate-400">
                       Interested In?
                     </label>
                     <select
+                      id="interested-in"
                       value={formData.interest}
                       onChange={(e) =>
                         setFormData({ ...formData, interest: e.target.value })
@@ -331,10 +341,11 @@ const ContactUs = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-gray-500">
+                  <label htmlFor="message-profile" className="text-[10px] uppercase font-bold text-slate-400">
                     Message / Garage Profile
                   </label>
                   <textarea
+                    id="message-profile"
                     rows="4"
                     maxLength={500}
                     value={formData.message}

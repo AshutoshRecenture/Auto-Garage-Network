@@ -52,12 +52,13 @@ const LogIn = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-[10px] uppercase font-bold text-gray-500">Email Address</label>
+            <label htmlFor="login-email" className="text-[10px] uppercase font-bold text-slate-400">Email Address</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
                 <FiMail />
               </span>
               <input
+                id="login-email"
                 type="email"
                 required
                 value={email}
@@ -70,7 +71,7 @@ const LogIn = () => {
 
           <div className="space-y-1">
             <div className="flex justify-between items-center">
-              <label className="text-[10px] uppercase font-bold text-gray-500">Password</label>
+              <label htmlFor="login-password" className="text-[10px] uppercase font-bold text-slate-400">Password</label>
               <a href="#" className="text-[10px] text-indigo-400 hover:underline">Forgot password?</a>
             </div>
             <div className="relative">
@@ -78,6 +79,7 @@ const LogIn = () => {
                 <FiLock />
               </span>
               <input
+                id="login-password"
                 type="password"
                 required
                 value={password}

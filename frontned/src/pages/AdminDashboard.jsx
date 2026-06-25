@@ -145,10 +145,11 @@ const AdminDashboard = () => {
 
                 <form onSubmit={handleLogin} className="space-y-4 text-left">
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-gray-500">
+                    <label htmlFor="admin-passcode" className="text-[10px] uppercase font-bold text-slate-400">
                       Passcode
                     </label>
                     <input
+                      id="admin-passcode"
                       type="password"
                       required
                       value={passcode}
@@ -226,6 +227,7 @@ const AdminDashboard = () => {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full bg-[#050816] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500"
+                      aria-label="Search leads"
                     />
                   </div>
 
@@ -235,6 +237,7 @@ const AdminDashboard = () => {
                       value={filterInterest}
                       onChange={(e) => setFilterInterest(e.target.value)}
                       className="w-full bg-[#050816] border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-indigo-500 text-white cursor-pointer"
+                      aria-label="Filter leads by interest"
                     >
                       <option value="All">All Interests</option>
                       <option value="Garage Management System">Garage Management System</option>

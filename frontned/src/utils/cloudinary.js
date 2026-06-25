@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 const CLOUDINARY_CLOUD_NAME = "n4okswsd";
 
+import { API_URL } from "../config";
+
 let backendOnline = true;
 const listeners = new Set();
 
@@ -12,7 +14,7 @@ export const subscribeBackendStatus = (listener) => {
 
 export const checkBackendStatus = async () => {
   try {
-    const res = await fetch("http://localhost:5000/api/media");
+    const res = await fetch(`${API_URL}/api/media`);
     const isOnline = res.ok;
     if (isOnline !== backendOnline) {
       backendOnline = isOnline;

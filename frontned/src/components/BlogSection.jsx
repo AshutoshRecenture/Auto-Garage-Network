@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../config";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiArrowRight,
@@ -163,10 +164,10 @@ const BlogModal = ({ post, onClose }) => {
             width="600"
             height="300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0c1222] via-[#0c1222]/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0c1222] via-[#0c1222]/20 to-transparent pointer-events-none modal-image-gradient" />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 text-white hover:text-rose-400 hover:scale-105 p-2 rounded-full transition-all focus:outline-none cursor-pointer flex items-center justify-center"
+            className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 text-neutral-50 hover:text-rose-400 hover:scale-105 p-2 rounded-full transition-all focus:outline-none cursor-pointer flex items-center justify-center"
             aria-label="Close modal"
           >
             <FiX className="w-5 h-5" />
@@ -219,12 +220,6 @@ const BlogModal = ({ post, onClose }) => {
         </div>
 
         <div className="p-5 bg-[#0a0f24]/20 border-t border-white/5 flex items-center justify-end gap-3 rounded-b-3xl">
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-xl text-xs font-bold text-gray-500 hover:text-white transition-colors cursor-pointer"
-          >
-            Close Reader
-          </button>
           <Link to="/contact-us" onClick={onClose}>
             <button className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md cursor-pointer">
               Book Free Demo
@@ -368,7 +363,7 @@ const BlogSection = ({ limit }) => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/blogs");
+        const response = await fetch(`${API_URL}/api/blogs`);
         const data = await response.json();
         setPosts(data);
       } catch (error) {

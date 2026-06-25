@@ -324,7 +324,7 @@ const Footer = () => {
             })),
             leadStatus: "New",
           };
-          fetch("http://localhost:5000/api/chat-submissions", {
+          fetch("https://auto-garage-network.onrender.com/api/chat-submissions", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -360,7 +360,7 @@ const Footer = () => {
               time: m.time || "",
             })),
           };
-          fetch(`http://localhost:5000/api/chat-submissions/${leadIdRef.current}`, {
+          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatePayload),
@@ -386,7 +386,7 @@ const Footer = () => {
               time: m.time || "",
             })),
           };
-          fetch(`http://localhost:5000/api/chat-submissions/${leadIdRef.current}`, {
+          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatePayload),
@@ -419,7 +419,7 @@ const Footer = () => {
               time: m.time || "",
             })),
           };
-          fetch(`http://localhost:5000/api/chat-submissions/${leadIdRef.current}`, {
+          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatePayload),
@@ -445,7 +445,7 @@ const Footer = () => {
               time: m.time || "",
             })),
           };
-          fetch(`http://localhost:5000/api/chat-submissions/${leadIdRef.current}`, {
+          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatePayload),
@@ -471,7 +471,7 @@ const Footer = () => {
               time: m.time || "",
             })),
           };
-          fetch(`http://localhost:5000/api/chat-submissions/${leadIdRef.current}`, {
+          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatePayload),
@@ -497,7 +497,7 @@ const Footer = () => {
               time: m.time || "",
             })),
           };
-          fetch(`http://localhost:5000/api/chat-submissions/${leadIdRef.current}`, {
+          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatePayload),
@@ -539,7 +539,7 @@ const Footer = () => {
 
           let response;
           if (leadIdRef.current) {
-            response = await fetch(`http://localhost:5000/api/chat-submissions/${leadIdRef.current}`, {
+            response = await fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
@@ -550,7 +550,7 @@ const Footer = () => {
               }),
             });
           } else {
-            response = await fetch("http://localhost:5000/api/chat-submissions", {
+            response = await fetch("https://auto-garage-network.onrender.com/api/chat-submissions", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -747,6 +747,8 @@ const Footer = () => {
               <button
                 onClick={() => toggleSection("company")}
                 className="w-full md:cursor-default flex justify-between items-center text-left md:block focus:outline-none"
+                aria-expanded={openSections.company}
+                aria-controls="footer-company-links"
               >
                 <h4 className="text-white font-extrabold text-base select-none">
                   Company
@@ -757,6 +759,7 @@ const Footer = () => {
               </button>
 
               <div
+                id="footer-company-links"
                 className={`${openSections.company ? "block" : "hidden"} md:block mt-3 md:mt-0`}
               >
                 <ul className="space-y-2.5 text-xs text-gray-400 font-semibold">
@@ -843,6 +846,8 @@ const Footer = () => {
               <button
                 onClick={() => toggleSection("industries")}
                 className="w-full md:cursor-default flex justify-between items-center text-left md:block focus:outline-none"
+                aria-expanded={openSections.industries}
+                aria-controls="footer-industries-links"
               >
                 <h4 className="text-white font-extrabold text-base select-none">
                   Industries
@@ -853,6 +858,7 @@ const Footer = () => {
               </button>
 
               <div
+                id="footer-industries-links"
                 className={`${openSections.industries ? "block" : "hidden"} md:block mt-3 md:mt-0`}
               >
                 <ul className="space-y-2.5 text-xs text-gray-400 font-semibold">
@@ -885,6 +891,8 @@ const Footer = () => {
               <button
                 onClick={() => toggleSection("products")}
                 className="w-full md:cursor-default flex justify-between items-center text-left md:block focus:outline-none"
+                aria-expanded={openSections.products}
+                aria-controls="footer-products-links"
               >
                 <h4 className="text-white font-extrabold text-base select-none">
                   Products
@@ -895,6 +903,7 @@ const Footer = () => {
               </button>
 
               <div
+                id="footer-products-links"
                 className={`${openSections.products ? "block" : "hidden"} md:block mt-3 md:mt-0`}
               >
                 <ul className="space-y-2.5 text-xs text-gray-400 font-semibold">
@@ -938,6 +947,8 @@ const Footer = () => {
               <button
                 onClick={() => toggleSection("contact")}
                 className="w-full md:cursor-default flex justify-between items-center text-left md:block focus:outline-none"
+                aria-expanded={openSections.contact}
+                aria-controls="footer-contact-links"
               >
                 <h4 className="text-white font-extrabold text-base select-none">
                   Contact Information
@@ -948,6 +959,7 @@ const Footer = () => {
               </button>
 
               <div
+                id="footer-contact-links"
                 className={`${openSections.contact ? "block" : "hidden"} md:block space-y-5 mt-4 md:mt-0 text-xs text-gray-400 font-semibold leading-relaxed`}
               >
                 <div className="flex items-start gap-3">
@@ -1050,6 +1062,7 @@ const Footer = () => {
                   setShowTooltip(false);
                 }}
                 className="text-gray-400 hover:text-slate-600 transition-colors cursor-pointer"
+                aria-label="Dismiss tooltip"
               >
                 <FiX className="w-3.5 h-3.5" />
               </button>
@@ -1086,6 +1099,7 @@ const Footer = () => {
                 <button
                   onClick={() => setIsOpen(false)}
                   className="text-gray-400 hover:text-slate-600 p-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                  aria-label="Close chat"
                 >
                   <FiX className="w-4 h-4" />
                 </button>
@@ -1232,15 +1246,17 @@ const Footer = () => {
               >
                 <input
                   type="text"
-                  placeholder="Type your message..."
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  className="flex-grow bg-gray-50 border border-gray-200 focus:border-blue-500 focus:outline-none rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-gray-400"
+                  placeholder="Type a message..."
+                  className="flex-grow bg-transparent border-0 outline-none text-xs font-semibold text-slate-800 placeholder-slate-400 min-w-0"
+                  aria-label="Type message"
                 />
                 <button
                   type="submit"
                   disabled={!inputValue.trim()}
                   className="p-2 rounded-xl bg-[#1A73E8] hover:bg-blue-600 text-white disabled:opacity-50 disabled:hover:bg-[#1A73E8] transition-colors shadow-lg cursor-pointer"
+                  aria-label="Send message"
                 >
                   <FiSend className="w-3.5 h-3.5" />
                 </button>
@@ -1266,6 +1282,7 @@ const Footer = () => {
               ? "bg-white text-slate-800 border border-gray-200 hover:bg-gray-50"
               : "bg-white text-slate-800 border border-gray-100 shadow-xl hover:shadow-2xl"
           }`}
+          aria-label={isOpen ? "Close support chat" : "Open support chat"}
         >
           {isOpen ? (
             <FiX className="w-6 h-6 text-slate-600" />

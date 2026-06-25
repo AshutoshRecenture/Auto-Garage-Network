@@ -369,6 +369,8 @@ const Navbar = () => {
                             ? "text-[#2196f3] font-bold"
                             : "text-gray-300 hover:text-white"
                         }`}
+                        aria-haspopup="true"
+                        aria-expanded={dropdownOpen && hoveredLink === link.name}
                       >
                         {hoveredLink === link.name && (
                           <motion.span
@@ -507,6 +509,8 @@ const Navbar = () => {
                     ? "text-slate-800 hover:text-slate-900 bg-slate-100 border-slate-200"
                     : "text-gray-300 hover:text-white bg-white/5 border-white/5"
                 }`}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
               >
                 {mobileMenuOpen ? (
                   <FiX className="w-6 h-6" />
@@ -626,6 +630,8 @@ const Navbar = () => {
                               ? "text-blue-600"
                               : "text-[#2196f3]"
                           }`}
+                          aria-haspopup="true"
+                          aria-expanded={mobileDropdownOpen}
                         >
                           <span>{link.name}</span>
                           <FiChevronDown

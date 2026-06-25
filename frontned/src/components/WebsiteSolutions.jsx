@@ -365,15 +365,16 @@ const WebsiteSolutions = () => {
 
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <span className="text-[7.5px] font-extrabold text-slate-500 block">
+                  <label htmlFor="booking-reg" className="text-[7.5px] font-extrabold text-slate-500 block">
                     VEHICLE REGISTRATION:
-                  </span>
+                  </label>
                   <div className="flex justify-center">
                     <div className="bg-amber-400 border-[2px] border-slate-950 rounded-md px-3 py-1 flex items-center shadow-sm relative overflow-hidden h-9 w-[180px]">
                       <div className="absolute left-0 top-0 bottom-0 w-3 bg-blue-600 flex flex-col items-center justify-center text-white text-[4px] leading-none shrink-0 font-bold">
                         <span>GB</span>
                       </div>
                       <input
+                        id="booking-reg"
                         type="text"
                         value={bookingReg}
                         onChange={(e) =>

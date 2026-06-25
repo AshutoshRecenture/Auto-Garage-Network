@@ -26,6 +26,7 @@ import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import DashboardSection from "../components/DashboardSection.jsx";
 import Footer from "../components/Footer.jsx";
+import { API_URL } from "../config";
 
 import { getCloudinaryUrl, useBackendOnline } from "../utils/cloudinary.js";
 
@@ -204,7 +205,7 @@ const GarageManagementSystem = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:5000/api/bookings", {
+      const response = await fetch(`${API_URL}/api/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -609,7 +610,7 @@ const GarageManagementSystem = () => {
                       <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Name */}
                         <div className="space-y-1">
-                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label htmlFor="form-name" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Full Name *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -631,7 +632,7 @@ const GarageManagementSystem = () => {
 
                         {/* Garage Name */}
                         <div className="space-y-1">
-                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label htmlFor="form-garagename" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Company / Garage Name *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -654,7 +655,7 @@ const GarageManagementSystem = () => {
                         {/* Email & Phone side-by-side */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-1">
-                            <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                            <label htmlFor="form-email" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                               Email Address *
                             </label>
                             <div className="relative flex items-center group/field">
@@ -674,7 +675,7 @@ const GarageManagementSystem = () => {
                             </div>
                           </div>
                           <div className="space-y-1">
-                            <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                            <label htmlFor="form-phone" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                               Phone Number *
                             </label>
                             <div className="relative flex items-center group/field">
@@ -697,7 +698,7 @@ const GarageManagementSystem = () => {
 
                         {/* Dropdown: Interested in */}
                         <div className="space-y-1">
-                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label htmlFor="interestedin" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Interested In *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -750,7 +751,7 @@ const GarageManagementSystem = () => {
 
                         {/* Address */}
                         <div className="space-y-1">
-                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label htmlFor="form-address" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Garage Address *
                           </label>
                           <div className="relative flex items-center group/field">
@@ -772,7 +773,7 @@ const GarageManagementSystem = () => {
 
                         {/* Message */}
                         <div className="space-y-1">
-                          <label className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
+                          <label htmlFor="form-message" className="text-xs uppercase font-bold text-indigo-400 tracking-wider block mb-1">
                             Inquiry Message
                           </label>
                           <div className="relative flex items-start group/field">

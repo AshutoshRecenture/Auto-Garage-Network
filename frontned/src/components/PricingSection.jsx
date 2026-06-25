@@ -200,6 +200,7 @@ const PricingSection = () => {
                     value={dailyJobs}
                     onChange={(e) => setDailyJobs(Number(e.target.value))}
                     className="w-full h-1.5 bg-[#050816] rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    aria-label="Daily Bookings / Jobs"
                   />
                   <div className="flex justify-between text-[10px] text-gray-600 font-bold select-none">
                     <span>1 Job</span>
@@ -222,6 +223,7 @@ const PricingSection = () => {
                     value={avgInvoice}
                     onChange={(e) => setAvgInvoice(Number(e.target.value))}
                     className="w-full h-1.5 bg-[#050816] rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    aria-label="Average Invoice Value"
                   />
                   <div className="flex justify-between text-[10px] text-gray-600 font-bold select-none">
                     <span>£30</span>
@@ -246,6 +248,7 @@ const PricingSection = () => {
                     value={adminHours}
                     onChange={(e) => setAdminHours(Number(e.target.value))}
                     className="w-full h-1.5 bg-[#050816] rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                    aria-label="Admin/Office Hours Per Day"
                   />
                   <div className="flex justify-between text-[10px] text-gray-600 font-bold select-none">
                     <span>1 Hour</span>
