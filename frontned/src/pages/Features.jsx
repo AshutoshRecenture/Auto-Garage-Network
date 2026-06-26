@@ -25,7 +25,7 @@ const Features = () => {
             A comprehensive overview of our automated system, providing tyre registration lookup, wholesaler stock, SMS reminders, and diagnostic audits.
           </p>
         </div>
-        <FeaturesSection />
+        <FeaturesSection isPage={true} />
       </main>
       <Footer />
     </div>

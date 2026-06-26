@@ -11,7 +11,7 @@ import {
   FiPlus,
 } from "react-icons/fi";
 
-const SEOSection = () => {
+const SEOSection = ({ isPage = false }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
@@ -286,12 +286,17 @@ const SEOSection = () => {
   );
 
   return (
-    <section id="seo" className="py-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden">
+    <section
+      id="seo"
+      className={`px-6 md:px-12 bg-[#050816] relative overflow-hidden ${
+        isPage ? "pt-6 md:pt-8 pb-12 md:pb-24" : "py-12 md:py-24"
+      }`}
+    >
       {/* Background radial glow recolored from emerald to blue */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
           {/* Left Column: Interactive Feature Cards */}
           <div className="order-2 md:order-1 space-y-8">
             <motion.div

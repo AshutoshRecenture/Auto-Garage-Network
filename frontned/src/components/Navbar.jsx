@@ -6,6 +6,7 @@ import {
   FiX,
   FiPhone,
   FiChevronDown,
+  FiChevronRight,
   FiLayout,
   FiMonitor,
   FiDatabase,
@@ -324,7 +325,7 @@ const Navbar = () => {
             : "bg-[#050816]/95 backdrop-blur-md sm:bg-transparent py-4 lg:py-5"
         }`}
       >
-        <div className="max-w-[1440px] mx-auto px-4 md:px-8">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 relative z-30">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link
@@ -370,7 +371,9 @@ const Navbar = () => {
                             : "text-gray-300 hover:text-white"
                         }`}
                         aria-haspopup="true"
-                        aria-expanded={dropdownOpen && hoveredLink === link.name}
+                        aria-expanded={
+                          dropdownOpen && hoveredLink === link.name
+                        }
                       >
                         {hoveredLink === link.name && (
                           <motion.span
@@ -501,7 +504,9 @@ const Navbar = () => {
             </nav>
 
             {/* Mobile / Tablet Menu Button */}
-            <div className="lg:hidden flex items-center">
+            <div
+              className={`lg:hidden flex items-center transition-opacity duration-300 ${mobileMenuOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+            >
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className={`p-1.5 rounded-md border cursor-pointer transition-colors duration-300 ${
@@ -525,285 +530,229 @@ const Navbar = () => {
         {/* Mobile / Tablet Menu Drawer */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              className={`absolute top-full left-0 w-full lg:hidden border-b overflow-y-auto max-h-[85vh] shadow-2xl transition-colors duration-300 ${
-                theme === "light"
-                  ? "bg-slate-50 border-slate-200"
-                  : "bg-[#070b16]/98 backdrop-blur-xl border-white/10"
-              }`}
-            >
-              <div className="px-6 py-6 space-y-4">
-                {/* Theme Toggle inside drawer to save space in the main mobile header */}
+            <>
+              {/* Backdrop Overlay */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setMobileMenuOpen(false)}
+                className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden"
+              />
+
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className={`fixed right-0 top-0 bottom-0 h-screen w-[82%] max-w-[340px] lg:hidden overflow-hidden shadow-2xl z-50 flex flex-col transition-all duration-300 ${
+                  theme === "light"
+                    ? "bg-white border-l border-slate-200"
+                    : "bg-[#0d1324] border-l border-white/10"
+                }`}
+              >
+                {/* Drawer Header inside the side panel */}
                 <div
-                  className={`flex justify-between items-center pb-4 border-b no-invert ${
-                    theme === "light" ? "border-slate-200" : "border-white/10"
+                  className={`flex items-center justify-between px-5 py-4 border-b ${
+                    theme === "light" ? "border-slate-100" : "border-white/5"
                   }`}
                 >
-                  <span
-                    className={`text-xs font-bold uppercase tracking-wider ${
-                      theme === "light" ? "text-slate-500" : "text-gray-400"
-                    }`}
+                  <Link
+                    to="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-shrink-0 flex items-center"
                   >
-                    Switch Theme
-                  </span>
-                  <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+                    <img
+                      src="/logo-color.png"
+                      alt="AG Network Logo"
+                      className="h-8 w-auto object-contain"
+                    />
+                  </Link>
+
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`p-1.5 rounded-md border cursor-pointer transition-colors duration-300 ${
+                      theme === "light"
+                        ? "text-slate-800 hover:text-slate-900 bg-slate-100 border-slate-200"
+                        : "text-gray-300 hover:text-white bg-white/5 border-white/5"
+                    }`}
+                    aria-label="Close menu"
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
                 </div>
 
-                {/* Mobile Drawer Contacts - Moved to Top */}
-                <div
-                  className={`pb-4 border-b space-y-3 ${
-                    theme === "light" ? "border-slate-200" : "border-white/10"
-                  }`}
-                >
-                  <p
-                    className={`text-[10px] uppercase tracking-wider font-extrabold ${
-                      theme === "light" ? "text-slate-400" : "text-gray-500"
-                    }`}
-                  >
-                    Contact Info
-                  </p>
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <a
-                      href="tel:07947906789"
-                      className={`flex items-center text-sm transition-colors duration-300 ${
+                <div className="flex-grow overflow-y-auto px-5 pb-8 pt-4 space-y-6">
+                  {/* Services Bento Grid Section */}
+                  <div className="space-y-1">
+                    <div
+                      onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+                      className={`flex items-center justify-between py-3 px-1 transition-all duration-200 cursor-pointer select-none ${
                         theme === "light"
-                          ? "text-slate-700 hover:text-slate-950"
+                          ? "text-slate-700 hover:text-slate-900"
                           : "text-gray-300 hover:text-white"
                       }`}
                     >
-                      <div
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2 shrink-0 border ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 text-indigo-600"
-                            : "bg-white/5 border-white/5 text-indigo-400"
-                        }`}
+                      <span
+                        className={`text-[13px] font-extrabold tracking-wide ${theme === "light" ? "text-slate-800" : "text-white"}`}
                       >
-                        <FiPhone className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-semibold text-[10px] sm:text-xs tracking-wide">
-                        Sales: 07947906789
+                        Our Services
                       </span>
-                    </a>
-                    <a
-                      href="tel:0172655556"
-                      className={`flex items-center text-sm transition-colors duration-300 ${
-                        theme === "light"
-                          ? "text-slate-700 hover:text-slate-950"
-                          : "text-gray-300 hover:text-white"
-                      }`}
-                    >
-                      <div
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center mr-2 shrink-0 border ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 text-indigo-600"
-                            : "bg-white/5 border-white/5 text-indigo-400"
+                      <FiChevronRight
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          mobileDropdownOpen
+                            ? "rotate-90 text-indigo-500"
+                            : theme === "light"
+                              ? "text-slate-500"
+                              : "text-gray-400"
                         }`}
-                      >
-                        <FiPhone className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-semibold text-[10px] sm:text-xs tracking-wide">
-                        Services: 0172655556
-                      </span>
-                    </a>
-                  </div>
-                </div>
+                      />
+                    </div>
 
-                {navLinks.map((link) => {
-                  const isActive =
-                    activeLink === link.href ||
-                    (link.dropdown &&
-                      link.dropdown.some((d) => activeLink === d.href));
-
-                  if (link.type === "dropdown") {
-                    return (
-                      <div key={link.name} className="block">
-                        <button
-                          onClick={() =>
-                            setMobileDropdownOpen(!mobileDropdownOpen)
-                          }
-                          className={`w-full flex items-center justify-between text-base font-semibold py-2 cursor-pointer ${
-                            theme === "light"
-                              ? "text-blue-600"
-                              : "text-[#2196f3]"
-                          }`}
-                          aria-haspopup="true"
-                          aria-expanded={mobileDropdownOpen}
+                    <AnimatePresence initial={false}>
+                      {mobileDropdownOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden"
                         >
-                          <span>{link.name}</span>
-                          <FiChevronDown
-                            className={`w-5 h-5 transition-transform duration-300 ${
-                              mobileDropdownOpen ? "rotate-180" : "rotate-0"
-                            }`}
-                          />
-                        </button>
-                        <AnimatePresence>
-                          {mobileDropdownOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className={`pl-4 space-y-2 overflow-hidden mt-1 border-l ${
-                                theme === "light"
-                                  ? "border-slate-200"
-                                  : "border-white/10"
-                              }`}
-                            >
-                              {link.dropdown.map((subItem) => {
-                                const isSubActive = activeLink === subItem.href;
-                                return (
-                                  <Link
-                                    key={subItem.name}
-                                    to={subItem.href}
-                                    onMouseEnter={() =>
-                                      handlePreload(subItem.href)
-                                    }
-                                    className={`block text-sm py-2 transition-colors duration-200 ${
-                                      isSubActive
-                                        ? theme === "light"
-                                          ? "text-blue-600 font-bold"
-                                          : "text-[#2196f3] font-bold"
-                                        : theme === "light"
-                                          ? "text-slate-600 hover:text-slate-900"
-                                          : "text-gray-400 hover:text-white"
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3">
+                            {(
+                              navLinks.find((link) => link.type === "dropdown")
+                                ?.dropdown || []
+                            ).map((subItem) => {
+                              const SubIcon = subItem.icon;
+                              return (
+                                <Link
+                                  key={subItem.name}
+                                  to={subItem.href}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={`p-3.5 rounded-2xl border flex flex-col items-center text-center justify-center gap-2.5 transition-all duration-300 active:scale-95 ${
+                                    theme === "light"
+                                      ? "bg-slate-50 border-slate-100 shadow-xs hover:bg-slate-100"
+                                      : "bg-white/[0.02] border-white/[0.05] shadow-inner hover:bg-white/[0.05]"
+                                  }`}
+                                >
+                                  <div
+                                    className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${subItem.color} flex items-center justify-center shadow-md`}
+                                  >
+                                    <SubIcon className="text-white w-5 h-5" />
+                                  </div>
+                                  <span
+                                    className={`text-[11px] font-bold leading-tight ${
+                                      theme === "light"
+                                        ? "text-slate-800"
+                                        : "text-white"
                                     }`}
-                                    onClick={() => {
-                                      setMobileMenuOpen(false);
-                                      setMobileDropdownOpen(false);
-                                    }}
                                   >
                                     {subItem.name}
-                                  </Link>
-                                );
-                              })}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  }
+                                  </span>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
 
-                  let linkClass =
-                    "block text-base font-semibold py-2 pl-3 rounded-lg transition-all ";
-                  if (link.type === "pricing") {
-                    linkClass +=
-                      theme === "light"
-                        ? "text-emerald-600 border-l-4 border-emerald-500 bg-emerald-50 mt-1 pr-3"
-                        : "text-emerald-400 border-l-4 border-[#10b981] bg-emerald-500/5 mt-1 pr-3";
-                  } else if (
-                    link.type === "seo" ||
-                    link.type === "latest-work"
-                  ) {
-                    linkClass +=
-                      theme === "light"
-                        ? "text-rose-600 border-l-4 border-rose-500 bg-rose-50 mt-1 pr-3"
-                        : "text-rose-400 border-l-4 border-[#f43f5e] bg-rose-500/5 mt-1 pr-3";
-                  } else {
-                    linkClass += isActive
-                      ? theme === "light"
-                        ? "text-indigo-600 border-l-4 border-indigo-500 bg-indigo-50 font-bold"
-                        : "text-indigo-400 border-l-4 border-indigo-500 bg-indigo-500/5 font-bold"
-                      : theme === "light"
-                        ? "text-slate-700 border-l-4 border-transparent hover:text-slate-950 hover:bg-slate-100"
-                        : "text-gray-300 border-l-4 border-transparent hover:text-white hover:bg-white/5";
-                  }
+                  {/* Navigation List Links */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0.5">
+                    {navLinks
+                      .filter((link) => link.type !== "dropdown")
+                      .map((link) => {
+                        const isActive = activeLink === link.href;
 
-                  return (
-                    <Link
-                      key={link.name}
-                      to={link.href}
-                      className={linkClass}
-                      onMouseEnter={() => handlePreload(link.href)}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {link.name}
-                    </Link>
-                  );
-                })}
+                        let textColor = "";
+                        let badge = null;
 
-                {/* Mobile Drawer Socials */}
-                <div
-                  className={`pt-6 border-t space-y-5 ${
-                    theme === "light" ? "border-slate-200" : "border-white/10"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <p
-                      className={`text-[10px] uppercase tracking-wider font-extrabold ${
-                        theme === "light" ? "text-slate-400" : "text-gray-500"
-                      }`}
-                    >
-                      Follow Us
-                    </p>
-                    <div className="flex items-center space-x-3.5">
-                      <a
-                        href="https://www.facebook.com/autogaragenetworkltd"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#1877F2] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 hover:bg-[#1877F2]/10"
-                            : "bg-white/5 border-white/5 hover:bg-[#1877F2]/10"
+                        if (link.type === "pricing") {
+                          textColor =
+                            theme === "light"
+                              ? "text-emerald-600"
+                              : "text-emerald-400";
+                          badge = (
+                            <span
+                              className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider ${
+                                theme === "light"
+                                  ? "bg-emerald-100 text-emerald-800"
+                                  : "bg-emerald-500/20 text-emerald-300"
+                              }`}
+                            >
+                              Plans
+                            </span>
+                          );
+                        } else if (
+                          link.type === "seo" ||
+                          link.type === "latest-work"
+                        ) {
+                          textColor =
+                            theme === "light"
+                              ? "text-rose-600"
+                              : "text-rose-400";
+                          badge = (
+                            <span
+                              className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider ${
+                                theme === "light"
+                                  ? "bg-rose-100 text-rose-800"
+                                  : "bg-rose-500/20 text-rose-300"
+                              }`}
+                            >
+                              Hot
+                            </span>
+                          );
+                        } else {
+                          textColor = isActive
+                            ? theme === "light"
+                              ? "text-indigo-600 font-bold"
+                              : "text-indigo-400 font-bold"
+                            : theme === "light"
+                              ? "text-slate-700 hover:text-slate-900"
+                              : "text-gray-300 hover:text-white";
+                        }
+
+                        return (
+                          <Link
+                            key={link.name}
+                            to={link.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center justify-between py-3 px-1 transition-all duration-200 group active:translate-x-1 ${
+                              theme === "light"
+                                ? "hover:text-slate-900"
+                                : "hover:text-white"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`text-[13px] font-extrabold tracking-wide ${textColor}`}
+                              >
+                                {link.name}
+                              </span>
+                              {badge}
+                            </div>
+
+                            {/* Chevron indicator removed per request */}
+                          </Link>
+                        );
+                      })}
+
+                    {/* Switch Theme Row */}
+                    <div className="flex items-center justify-between no-invert py-3 px-1 sm:hidden col-span-1 sm:col-span-2">
+                      <span
+                        className={`text-[10px] font-extrabold uppercase tracking-wider ${
+                          theme === "light" ? "text-slate-400" : "text-gray-500"
                         }`}
                       >
-                        <FaFacebookF size={14} />
-                      </a>
-                      <a
-                        href="https://www.instagram.com/autogaragenetworkltd.uk"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#E1306C] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 hover:bg-[#E1306C]/10"
-                            : "bg-white/5 border-white/5 hover:bg-[#E1306C]/10"
-                        }`}
-                      >
-                        <FaInstagram size={14} />
-                      </a>
-                      <a
-                        href="https://x.com/autogaragent"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#1877F2] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 hover:bg-[#1DA1F2]/10"
-                            : "bg-white/5 border-white/5 hover:bg-[#1DA1F2]/10"
-                        }`}
-                      >
-                        <FaTwitter size={14} />
-                      </a>
-                      <a
-                        href="https://www.linkedin.com/company/auto-garage-network-ltd/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#0A66C2] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 hover:bg-[#0A66C2]/10"
-                            : "bg-white/5 border-white/5 hover:bg-[#0A66C2]/10"
-                        }`}
-                      >
-                        <FaLinkedinIn size={14} />
-                      </a>
-                      <a
-                        href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center text-[#FF0000] transition-all duration-300 border shadow-md hover:scale-105 ${
-                          theme === "light"
-                            ? "bg-slate-100 border-slate-200 hover:bg-[#FF0000]/10"
-                            : "bg-white/5 border-white/5 hover:bg-[#FF0000]/10"
-                        }`}
-                      >
-                        <FaYoutube size={14} />
-                      </a>
+                        Switch Theme
+                      </span>
+                      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                     </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </header>

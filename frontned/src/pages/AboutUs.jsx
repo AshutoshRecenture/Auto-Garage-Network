@@ -245,7 +245,7 @@ const AboutUs = () => {
         {/* ══════════════════════════════════════════
             FOUNDER STORY SECTION (VIDEO + TEXT)
         ══════════════════════════════════════════ */}
-        <section className="py-20 px-6 md:px-12 border-y border-white/5 bg-[#0a0f24]/30 relative overflow-hidden">
+        <section className="pt-10 pb-12 px-6 md:px-12 border-y border-white/5 bg-[#0a0f24]/30 relative overflow-hidden">
           {/* subtle background glow behind the video section */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-indigo-600/5 blur-[120px] pointer-events-none" />
 
@@ -350,7 +350,7 @@ const AboutUs = () => {
         {/* ══════════════════════════════════════════
             WHAT WE OFFER  +  SERVICES
         ══════════════════════════════════════════ */}
-        <section className="py-24 px-6 md:px-12">
+        <section className="pt-10 pb-12 px-6 md:px-12">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             {/* left text */}
             <motion.div
@@ -507,7 +507,7 @@ const AboutUs = () => {
         {/* ══════════════════════════════════════════
             CORE VALUES
         ══════════════════════════════════════════ */}
-        <section className="py-24 px-6 md:px-12 bg-white/[0.01] border-y border-white/5">
+        <section className="pt-10 pb-16 px-6 md:px-12 bg-white/[0.01] border-y border-white/5">
           <div className="max-w-7xl mx-auto">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <motion.h2

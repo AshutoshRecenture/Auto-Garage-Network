@@ -1152,6 +1152,16 @@ html:not(.light) .gms-hero-gradient-2 {
 
 .fup-card {
   perspective: 1000px;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15), filter 0.3s ease;
+  will-change: transform;
+}
+
+.fup-card:hover {
+  transform: translateY(-8px);
+}
+
+.fup-card:active {
+  transform: translateY(-2px) scale(0.98);
 }
 
 .fup-card-inner {
@@ -1174,8 +1184,9 @@ html:not(.light) .gms-hero-gradient-2 {
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: 1rem; /* rounded-2xl */
+  border-radius: 1.25rem; /* rounded-2xl */
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .fup-card-front {
@@ -1184,35 +1195,60 @@ html:not(.light) .gms-hero-gradient-2 {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background-color: rgba(5, 8, 22, 0.4) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background-color: rgba(8, 12, 30, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.fup-card:hover .fup-card-front {
+  border-color: var(--card-color) !important;
+  background-color: rgba(12, 18, 42, 0.8) !important;
+  box-shadow: 0 12px 30px -10px var(--card-color) !important;
 }
 
 .light .fup-card-front {
-  background-color: rgba(15, 23, 42, 0.03) !important;
-  border-color: rgba(15, 23, 42, 0.06) !important;
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04) !important;
 }
 
-.fup-card-front:hover {
-  border-color: rgba(99, 102, 241, 0.3) !important;
-}
-
-.light .fup-card-front:hover {
-  border-color: rgba(79, 70, 229, 0.3) !important;
+.light .fup-card:hover .fup-card-front {
+  border-color: var(--card-color) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 15px 35px -10px var(--card-color) !important;
 }
 
 .fup-card-back {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  background-color: rgba(12, 18, 34, 0.98) !important;
+  background-color: rgba(8, 12, 30, 0.95) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transform: rotateY(180deg);
 }
 
+.fup-card:hover .fup-card-back {
+  border-color: var(--card-color) !important;
+  box-shadow: 0 12px 30px -10px var(--card-color) !important;
+}
+
 .light .fup-card-back {
-  background-color: #ffffff !important;
-  border-color: rgba(15, 23, 42, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04) !important;
+}
+
+.light .fup-card:hover .fup-card-back {
+  border-color: var(--card-color) !important;
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  box-shadow: 0 15px 35px -10px var(--card-color) !important;
 }
 
 /* Scrollbar styling for FUP card description */
@@ -1240,3 +1276,43 @@ html:not(.light) .gms-hero-gradient-2 {
   border-color: rgba(99, 102, 241, 0.2) !important;
 }
 
+/* Custom hover styles for the pricing navigation tabs */
+.pricing-tab-link {
+  color: #9ca3af !important; /* text-gray-400 equivalent */
+  transition: color 0.3s ease;
+}
+
+.pricing-tab-link:hover {
+  color: #ffffff !important; /* hover:text-white */
+}
+
+.light .pricing-tab-link {
+  color: #64748b !important; /* text-slate-500 in light mode */
+}
+
+.light .pricing-tab-link:hover {
+  color: #0f172a !important; /* hover:text-slate-900 in light mode */
+}
+
+/* Specific theme overrides for the pricing page tabs container and elements to guarantee high visibility in light mode */
+.light .pricing-tabs-container {
+  background-color: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+.light .pricing-tabs-container button,
+.light .pricing-tabs-container a {
+  color: #475569 !important; /* slate-600 (highly readable dark grey) */
+}
+
+.light .pricing-tabs-container button:hover,
+.light .pricing-tabs-container a:hover {
+  color: #0f172a !important; /* slate-900 */
+}
+
+/* Maintain proper background and text color for the active tab in light mode */
+.light .pricing-tabs-container button.bg-indigo-600 {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3) !important;
+}

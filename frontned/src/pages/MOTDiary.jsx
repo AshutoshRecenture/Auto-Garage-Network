@@ -54,7 +54,7 @@ const MOTDiaryPage = () => {
             HERO BANNER
         ══════════════════════════════════════════ */}
         <section
-          className="relative py-24 md:py-32 overflow-hidden bg-cover bg-center garage-hero-banner"
+          className="relative py-12 md:py-16 overflow-hidden bg-cover bg-center garage-hero-banner"
           style={{ backgroundImage: `url(${aboutImg})` }}
         >
           {/* Blue/Navy tint brand overlay */}
@@ -76,7 +76,7 @@ const MOTDiaryPage = () => {
         {/* ══════════════════════════════════════════
             SUB-HERO SECTION
         ══════════════════════════════════════════ */}
-        <section className="py-16 md:py-20 px-6 relative overflow-hidden">
+        <section className="pt-8 pb-10 md:pt-10 md:pb-12 px-6 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
@@ -119,7 +119,7 @@ const MOTDiaryPage = () => {
         {/* ══════════════════════════════════════════
             WHAT NOT TO MISS & LAPTOP MOCKUP
         ══════════════════════════════════════════ */}
-        <section className="py-16 px-6">
+        <section className="pt-6 pb-10 px-6">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left: Detailed Info */}
             <div className="lg:col-span-7 space-y-6 text-left">
@@ -176,7 +176,7 @@ const MOTDiaryPage = () => {
         {/* ══════════════════════════════════════════
             IT'S FEATURE-LOADED CARDS
         ══════════════════════════════════════════ */}
-        <section className="py-20 px-6 bg-[#0a0f24]/30 border-y border-white/5 relative overflow-hidden">
+        <section className="py-10 px-6 bg-[#0a0f24]/30 border-y border-white/5 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto relative z-10 space-y-12">
@@ -215,7 +215,7 @@ const MOTDiaryPage = () => {
             LIVE INTERACTIVE PREVIEW
         ══════════════════════════════════════════ */}
         <div className="border-t border-white/5">
-          <div className="text-center pt-20">
+          <div className="text-center pt-10">
             <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-4 py-1.5 rounded-full inline-block mb-2">
               Live Interactive Demo
             </span>

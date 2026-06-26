@@ -17,6 +17,7 @@ import {
   FiShield,
   FiEdit,
   FiMail,
+  FiRefreshCw,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -421,30 +422,30 @@ const Pricing = () => {
 
           {/* Tab Selection Navigation */}
           <div className="flex justify-center mt-12 px-4">
-            <div className="bg-[#0c1222]/90 border border-white/10 p-1.5 rounded-2xl flex gap-2 max-w-full overflow-x-auto shadow-2xl backdrop-blur-md">
+            <div className="bg-[#0c1222]/90 border border-white/10 p-1.5 rounded-2xl flex flex-col sm:flex-row gap-2 w-full sm:w-auto shadow-2xl backdrop-blur-md pricing-tabs-container">
               <button
                 onClick={() => setActiveTab("gms")}
-                className={`px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer ${
+                className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer ${
                   activeTab === "gms"
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                    : "text-gray-400 hover:text-white"
+                    : "pricing-tab-link"
                 }`}
               >
                 Garage Management (GMS)
               </button>
               <button
                 onClick={() => setActiveTab("websites")}
-                className={`px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer ${
+                className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer ${
                   activeTab === "websites"
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                    : "text-gray-400 hover:text-white"
+                    : "pricing-tab-link"
                 }`}
               >
                 Website Solutions
               </button>
               <Link
                 to="/autotech-data"
-                className="px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer text-gray-400 hover:text-white flex items-center"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs md:text-sm transition-all duration-300 whitespace-nowrap cursor-pointer pricing-tab-link flex items-center justify-center"
               >
                 Autotech Data
               </Link>
@@ -556,7 +557,7 @@ const Pricing = () => {
                       <Link
                         to="/contact-us"
                         state={{ interest: "Garage Management System" }}
-                        className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-center block ${
+                        className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-center block active:scale-[0.97] duration-150 ${
                           plan.popular
                             ? "bg-indigo-600 hover:!bg-blue-600 hover:!text-white text-white no-invert shadow-lg shadow-indigo-600/15"
                             : "bg-white/5 hover:!bg-blue-600 hover:!text-white text-white border border-white/10 hover:!border-blue-600"
@@ -600,6 +601,7 @@ const Pricing = () => {
                         <div
                           key={idx}
                           onClick={() => toggleFlip(idx)}
+                          style={{ "--card-color": item.color }}
                           className={`fup-card h-[220px] cursor-pointer group ${
                             isFlipped ? "flipped" : ""
                           }`}
@@ -619,25 +621,47 @@ const Pricing = () => {
                                   style={{ color: item.color }}
                                 />
                               </div>
-                              <h4 className="font-black text-indigo-400 uppercase tracking-wider text-sm md:text-base text-center px-2">
+                              <h4
+                                className="font-black uppercase tracking-wider text-sm md:text-base text-center px-2"
+                                style={{ color: item.color }}
+                              >
                                 {item.title}
                               </h4>
-                              <span className="text-[10px] text-gray-500 mt-6 group-hover:text-indigo-400 transition-colors uppercase tracking-widest font-bold">
-                                Click to Read Details
-                              </span>
+                              <div
+                                className="flex items-center gap-1.5 mt-6 px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all duration-300"
+                                style={{
+                                  borderColor: `${item.color}30`,
+                                  color: item.color,
+                                  backgroundColor: `${item.color}08`,
+                                }}
+                              >
+                                <span>Click to Read Details</span>
+                                <FiRefreshCw className="w-3 h-3 group-hover:rotate-180 transition-transform duration-500" />
+                              </div>
                             </div>
 
                             {/* Back Side */}
                             <div className="fup-card-back">
-                              <h4 className="font-black text-indigo-400 uppercase tracking-wider text-xs md:text-sm mb-3">
+                              <h4
+                                className="font-black uppercase tracking-wider text-xs md:text-sm mb-3"
+                                style={{ color: item.color }}
+                              >
                                 {item.title}
                               </h4>
                               <div className="text-gray-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-grow scrollbar-thin">
                                 {item.desc}
                               </div>
-                              <span className="text-[9px] text-gray-500 mt-3 text-center uppercase tracking-widest font-bold">
-                                Click to Flip Back
-                              </span>
+                              <div
+                                className="flex items-center justify-center gap-1.5 mt-3 px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest border transition-all duration-300 align-self-center text-center cursor-pointer"
+                                style={{
+                                  borderColor: `${item.color}30`,
+                                  color: item.color,
+                                  backgroundColor: `${item.color}08`,
+                                }}
+                              >
+                                <span>Click to Flip Back</span>
+                                <FiRefreshCw className="w-2.5 h-2.5 group-hover:rotate-180 transition-transform duration-500" />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -749,10 +773,10 @@ const Pricing = () => {
                       <Link
                         to="/contact-us"
                         state={{ interest: "Website for Garages" }}
-                        className={`w-full mt-6 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer text-center block ${
+                        className={`w-full mt-6 py-3 rounded-xl text-xs font-bold transition-all cursor-pointer text-center block active:scale-[0.97] duration-150 ${
                           plan.popular
-                            ? "bg-purple-600 hover:bg-purple-500 text-white no-invert shadow-lg shadow-purple-600/15"
-                            : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                            ? "bg-purple-600 hover:!bg-purple-500 hover:!text-white text-white no-invert shadow-lg shadow-purple-600/15"
+                            : "bg-white/5 hover:!bg-purple-600 hover:!text-white text-white border border-white/10 hover:!border-purple-600"
                         }`}
                       >
                         Select Tier

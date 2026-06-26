@@ -320,7 +320,15 @@ const ProjectCard = ({ project, idx }) => {
           </div>
           {/* Render Mock Interface */}
           <div className="relative w-full h-[calc(100%-20px)]">
-            {renderMockup()}
+            {project.image ? (
+              <img
+                src={project.image}
+                alt={project.title}
+                className="w-full h-full object-cover object-top"
+              />
+            ) : (
+              renderMockup()
+            )}
           </div>
         </div>
       </div>
@@ -361,6 +369,7 @@ const LatestWork = () => {
       features: ["Tyre Fitting", "MOT & Services", "Instant Reg Quote"],
       metrics: "35% Growth in Bookings",
       bgClass: "from-blue-600 to-indigo-800",
+      image: "/carfix.png",
     },
     {
       title: "Kilnhurst Tyres",
@@ -370,6 +379,7 @@ const LatestWork = () => {
       features: ["Wheel Alignment", "Mobile Tyre Fitting", "Live Slot Scheduler"],
       metrics: "Ranked #1 Locally for Tyres",
       bgClass: "from-slate-800 to-emerald-950",
+      image: "/kilnhurst.png",
     },
     {
       title: "MS Auto Centre Ltd",
@@ -379,6 +389,7 @@ const LatestWork = () => {
       features: ["MOT & Servicing", "Brakes & Exhausts", "E-Commerce System"],
       metrics: "2.5x Increase in Web Traffic",
       bgClass: "from-red-600 to-neutral-900",
+      image: "/msauto.png",
     },
     {
       title: "Kingz Automotive",
@@ -388,6 +399,7 @@ const LatestWork = () => {
       features: ["Custom Wrapping", "Alloy Wheels", "Luxury Tuning Portal"],
       metrics: "180+ High-End Builds Streamlined",
       bgClass: "from-amber-600 via-amber-800 to-stone-950",
+      image: "/kingz.png",
     },
     {
       title: "Solent MOT Centre",
@@ -397,6 +409,7 @@ const LatestWork = () => {
       features: ["Class 4 & 7 MOTs", "Vehicle Diagnostics", "Integrated Diary"],
       metrics: "Over 5,000 Bookings Processed",
       bgClass: "from-cyan-600 to-blue-800",
+      image: "/solent.png",
     },
     {
       title: "Smart MOT",
@@ -406,6 +419,7 @@ const LatestWork = () => {
       features: ["Online Slot Booking", "Tyre Finder Widget", "Fleet Logs"],
       metrics: "Zero Double-Bookings",
       bgClass: "from-green-600 to-teal-800",
+      image: "/smartmot.png",
     },
     {
       title: "Roberts Tyres",
@@ -415,6 +429,7 @@ const LatestWork = () => {
       features: ["Mobile Fitting", "Nexen Tyres Discount", "Instant VRM Search"],
       metrics: "40% E-Commerce Sales Uplift",
       bgClass: "from-green-500 to-zinc-900",
+      image: "/roberts.png",
     },
     {
       title: "Treadmark Wheels and Tyres",
@@ -424,6 +439,7 @@ const LatestWork = () => {
       features: ["Alloy Refurbishment", "Tyre Finder Widget", "Brakes Fitting"],
       metrics: "300+ Google Reviews (4.9 Star)",
       bgClass: "from-blue-700 to-slate-900",
+      image: "/treadmark.png",
     },
   ];
 

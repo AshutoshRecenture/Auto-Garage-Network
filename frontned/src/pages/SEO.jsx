@@ -22,7 +22,7 @@ const SEO = () => {
             Search Engine Optimisation
           </h1>
         </div>
-        <SEOSection />
+        <SEOSection isPage={true} />
       </main>
       <Footer />
     </div>

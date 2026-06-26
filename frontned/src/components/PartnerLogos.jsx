@@ -17,9 +17,9 @@ const PartnerLogos = () => {
   const duplicatedPartners = [...partners, ...partners]
 
   return (
-    <section className="py-12 border-t border-white/5 bg-[#050816] overflow-hidden">
+    <section className="py-6 md:py-12 border-t border-white/5 bg-[#050816] overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-8 text-center">
+        <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-4 md:mb-8 text-center">
           INTEGRATED WITH LEADING AUTOMOTIVE BRANDS & SOFTWARE
         </p>
         

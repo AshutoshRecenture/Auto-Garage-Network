@@ -51,10 +51,10 @@ const PricingSection = () => {
   return (
     <section
       id="pricing"
-      className="py-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden"
+      className="pt-10 pb-6 md:pt-20 md:pb-10 px-6 md:px-12 bg-[#050816] relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -79,7 +79,7 @@ const PricingSection = () => {
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-8 items-stretch mb-24">
+        <div className="grid md:grid-cols-3 gap-8 items-stretch mb-6">
           {plans.map((plan, idx) => (
             <motion.div
               key={idx}

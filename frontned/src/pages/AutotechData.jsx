@@ -60,7 +60,7 @@ const AutotechData = () => {
         {/* ══════════════════════════════════════════
             HERO SECTION
         ══════════════════════════════════════════ */}
-        <section className="relative pt-6 pb-20 lg:pt-8 lg:pb-28 px-6 md:px-12 overflow-hidden">
+        <section className="relative pt-6 pb-10 lg:pt-8 lg:pb-12 px-6 md:px-12 overflow-hidden">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center relative z-10">
@@ -116,7 +116,7 @@ const AutotechData = () => {
         {/* ══════════════════════════════════════════
             SOLERA AUTODATA PARTNERSHIP
         ══════════════════════════════════════════ */}
-        <section className="py-20 px-6 bg-[#0a0f24]/30 border-y border-white/5 relative overflow-hidden">
+        <section className="py-12 lg:py-16 px-6 bg-[#0a0f24]/30 border-y border-white/5 relative overflow-hidden">
           <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
@@ -195,7 +195,7 @@ const AutotechData = () => {
         {/* ══════════════════════════════════════════
             TRANSITION VISION BANNER (PRESERVED DARK)
         ══════════════════════════════════════════ */}
-        <section className="py-20 px-6 bg-[#0c1222] border-b border-white/5 relative overflow-hidden dark-card-preserve">
+        <section className="py-12 lg:py-16 px-6 bg-[#0c1222] border-b border-white/5 relative overflow-hidden dark-card-preserve">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto relative z-10 space-y-10">
@@ -244,7 +244,7 @@ const AutotechData = () => {
         {/* ══════════════════════════════════════════
             UNRIVALLED DATA SECTION
         ══════════════════════════════════════════ */}
-        <section className="py-20 px-6">
+        <section className="py-12 lg:py-16 px-6">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left: Component Diagram Mockup */}
             <motion.div
@@ -291,7 +291,7 @@ const AutotechData = () => {
         {/* ══════════════════════════════════════════
             FACTORY CORRECT INFORMATION
         ══════════════════════════════════════════ */}
-        <section className="py-20 px-6 bg-[#0a0f24]/30 border-t border-white/5 relative overflow-hidden">
+        <section className="py-12 lg:py-16 px-6 bg-[#0a0f24]/30 border-t border-white/5 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
@@ -340,7 +340,7 @@ const AutotechData = () => {
         {/* ══════════════════════════════════════════
             LOOKUP PRICING PACKAGES
         ══════════════════════════════════════════ */}
-        <section className="py-20 px-6 border-t border-white/5 relative overflow-hidden">
+        <section className="py-12 lg:py-16 px-6 border-t border-white/5 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto relative z-10 space-y-12">

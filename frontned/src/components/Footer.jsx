@@ -785,7 +785,7 @@ const Footer = () => {
         </div>
 
         {/* 2. Main Footer columns grid */}
-        <div className="max-w-[1500px] mx-auto px-8 lg:px-16 pt-16 pb-6">
+        <div className="max-w-[1500px] mx-auto px-8 lg:px-16 pt-10 md:pt-16 pb-6">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-y-8 md:gap-10">
             {/* Column 1: Auto Garage Network blurb */}
             <div className="space-y-5 text-center md:text-left flex flex-col items-center md:items-start pb-6 md:pb-0 border-b border-white/5 md:border-0">

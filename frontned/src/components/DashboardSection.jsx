@@ -18,7 +18,7 @@ import {
   FiBriefcase,
 } from "react-icons/fi";
 
-const DashboardSection = () => {
+const DashboardSection = ({ isPage = false }) => {
   // State machine selection: 0 = Dashboard, 1 = Maintenance, 2 = Fleet, 3 = Scheduling
   const [activeTab, setActiveTab] = useState(0);
 
@@ -331,14 +331,14 @@ const DashboardSection = () => {
   }, []);
 
   return (
-    <section className="pt-12 pb-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden">
+    <section className={`px-6 md:px-12 bg-[#050816] relative overflow-hidden ${isPage ? "pt-6 md:pt-8 pb-12 md:pb-16" : "pt-12 pb-12 md:pb-24"}`}>
       {/* Visual background elements */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.05),transparent)] pointer-events-none" />
       <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[160px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[160px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}

@@ -651,7 +651,7 @@ const WebsiteSolutions = () => {
   return (
     <section
       id="products"
-      className="py-16 px-6 md:px-12 bg-[#050816] relative overflow-hidden"
+      className="py-10 md:py-16 px-6 md:px-12 bg-[#050816] relative overflow-hidden"
     >
       <div id="latest-work" className="absolute top-0 left-0" />
       <div className="max-w-7xl mx-auto">
@@ -660,7 +660,7 @@ const WebsiteSolutions = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+          className="text-center max-w-3xl mx-auto mb-8 md:mb-16 space-y-4"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-white">
             High-Performance <br />

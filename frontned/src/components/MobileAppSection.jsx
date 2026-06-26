@@ -297,12 +297,12 @@ const MobileAppSection = () => {
   );
 
   return (
-    <section className="py-24 px-6 md:px-12 bg-gradient-to-b from-[#050816] to-[#0c1222] overflow-hidden relative">
+    <section className="py-12 md:py-24 px-6 md:px-12 bg-gradient-to-b from-[#050816] to-[#0c1222] overflow-hidden relative">
       {/* Background radial glow recolored from orange to blue */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
           {/* Left Column: Interactive Feature List */}
           <div className="order-2 md:order-1 space-y-8 text-left z-10">
             <motion.div

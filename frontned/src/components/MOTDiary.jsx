@@ -486,8 +486,8 @@ const MOTDiary = () => {
   };
 
   return (
-    <section className="py-16 px-6 md:px-12 bg-[#0c1222] overflow-hidden">
-      <div className="max-w-7xl mx-auto space-y-16">
+    <section className="py-10 md:py-16 px-6 md:px-12 bg-[#0c1222] overflow-hidden">
+      <div className="max-w-7xl mx-auto space-y-8 md:space-y-16">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <h2 className="text-3xl md:text-5xl font-black text-white">

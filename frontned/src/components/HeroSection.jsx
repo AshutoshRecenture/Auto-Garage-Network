@@ -265,7 +265,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative pt-36 pb-16 md:pt-44 lg:pt-48 md:pb-20 px-6 md:px-12 max-w-7xl mx-auto overflow-visible min-h-[80vh] flex items-center">
+    <section className="relative pt-24 pb-8 md:pt-44 lg:pt-48 md:pb-20 px-6 md:px-12 max-w-7xl mx-auto overflow-visible min-h-0 md:min-h-[80vh] flex items-center">
       <style>{`.three-d{perspective:1200px;transform-style:preserve-3d;transition:transform .4s ease;}
 .three-d:hover{transform:rotateX(2deg) rotateY(-2deg) scale(1.01);}`}</style>
 
@@ -295,7 +295,7 @@ const HeroSection = () => {
       <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
         {/* Left Column: Content */}
         <motion.div
-          className="lg:col-span-6 space-y-8 text-left z-10"
+          className="lg:col-span-6 space-y-5 md:space-y-8 text-left z-10"
           variants={containerVariant}
           initial="hidden"
           animate="visible"
@@ -385,7 +385,7 @@ const HeroSection = () => {
         </motion.div>
 
         {/* Right Column: Visual Mockup */}
-        <div className="lg:col-span-6 relative mt-16 lg:mt-0 flex justify-center items-center three-d w-full overflow-visible py-8">
+        <div className="lg:col-span-6 relative mt-8 lg:mt-0 flex justify-center items-center three-d w-full overflow-visible py-4 lg:py-8">
           <div className="scale-[0.8] xs:scale-[0.88] sm:scale-95 md:scale-100 origin-center relative w-full max-w-[550px] flex justify-center items-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, x: 20 }}

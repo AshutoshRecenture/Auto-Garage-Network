@@ -118,7 +118,7 @@ const FeatureCard = ({ feature }) => {
   );
 };
 
-const FeaturesSection = () => {
+const FeaturesSection = ({ isPage = false }) => {
   const [showAllFeatures, setShowAllFeatures] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -230,18 +230,20 @@ const FeaturesSection = () => {
   return (
     <section
       id="features"
-      className="feature-section pt-24 pb-12 px-6 md:px-12 bg-[#050816] relative"
+      className={`feature-section pb-6 md:pb-12 px-6 md:px-12 bg-[#050816] relative ${
+        isPage ? "pt-6 md:pt-8" : "pt-12 md:pt-24"
+      }`}
       onMouseMove={handleMouseMove}
     >
       <div className="max-w-7xl mx-auto relative">
         <div className="feature-bg"></div>
         <div className="spotlight absolute inset-0 pointer-events-none"></div>
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-bold text-white mb-6"
+            className="text-3xl md:text-5xl font-bold text-white mb-3 md:mb-6"
           >
             Everything you need to{" "}
             <span className="text-blue-500">Run Your Garage</span>
@@ -263,7 +265,7 @@ const FeaturesSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8"
         >
           {features.map((feature, idx) => (
             <motion.div
