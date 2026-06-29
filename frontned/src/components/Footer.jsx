@@ -1011,6 +1011,7 @@ const Footer = () => {
                   href="https://www.facebook.com/autogaragenetworkltd"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Visit our Facebook page"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1877F2] flex items-center justify-center text-white transition-all hover:scale-105"
                 >
                   <FaFacebookF size={13} />
@@ -1019,6 +1020,7 @@ const Footer = () => {
                   href="https://www.instagram.com/autogaragenetworkltd.uk"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Visit our Instagram profile"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#E1306C] flex items-center justify-center text-white transition-all hover:scale-105"
                 >
                   <FaInstagram size={13} />
@@ -1027,6 +1029,7 @@ const Footer = () => {
                   href="https://x.com/autogaragent"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Visit our Twitter profile"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1DA1F2] flex items-center justify-center text-white transition-all hover:scale-105"
                 >
                   <FaTwitter size={13} />
@@ -1035,6 +1038,7 @@ const Footer = () => {
                   href="https://www.linkedin.com/company/auto-garage-network-ltd/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Visit our LinkedIn page"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#0A66C2] flex items-center justify-center text-white transition-all hover:scale-105"
                 >
                   <FaLinkedinIn size={13} />
@@ -1043,6 +1047,7 @@ const Footer = () => {
                   href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Visit our YouTube channel"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#FF0000] flex items-center justify-center text-white transition-all hover:scale-105"
                 >
                   <FaYoutube size={13} />
