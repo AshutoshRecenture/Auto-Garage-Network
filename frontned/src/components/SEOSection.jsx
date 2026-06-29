@@ -311,7 +311,10 @@ const SEOSection = ({ isPage = false }) => {
                 </span>
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed">
-                Unlock a continuous stream of organic bookings. Our specialized SEO platform places your workshop at the peak of local search results when nearby car owners actively search for MOTs, servicing, and repairs.
+                Unlock a continuous stream of organic bookings. Our specialized
+                SEO platform places your workshop at the peak of local search
+                results when nearby car owners actively search for MOTs,
+                servicing, and repairs.
               </p>
             </motion.div>
 

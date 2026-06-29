@@ -395,18 +395,9 @@ const BlogSection = ({ limit }) => {
   }, [showOthers]);
 
   const allCategories = ["All", ...new Set(posts.map((post) => post.category))];
-  const cutIndex = allCategories.findIndex(
-    (c) =>
-      c.toLowerCase().includes("relations") ||
-      c.toLowerCase().includes("customer relations"),
-  );
 
-  const mainCategories =
-    cutIndex !== -1
-      ? allCategories.slice(0, cutIndex + 1)
-      : allCategories.slice(0, 5);
-  const otherCategories =
-    cutIndex !== -1 ? allCategories.slice(cutIndex + 1) : allCategories.slice(5);
+  const mainCategories = allCategories.slice(0, 5);
+  const otherCategories = allCategories.slice(5);
 
   const filteredPosts =
     selectedCategory === "All"
@@ -455,13 +446,13 @@ const BlogSection = ({ limit }) => {
               </p>
             </motion.div>
 
-            <Link to="/blog">
+            <Link to="/blog" className="hidden md:inline-block">
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 whileHover={{ x: 3 }}
-                className="hidden md:flex items-center space-x-2 text-indigo-400 hover:text-indigo-300 font-extrabold transition-colors cursor-pointer"
+                className="flex items-center space-x-2 text-indigo-400 hover:text-indigo-300 font-extrabold transition-colors cursor-pointer"
               >
                 <span>View All Articles</span>
                 <FiArrowRight />
@@ -498,7 +489,7 @@ const BlogSection = ({ limit }) => {
                   <span>
                     {otherCategories.includes(selectedCategory)
                       ? selectedCategory
-                      : "Other..."}
+                      : "See More..."}
                   </span>
                   <span className="opacity-75">
                     {showOthers ? <FiChevronUp className="w-3.5 h-3.5" /> : <FiChevronDown className="w-3.5 h-3.5" />}
