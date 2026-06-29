@@ -238,13 +238,27 @@ const BlogModal = ({ post, onClose }) => {
 
 const BlogCard = ({ post, onReadMore }) => {
   const cardRef = React.useRef(null);
+  const rectRef = React.useRef(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  const handleMouseEnter = () => {
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+    setIsHovered(true);
+  };
+
   const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    if (!rectRef.current) {
+      if (cardRef.current) {
+        rectRef.current = cardRef.current.getBoundingClientRect();
+      } else {
+        return;
+      }
+    }
+    const rect = rectRef.current;
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const xc = rect.width / 2;
@@ -254,6 +268,7 @@ const BlogCard = ({ post, onReadMore }) => {
   };
 
   const handleMouseLeave = () => {
+    rectRef.current = null;
     setRotateX(0);
     setRotateY(0);
     setIsHovered(false);
@@ -283,7 +298,7 @@ const BlogCard = ({ post, onReadMore }) => {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onClick={onReadMore}
       style={{
         perspective: 1000,

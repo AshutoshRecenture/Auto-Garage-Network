@@ -26,10 +26,17 @@ const FeatureCard = ({ feature }) => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const cardRectRef = React.useRef(null);
+
+  const handleMouseEnter = (e) => {
+    cardRectRef.current = e.currentTarget.getBoundingClientRect();
+  };
 
   const handleMouseMove = (e) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
+    if (!cardRectRef.current) {
+      cardRectRef.current = e.currentTarget.getBoundingClientRect();
+    }
+    const rect = cardRectRef.current;
     const width = rect.width;
     const height = rect.height;
 
@@ -46,7 +53,7 @@ const FeatureCard = ({ feature }) => {
   };
 
   const handleMouseLeave = () => {
-    // Reset tilt on mouse leave
+    cardRectRef.current = null;
     setRotateX(0);
     setRotateY(0);
   };
@@ -55,6 +62,7 @@ const FeatureCard = ({ feature }) => {
     <div
       className="w-full h-[220px] cursor-pointer"
       style={{ perspective: "1000px" }}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={() => setIsFlipped(!isFlipped)}
@@ -121,14 +129,26 @@ const FeatureCard = ({ feature }) => {
 const FeaturesSection = ({ isPage = false }) => {
   const [showAllFeatures, setShowAllFeatures] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const sectionRectRef = React.useRef(null);
+
+  const handleMouseEnter = (e) => {
+    sectionRectRef.current = e.currentTarget.getBoundingClientRect();
+  };
 
   const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    if (!sectionRectRef.current) {
+      sectionRectRef.current = e.currentTarget.getBoundingClientRect();
+    }
+    const rect = sectionRectRef.current;
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     setMousePos({ x, y });
     e.currentTarget.style.setProperty("--mouse-x", `${x}%`);
     e.currentTarget.style.setProperty("--mouse-y", `${y}%`);
+  };
+
+  const handleMouseLeave = () => {
+    sectionRectRef.current = null;
   };
 
   const features = [
@@ -233,7 +253,9 @@ const FeaturesSection = ({ isPage = false }) => {
       className={`feature-section pb-6 md:pb-12 px-6 md:px-12 bg-[#050816] relative ${
         isPage ? "pt-6 md:pt-8" : "pt-12 md:pt-24"
       }`}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="max-w-7xl mx-auto relative">
         <div className="feature-bg"></div>
