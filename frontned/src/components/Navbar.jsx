@@ -234,6 +234,7 @@ const Navbar = () => {
               href="https://www.facebook.com/autogaragenetworkltd"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit our Facebook page"
               className="text-[#1877F2] hover:text-[#1877F2]/80 transition-colors duration-300"
             >
               <FaFacebookF size={15} />
@@ -243,6 +244,7 @@ const Navbar = () => {
               href="https://www.instagram.com/autogaragenetworkltd.uk"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit our Instagram profile"
               className="text-[#E1306C] hover:text-[#E1306C]/80 transition-colors duration-300"
             >
               <FaInstagram size={15} />
@@ -252,6 +254,7 @@ const Navbar = () => {
               href="https://x.com/autogaragent"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit our Twitter profile"
               className="text-[#1DA1F2] hover:text-[#1DA1F2]/80 transition-colors duration-300"
             >
               <FaTwitter size={15} />
@@ -261,6 +264,7 @@ const Navbar = () => {
               href="https://www.linkedin.com/company/auto-garage-network-ltd/"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit our LinkedIn page"
               className="text-[#0A66C2] hover:text-[#0A66C2]/80 transition-colors duration-300"
             >
               <FaLinkedinIn size={15} />
@@ -270,6 +274,7 @@ const Navbar = () => {
               href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit our YouTube channel"
               className="text-[#FF0000] hover:text-[#FF0000]/80 transition-colors duration-300"
             >
               <FaYoutube size={15} />
