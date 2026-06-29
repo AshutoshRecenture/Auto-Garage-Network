@@ -265,7 +265,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative pt-24 pb-8 md:pt-44 lg:pt-48 md:pb-20 px-6 md:px-12 max-w-7xl mx-auto overflow-visible min-h-0 md:min-h-[80vh] flex items-center">
+    <section className="relative pt-20 pb-6 md:pt-36 lg:pt-38 md:pb-8 px-6 md:px-12 max-w-7xl mx-auto overflow-visible min-h-0 md:min-h-[68vh] flex items-center">
       <style>{`.three-d{perspective:1200px;transform-style:preserve-3d;transition:transform .4s ease;}
 .three-d:hover{transform:rotateX(2deg) rotateY(-2deg) scale(1.01);}`}</style>
 
@@ -300,19 +300,6 @@ const HeroSection = () => {
           initial="hidden"
           animate="visible"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center space-x-2 bg-[#111827]/80 backdrop-blur-sm border border-indigo-500/30 px-4 py-2 rounded-full text-xs font-semibold text-indigo-300"
-          >
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-            </span>
-            <span>All-in-one Garage Management Suite</span>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

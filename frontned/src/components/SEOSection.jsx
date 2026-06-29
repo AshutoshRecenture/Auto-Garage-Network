@@ -289,7 +289,7 @@ const SEOSection = ({ isPage = false }) => {
     <section
       id="seo"
       className={`px-6 md:px-12 bg-[#050816] relative overflow-hidden ${
-        isPage ? "pt-6 md:pt-8 pb-12 md:pb-24" : "py-12 md:py-24"
+        isPage ? "pt-6 md:pt-8 pb-12 md:pb-24" : "pt-12 pb-6 md:pt-20 md:pb-8"
       }`}
     >
       {/* Background radial glow recolored from emerald to blue */}

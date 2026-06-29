@@ -506,7 +506,7 @@ const GarageManagementSystem = () => {
         {/* ══════════════════════════════════════════
             HERO SECTION + BOOKING FORM
         ══════════════════════════════════════════ */}
-        <section className="relative pt-6 pb-6 md:pt-8 md:pb-8 px-6 md:px-12 overflow-hidden border-b border-white/5">
+        <section className="relative pt-6 pb-6 md:pt-10 md:pb-8 px-6 md:px-12 overflow-hidden border-b border-white/5">
           {/* background glows */}
           <div className="hidden md:block absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="hidden md:block absolute bottom-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
@@ -515,13 +515,6 @@ const GarageManagementSystem = () => {
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-start relative z-10">
             {/* Left Column: Heading, intro & bullet points */}
             <div className="lg:col-span-7 space-y-8 text-left">
-              <div className="inline-flex items-center gap-2 bg-[#111827]/85 border border-indigo-500/35 px-4 py-2 rounded-full text-xs font-bold text-indigo-300 backdrop-blur-sm select-none shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                </span>
-                <span>Auto Garage Network GMS Suite</span>
-              </div>
               <h1 className="text-3xl md:text-5xl lg:text-[52px] font-black tracking-tight text-white leading-[1.2] lg:max-w-4xl">
                 Explore the Features of AGN's <br />
                 <span className="block text-4xl md:text-6xl font-extrabold tracking-tight mt-3 mb-3 bg-clip-text text-transparent animate-gradient gms-hero-gradient-1">

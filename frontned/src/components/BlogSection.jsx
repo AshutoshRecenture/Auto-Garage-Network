@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../config";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +9,8 @@ import {
   FiClock,
   FiChevronLeft,
   FiChevronRight,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
 
 // Blog images are now fetched dynamically from the backend static folder
@@ -357,6 +359,7 @@ const BlogSection = ({ limit }) => {
   const [showOthers, setShowOthers] = useState(false);
   const [posts, setPosts] = useState([]);
   const postsPerPage = 9;
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (!limit) {
@@ -377,7 +380,19 @@ const BlogSection = ({ limit }) => {
     fetchBlogs();
   }, []);
 
-
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowOthers(false);
+      }
+    };
+    if (showOthers) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showOthers]);
 
   const allCategories = ["All", ...new Set(posts.map((post) => post.category))];
   const cutIndex = allCategories.findIndex(
@@ -392,21 +407,6 @@ const BlogSection = ({ limit }) => {
       : allCategories.slice(0, 5);
   const otherCategories =
     cutIndex !== -1 ? allCategories.slice(cutIndex + 1) : allCategories.slice(5);
-
-  useEffect(() => {
-    if (posts.length > 0) {
-      const allCats = ["All", ...new Set(posts.map((post) => post.category))];
-      const cutIdx = allCats.findIndex(
-        (c) =>
-          c.toLowerCase().includes("relations") ||
-          c.toLowerCase().includes("customer relations"),
-      );
-      const otherCats = cutIdx !== -1 ? allCats.slice(cutIdx + 1) : allCats.slice(5);
-      if (otherCats.includes(selectedCategory)) {
-        setShowOthers(true);
-      }
-    }
-  }, [selectedCategory, posts]);
 
   const filteredPosts =
     selectedCategory === "All"
@@ -485,28 +485,58 @@ const BlogSection = ({ limit }) => {
               </span>
             ))}
 
-            {showOthers &&
-              otherCategories.map((cat, idx) => (
-                <span
-                  key={idx + 100}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all duration-300 ${getFilterStyles(cat, selectedCategory === cat)} cursor-pointer select-none`}
-                >
-                  {cat}
-                </span>
-              ))}
-
             {otherCategories.length > 0 && (
-              <span
-                onClick={() => setShowOthers(!showOthers)}
-                className="px-4 py-2 rounded-full text-xs md:text-sm font-bold bg-[#0d1226]/50 text-gray-400 border border-white/5 hover:text-white hover:border-indigo-500/30 cursor-pointer transition-all duration-300 flex items-center gap-1.5 select-none"
-              >
-                <span>{showOthers ? "Show Less" : "Other..."}</span>
-                <span className="text-[10px] opacity-75">{showOthers ? "▲" : "▼"}</span>
-              </span>
+              <div className="relative" ref={dropdownRef}>
+                <span
+                  onClick={() => setShowOthers(!showOthers)}
+                  className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all duration-300 flex items-center gap-1.5 cursor-pointer select-none ${
+                    otherCategories.includes(selectedCategory)
+                      ? getFilterStyles(selectedCategory, true)
+                      : "bg-[#0d1226]/50 text-gray-400 border border-white/5 hover:text-white hover:border-indigo-500/30"
+                  }`}
+                >
+                  <span>
+                    {otherCategories.includes(selectedCategory)
+                      ? selectedCategory
+                      : "Other..."}
+                  </span>
+                  <span className="opacity-75">
+                    {showOthers ? <FiChevronUp className="w-3.5 h-3.5" /> : <FiChevronDown className="w-3.5 h-3.5" />}
+                  </span>
+                </span>
+
+                <AnimatePresence>
+                  {showOthers && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 py-2 w-52 bg-[#0c1222]/90 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-md"
+                    >
+                      <div className="max-h-60 overflow-y-auto pr-1">
+                        {otherCategories.map((cat, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => {
+                              setSelectedCategory(cat);
+                              setCurrentPage(1);
+                              setShowOthers(false);
+                            }}
+                            className={`px-4 py-2.5 text-xs md:text-sm text-left transition-colors cursor-pointer select-none font-bold ${
+                              selectedCategory === cat
+                                ? "bg-blue-600 text-white"
+                                : "text-gray-400 hover:bg-white/5 hover:text-white"
+                            }`}
+                          >
+                            {cat}
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             )}
           </div>
         )}

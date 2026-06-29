@@ -20,6 +20,7 @@ import {
   FiX,
   FiMessageSquare,
 } from "react-icons/fi";
+import { API_URL } from "../config";
 
 // Happy Smiley Face Chat Widget Icon matching the user's reference screenshot
 const ChatBubbleIcon = ({ className = "w-10 h-10" }) => (
@@ -52,13 +53,24 @@ const ChatBubbleIcon = ({ className = "w-10 h-10" }) => (
   </svg>
 );
 
+const menuOptions = [
+  { text: "What does this website do? 🤔", value: "faq_about" },
+  { text: "What services do we provide? 🛠️", value: "faq_services" },
+  { text: "Our USP (Unique Selling Proposition) 🚀", value: "faq_usp" },
+  { text: "Website Development 🌐", value: "faq_web_dev" },
+  { text: "Mobile App Development 📱", value: "faq_app_dev" },
+  { text: "SEO Services 📈", value: "faq_seo" },
+  { text: "Digital Marketing 📢", value: "faq_marketing" },
+  { text: "Contact Support 🛠️", value: "faq_contact" },
+];
+
 const Footer = () => {
   // Chatbot State
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [leadStep, setLeadStep] = useState(0); 
+  const [leadStep, setLeadStep] = useState(0);
   const [leadData, setLeadData] = useState({
     name: "",
     email: "",
@@ -72,6 +84,16 @@ const Footer = () => {
 
   const [isAtBottom, setIsAtBottom] = useState(false);
   const leadIdRef = useRef(null);
+  const [unselectedOptions, setUnselectedOptions] = useState(menuOptions);
+  const leadDataRef = useRef(leadData);
+
+  const updateLeadFields = (fields) => {
+    leadDataRef.current = { ...leadDataRef.current, ...fields };
+    setLeadData((prev) => ({
+      ...prev,
+      ...fields,
+    }));
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -135,13 +157,12 @@ const Footer = () => {
       sender: "bot",
       text: "",
       isMenu: true,
+      options: menuOptions,
       time: getFormattedTime(),
     },
   ]);
 
   const messagesEndRef = useRef(null);
-
-
 
   useEffect(() => {
     // Auto scroll to bottom
@@ -150,25 +171,55 @@ const Footer = () => {
     }
   }, [messages, isTyping]);
 
-  const menuOptions = [
-    { text: "What does this website do? 🤔", value: "faq_about" },
-    { text: "What services do we provide? 🛠️", value: "faq_services" },
-    { text: "Our USP (Unique Selling Proposition) 🚀", value: "faq_usp" },
-    { text: "Website Development 🌐", value: "Website Development" },
-    { text: "Mobile App Development 📱", value: "Mobile App Development" },
-    { text: "SEO Services 📈", value: "SEO Services" },
-    { text: "Digital Marketing 📣", value: "Digital Marketing" },
-    { text: "AI Solutions 🤖", value: "AI Solutions" },
-    { text: "Get a Free Quote 🚀", value: "Quote" },
-    { text: "Contact Support 🛠️", value: "Support" },
-  ];
+  const syncChatToDatabase = async (currentMessages) => {
+    try {
+      const formattedMessages = currentMessages.map((m) => ({
+        sender: m.sender || "bot",
+        text: m.text || "",
+        time: m.time || "",
+      }));
 
-  const completedMenuOptions = [
-    { text: "Explore GMS Features ⚙️", value: "navigate_gms" },
-    { text: "Read Latest Insights 📚", value: "navigate_blog" },
-    { text: "Follow Our Socials 📱", value: "show_socials" },
-    { text: "Start New Inquiry 🔄", value: "restart_chat" },
-  ];
+      // Base payload structured for ChatLead schema
+      const payload = {
+        name: leadDataRef.current.name || "Website Visitor",
+        email: leadDataRef.current.email || "",
+        mobile: leadDataRef.current.mobile || "",
+        businessName: leadDataRef.current.businessName || "",
+        selectedService:
+          leadDataRef.current.selectedService || "General Inquiry",
+        budgetRange: leadDataRef.current.budgetRange || "",
+        projectDeadline: leadDataRef.current.projectDeadline || "",
+        projectDescription: leadDataRef.current.projectDescription || "",
+        chatMessages: formattedMessages,
+        leadStatus: "New",
+      };
+
+      if (!leadIdRef.current) {
+        const response = await fetch(`${API_URL}/api/chat-submissions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+          const resData = await response.json();
+          if (resData.success && resData.data) {
+            leadIdRef.current = resData.data._id;
+            console.log("Chat session created in DB:", leadIdRef.current);
+          }
+        }
+      } else {
+        await fetch(`${API_URL}/api/chat-submissions/${leadIdRef.current}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        console.log("Chat log and fields updated in DB");
+      }
+    } catch (error) {
+      console.error("Error syncing chat to DB:", error);
+    }
+  };
 
   const handleUserMessage = (text, optionValue = null) => {
     if (!text.trim()) return;
@@ -180,517 +231,741 @@ const Footer = () => {
       text,
       time: getFormattedTime(),
     };
-    setMessages((prev) => [...prev, userMsg]);
+    const newMessagesList = [...messages, userMsg];
+    setMessages(newMessagesList);
     setInputValue("");
     setIsTyping(true);
     setShowTooltip(false);
 
-    // Simulate bot response typing latency
-    setTimeout(async () => {
-      let botText1 = "";
-      let botText2 = "";
-      let nextStep = leadStep;
-      const updatedLeadData = { ...leadData };
+    if (leadStep === 0) {
       const query = (optionValue || text).toLowerCase();
 
-      // Lead capture flow state machine
-      if (leadStep === 0) {
-        if (query === "navigate_gms") {
-          botText1 = "Certainly! Redirecting you to our Garage Management System page to explore dynamic workshop schedules and CRM tools...";
-          setMessages((prev) => [
-            ...prev,
-            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() }
-          ]);
-          setIsTyping(false);
-          setTimeout(() => {
-            window.location.href = "/garage-management-system";
-          }, 1500);
-          return;
-        } else if (query === "navigate_blog") {
-          botText1 = "Sure! Redirecting you to our insights and blogs page...";
-          setMessages((prev) => [
-            ...prev,
-            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() }
-          ]);
-          setIsTyping(false);
-          setTimeout(() => {
-            window.location.href = "/blog";
-          }, 1500);
-          return;
-        } else if (query === "show_socials") {
-          botText1 = "Follow us to stay updated with our latest releases and news:\n\n• [Facebook](https://www.facebook.com/autogaragenetworkltd) ➔\n• [Instagram](https://www.instagram.com/autogaragenetworkltd.uk) ➔\n• [LinkedIn](https://www.linkedin.com/company/auto-garage-network-ltd/) ➔\n• [YouTube](https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ) ➔";
-          botText2 = "Is there anything else I can assist you with?";
-          setMessages((prev) => [
-            ...prev,
-            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() },
-            { id: Date.now() + 2, sender: "bot", text: botText2, time: getFormattedTime() },
-            { id: Date.now() + 3, sender: "bot", text: "", isCompletedMenu: true, time: getFormattedTime() }
-          ]);
-          setIsTyping(false);
-          return;
-        } else if (query === "restart_chat") {
-          botText1 = "Restarting chat assistant. How can I help you improve or grow your business today?";
-          setMessages([
-            {
-              id: 1,
-              sender: "bot",
-              text: "Hello! Welcome to Auto Garage Network Assistant. 👋",
-              time: getFormattedTime(),
-            },
-            {
-              id: 2,
-              sender: "bot",
-              text: botText1,
-              time: getFormattedTime(),
-            },
-            {
-              id: 3,
-              sender: "bot",
-              text: "",
-              isMenu: true,
-              time: getFormattedTime(),
-            },
-          ]);
-          setIsTyping(false);
-          return;
-        }
+      // Check for navigation / restart options first
+      if (query === "navigate_gms") {
+        const botText =
+          "Certainly! Redirecting you to our Garage Management System page to explore dynamic workshop schedules and CRM tools...";
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            sender: "bot",
+            text: botText,
+            time: getFormattedTime(),
+          },
+        ]);
+        setIsTyping(false);
+        setTimeout(() => {
+          window.location.href = "/garage-management-system";
+        }, 1500);
+        return;
+      } else if (query === "navigate_blog") {
+        const botText =
+          "Sure! Redirecting you to our insights and blogs page...";
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            sender: "bot",
+            text: botText,
+            time: getFormattedTime(),
+          },
+        ]);
+        setIsTyping(false);
+        setTimeout(() => {
+          window.location.href = "/blog";
+        }, 1500);
+        return;
+      } else if (query === "show_socials") {
+        const botText1 =
+          "Follow us to stay updated with our latest releases and news:\n\n• [Facebook](https://www.facebook.com/autogaragenetworkltd) ➔\n• [Instagram](https://www.instagram.com/autogaragenetworkltd.uk) ➔\n• [LinkedIn](https://www.linkedin.com/company/auto-garage-network-ltd/) ➔\n• [YouTube](https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ) ➔";
+        const botText2 = "Is there anything else I can assist you with?";
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            sender: "bot",
+            text: botText1,
+            time: getFormattedTime(),
+          },
+          {
+            id: Date.now() + 2,
+            sender: "bot",
+            text: botText2,
+            time: getFormattedTime(),
+          },
+          {
+            id: Date.now() + 3,
+            sender: "bot",
+            text: "",
+            isCompletedMenu: true,
+            time: getFormattedTime(),
+          },
+        ]);
+        setIsTyping(false);
+        return;
+      } else if (query === "restart_chat") {
+        const botText =
+          "Restarting chat assistant. How can I help you improve or grow your business today?";
+        setUnselectedOptions(menuOptions);
+        setMessages([
+          {
+            id: 1,
+            sender: "bot",
+            text: "Hello! Welcome to Auto Garage Network Assistant. 👋",
+            time: getFormattedTime(),
+          },
+          {
+            id: 2,
+            sender: "bot",
+            text: botText,
+            time: getFormattedTime(),
+          },
+          {
+            id: 3,
+            sender: "bot",
+            text: "",
+            isMenu: true,
+            options: menuOptions,
+            time: getFormattedTime(),
+          },
+        ]);
+        setIsTyping(false);
+        return;
+      }
 
-        if (query === "faq_about") {
-          botText1 = "Auto Garage Network provides state-of-the-art Garage Management Systems, bespoke websites for garages, MOT diaries, and digital marketing/SEO solutions specifically tailored for auto-garages in the UK to help them streamline operations, manage customers, and grow revenue.";
-          botText2 = "What service or information are you looking for today?";
-          setMessages((prev) => [
-            ...prev,
-            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() },
-            { id: Date.now() + 2, sender: "bot", text: botText2, time: getFormattedTime() },
-            { id: Date.now() + 3, sender: "bot", text: "", isMenu: true, time: getFormattedTime() }
-          ]);
-          setIsTyping(false);
-          return;
-        } else if (query === "faq_services") {
-          botText1 = "We provide comprehensive digital solutions including:\n• Bespoke Garage Websites\n• SEO & Local Search optimization\n• MOT & Online Booking diaries\n• Autotech data integration\n• Fully integrated Garage Management Systems (GMS) to automate invoicing, customer notifications, and technician workflows.";
-          botText2 = "Which of these services are you interested in today?";
-          setMessages((prev) => [
-            ...prev,
-            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() },
-            { id: Date.now() + 2, sender: "bot", text: botText2, time: getFormattedTime() },
-            { id: Date.now() + 3, sender: "bot", text: "", isMenu: true, time: getFormattedTime() }
-          ]);
-          setIsTyping(false);
-          return;
-        } else if (query === "faq_usp") {
-          botText1 = "Our Unique Selling Proposition (USP) includes:\n• 100% cloud-based systems built specifically for auto garages in the UK.\n• All-in-one platform: from website bookings directly into your workshop schedule and invoicing.\n• UK-based dedicated support and sales personnel to assist you anytime.\n• Cloudinary integration for lightning-fast image/media delivery and high performance.";
-          botText2 = "How would you like to proceed? You can select a service below or ask a question.";
-          setMessages((prev) => [
-            ...prev,
-            { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() },
-            { id: Date.now() + 2, sender: "bot", text: botText2, time: getFormattedTime() },
-            { id: Date.now() + 3, sender: "bot", text: "", isMenu: true, time: getFormattedTime() }
-          ]);
-          setIsTyping(false);
-          return;
-        } else if (
-          query === "website development" ||
-          query === "mobile app development" ||
-          query === "seo services" ||
-          query === "digital marketing" ||
-          query === "ai solutions" ||
-          query === "quote"
-        ) {
-          updatedLeadData.selectedService = optionValue || text;
-          setLeadData(updatedLeadData);
-          botText1 = `Awesome choice! I'd be happy to help you with ${optionValue || text}.`;
-          botText2 = "Let's collect some details to prepare a proposal. May I start with your Full Name, please?";
-          nextStep = 1;
-        } else if (query === "support") {
-          botText1 = "For support or sales inquiries, you can reach our team directly:\n• Sales Inquiry: 07947 906789\n• Customer Support: 01702 655556\n• Email: info@autogaragenetwork.com";
-          botText2 = "Would you like our team to call you back? If yes, please tell me your Full Name to register a callback request.";
-          updatedLeadData.selectedService = "Support Callback";
-          setLeadData(updatedLeadData);
-          nextStep = 1;
-        } else {
-          // Custom written query matching
-          if (query.includes("website") || query.includes("web") || query.includes("dev")) {
-            updatedLeadData.selectedService = "Website Development";
-            setLeadData(updatedLeadData);
-            botText1 = "I see you are interested in Website Development!";
-            botText2 = "Let's gather some details to start. May I have your Full Name?";
-            nextStep = 1;
-          } else if (query.includes("app") || query.includes("mobile") || query.includes("ios") || query.includes("android")) {
-            updatedLeadData.selectedService = "Mobile App Development";
-            setLeadData(updatedLeadData);
-            botText1 = "Great! Let's get started with Mobile App Development.";
-            botText2 = "May I have your Full Name?";
-            nextStep = 1;
-          } else if (query.includes("seo") || query.includes("search") || query.includes("rank")) {
-            updatedLeadData.selectedService = "SEO Services";
-            setLeadData(updatedLeadData);
-            botText1 = "Excellent. SEO Services is a key to growth!";
-            botText2 = "May I have your Full Name?";
-            nextStep = 1;
-          } else if (query.includes("marketing") || query.includes("advertise")) {
-            updatedLeadData.selectedService = "Digital Marketing";
-            setLeadData(updatedLeadData);
-            botText1 = "Nice. Digital Marketing will scale your brand!";
-            botText2 = "May I have your Full Name?";
-            nextStep = 1;
-          } else if (query.includes("ai") || query.includes("bot") || query.includes("gpt")) {
-            updatedLeadData.selectedService = "AI Solutions";
-            setLeadData(updatedLeadData);
-            botText1 = "Fantastic! We specialize in cutting-edge AI Solutions.";
-            botText2 = "May I have your Full Name?";
-            nextStep = 1;
-          } else if (query.includes("quote") || query.includes("free") || query.includes("price") || query.includes("pricing")) {
-            updatedLeadData.selectedService = "Custom Proposal";
-            setLeadData(updatedLeadData);
-            botText1 = "I can definitely help register your request for a Free Quote!";
-            botText2 = "Let's start. May I have your Full Name?";
-            nextStep = 1;
-          } else if (query.includes("support") || query.includes("help") || query.includes("contact")) {
-            botText1 = "For support or sales inquiries, you can reach our team directly:\n• Sales Inquiry: 07947 906789\n• Customer Support: 01702 655556\n• Email: info@autogaragenetwork.com";
-            botText2 = "Would you like us to call you back? If yes, please tell me your Full Name.";
-            updatedLeadData.selectedService = "Support Callback";
-            setLeadData(updatedLeadData);
-            nextStep = 1;
-          } else {
-            botText1 = "Hello! I am the virtual assistant. You can choose one of the options below, or type your request.";
-            botText2 = "What service are you looking for today?";
-            
-            setMessages((prev) => [
-              ...prev,
-              { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() },
-              { id: Date.now() + 2, sender: "bot", text: botText2, time: getFormattedTime() },
-              { id: Date.now() + 3, sender: "bot", text: "", isMenu: true, time: getFormattedTime() }
-            ]);
+      // Q&A / Start Flow State
+      if (optionValue) {
+        setUnselectedOptions((prev) =>
+          prev.filter((opt) => opt.value !== optionValue),
+        );
+      }
+
+      // Sync user message to DB
+      syncChatToDatabase(newMessagesList);
+
+      setTimeout(() => {
+        let botText1 = "";
+        const query = (optionValue || text).toLowerCase();
+
+        // 1. Check if Q&A Option
+        if (optionValue) {
+          if (optionValue === "faq_about") {
+            botText1 =
+              "Auto Garage Network provides state-of-the-art Garage Management Systems, bespoke websites for garages, MOT diaries, and digital marketing/SEO solutions specifically tailored for auto-garages in the UK to help them streamline operations, manage customers, and grow revenue.";
+          } else if (optionValue === "faq_services") {
+            botText1 =
+              "We provide comprehensive digital solutions including:\n• Bespoke Garage Websites\n• SEO & Local Search optimization\n• MOT & Online Booking diaries\n• Autotech data integration\n• Fully integrated Garage Management Systems (GMS) to automate invoicing, customer notifications, and technician workflows.";
+          } else if (optionValue === "faq_usp") {
+            botText1 =
+              "Our Unique Selling Proposition (USP) includes:\n• 100% cloud-based systems built specifically for auto garages in the UK.\n• All-in-one platform: from website bookings directly into your workshop schedule and invoicing.\n• UK-based dedicated support and sales personnel to assist you anytime.\n• Cloudinary integration for lightning-fast image/media delivery and high performance.";
+          }
+
+          if (botText1) {
+            setMessages((prev) => {
+              const updated = [
+                ...prev,
+                {
+                  id: Date.now() + 1,
+                  sender: "bot",
+                  text: botText1,
+                  time: getFormattedTime(),
+                },
+                {
+                  id: Date.now() + 2,
+                  sender: "bot",
+                  text: "Anything else?",
+                  isAnythingElseMenu: true,
+                  time: getFormattedTime(),
+                },
+              ];
+              syncChatToDatabase(updated);
+              return updated;
+            });
+            setIsTyping(false);
+            return;
+          }
+
+          // 2. Check if Service Option
+          let serviceName = "";
+          if (optionValue === "faq_web_dev")
+            serviceName = "Website Development";
+          else if (optionValue === "faq_app_dev")
+            serviceName = "Mobile App Development";
+          else if (optionValue === "faq_seo") serviceName = "SEO";
+          else if (optionValue === "faq_marketing")
+            serviceName = "Digital Marketing";
+          else if (optionValue === "faq_contact") serviceName = "Contact Us";
+
+          if (serviceName) {
+            const initialLeadData = {
+              name: leadDataRef.current.name || "",
+              email: leadDataRef.current.email || "",
+              mobile: leadDataRef.current.mobile || "",
+              businessName: leadDataRef.current.businessName || "",
+              selectedService: serviceName,
+              budgetRange: "",
+              projectDeadline: "",
+              projectDescription: "",
+            };
+            updateLeadFields(initialLeadData);
+            setLeadStep(1);
+
+            botText1 = `Awesome choice! Let's collect some details to prepare a proposal for ${serviceName}.`;
+            const botText2 =
+              serviceName === "Contact Us"
+                ? "Would you like our team to call you back? If yes, please tell me your Full Name to register a callback request."
+                : "May I start with your Full Name, please?";
+
+            setMessages((prev) => {
+              const updated = [
+                ...prev,
+                {
+                  id: Date.now() + 1,
+                  sender: "bot",
+                  text: botText1,
+                  time: getFormattedTime(),
+                },
+                {
+                  id: Date.now() + 2,
+                  sender: "bot",
+                  text: botText2,
+                  time: getFormattedTime(),
+                },
+              ];
+              syncChatToDatabase(updated);
+              return updated;
+            });
             setIsTyping(false);
             return;
           }
         }
-      } else if (leadStep === 1) {
-        updatedLeadData.name = text;
-        setLeadData(updatedLeadData);
-        botText1 = `Nice to meet you, ${text}!`;
-        botText2 = "Can you please enter your Email Address?";
-        nextStep = 2;
 
-        // Async Sync to DB: Create Initial Lead
-        try {
-          const payload = {
-            name: text,
+        // 3. Fallback Typed Text Queries
+        let matchedOption = null;
+        let serviceNameFallback = null;
+        if (
+          query.includes("website") ||
+          query.includes("web") ||
+          query.includes("dev")
+        ) {
+          matchedOption = "faq_web_dev";
+          serviceNameFallback = "Website Development";
+        } else if (
+          query.includes("app") ||
+          query.includes("mobile") ||
+          query.includes("phone")
+        ) {
+          matchedOption = "faq_app_dev";
+          serviceNameFallback = "Mobile App Development";
+        } else if (
+          query.includes("seo") ||
+          query.includes("rank") ||
+          query.includes("google")
+        ) {
+          matchedOption = "faq_seo";
+          serviceNameFallback = "SEO";
+        } else if (
+          query.includes("marketing") ||
+          query.includes("ads") ||
+          query.includes("advertise")
+        ) {
+          matchedOption = "faq_marketing";
+          serviceNameFallback = "Digital Marketing";
+        } else if (
+          query.includes("contact") ||
+          query.includes("support") ||
+          query.includes("phone") ||
+          query.includes("call") ||
+          query.includes("email")
+        ) {
+          matchedOption = "faq_contact";
+          serviceNameFallback = "Contact Us";
+        } else if (
+          query.includes("usp") ||
+          query.includes("unique") ||
+          query.includes("special")
+        ) {
+          matchedOption = "faq_usp";
+        } else if (
+          query.includes("service") ||
+          query.includes("provide") ||
+          query.includes("do you do")
+        ) {
+          matchedOption = "faq_services";
+        } else if (
+          query.includes("what does") ||
+          query.includes("about") ||
+          query.includes("network")
+        ) {
+          matchedOption = "faq_about";
+        }
+
+        if (
+          matchedOption &&
+          unselectedOptions.some((opt) => opt.value === matchedOption)
+        ) {
+          // Exclude it
+          setUnselectedOptions((prev) =>
+            prev.filter((opt) => opt.value !== matchedOption),
+          );
+
+          if (serviceNameFallback) {
+            // Start lead flow
+            const initialLeadData = {
+              name: leadDataRef.current.name || "",
+              email: leadDataRef.current.email || "",
+              mobile: leadDataRef.current.mobile || "",
+              businessName: leadDataRef.current.businessName || "",
+              selectedService: serviceNameFallback,
+              budgetRange: "",
+              projectDeadline: "",
+              projectDescription: "",
+            };
+            updateLeadFields(initialLeadData);
+            setLeadStep(1);
+
+            botText1 = `Awesome choice! Let's collect some details to prepare a proposal for ${serviceNameFallback}.`;
+            const botText2 =
+              serviceNameFallback === "Contact Us"
+                ? "Would you like our team to call you back? If yes, please tell me your Full Name to register a callback request."
+                : "May I start with your Full Name, please?";
+
+            setMessages((prev) => {
+              const updated = [
+                ...prev,
+                {
+                  id: Date.now() + 1,
+                  sender: "bot",
+                  text: botText1,
+                  time: getFormattedTime(),
+                },
+                {
+                  id: Date.now() + 2,
+                  sender: "bot",
+                  text: botText2,
+                  time: getFormattedTime(),
+                },
+              ];
+              syncChatToDatabase(updated);
+              return updated;
+            });
+          } else {
+            // General FAQ response
+            if (matchedOption === "faq_about") {
+              botText1 =
+                "Auto Garage Network provides state-of-the-art Garage Management Systems, bespoke websites for garages, MOT diaries, and digital marketing/SEO solutions specifically tailored for auto-garages in the UK to help them streamline operations, manage customers, and grow revenue.";
+            } else if (matchedOption === "faq_services") {
+              botText1 =
+                "We provide comprehensive digital solutions including:\n• Bespoke Garage Websites\n• SEO & Local Search optimization\n• MOT & Online Booking diaries\n• Autotech data integration\n• Fully integrated Garage Management Systems (GMS) to automate invoicing, customer notifications, and technician workflows.";
+            } else if (matchedOption === "faq_usp") {
+              botText1 =
+                "Our Unique Selling Proposition (USP) includes:\n• 100% cloud-based systems built specifically for auto garages in the UK.\n• All-in-one platform: from website bookings directly into your workshop schedule and invoicing.\n• UK-based dedicated support and sales personnel to assist you anytime.\n• Cloudinary integration for lightning-fast image/media delivery and high performance.";
+            }
+
+            setMessages((prev) => {
+              const updated = [
+                ...prev,
+                {
+                  id: Date.now() + 1,
+                  sender: "bot",
+                  text: botText1,
+                  time: getFormattedTime(),
+                },
+                {
+                  id: Date.now() + 2,
+                  sender: "bot",
+                  text: "Anything else?",
+                  isAnythingElseMenu: true,
+                  time: getFormattedTime(),
+                },
+              ];
+              syncChatToDatabase(updated);
+              return updated;
+            });
+          }
+        } else {
+          // Standard typed fallback
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: "I didn't quite catch that. Please choose from our available service options below:",
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: "",
+                isMenu: true,
+                options: [...unselectedOptions],
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+        }
+        setIsTyping(false);
+      }, 1000);
+    } else {
+      // Lead form capturing flow is active (leadStep > 0)
+      setTimeout(async () => {
+        let botText1 = "";
+        let botText2 = "";
+        let nextStep = leadStep;
+
+        if (leadStep === 1) {
+          updateLeadFields({ name: text });
+          botText1 = `Nice to meet you, ${text}!`;
+          botText2 = "Can you please enter your Email Address?";
+          nextStep = 2;
+
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: botText1,
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: botText2,
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+          setLeadStep(nextStep);
+        } else if (leadStep === 2) {
+          updateLeadFields({ email: text });
+          botText1 = "Got it, email address saved.";
+          botText2 = "Could you please enter your Mobile Number?";
+          nextStep = 3;
+
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: botText1,
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: botText2,
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+          setLeadStep(nextStep);
+        } else if (leadStep === 3) {
+          updateLeadFields({ mobile: text });
+          botText1 = "Thank you.";
+          botText2 =
+            "What is your Business Name? (Type 'skip' or 'no' if you don't have one)";
+          nextStep = 4;
+
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: botText1,
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: botText2,
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+          setLeadStep(nextStep);
+        } else if (leadStep === 4) {
+          const company =
+            text.toLowerCase() === "skip" || text.toLowerCase() === "no"
+              ? ""
+              : text;
+          updateLeadFields({ businessName: company });
+
+          botText1 = `Thank you. For your ${leadDataRef.current.selectedService} project, what is your estimated Budget Range?`;
+          botText2 =
+            "Please select from the options below or type your budget.";
+          nextStep = 6;
+
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: botText1,
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: botText2,
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+          setLeadStep(nextStep);
+        } else if (leadStep === 6) {
+          updateLeadFields({ budgetRange: text });
+          botText1 = `Budget set to ${text}.`;
+          botText2 =
+            "What is your desired Project Deadline? (e.g. 2 weeks, 1 month, 3 months)";
+          nextStep = 7;
+
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: botText1,
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: botText2,
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+          setLeadStep(nextStep);
+        } else if (leadStep === 7) {
+          updateLeadFields({ projectDeadline: text });
+          botText1 = `Project deadline set to ${text}.`;
+          botText2 =
+            "Lastly, could you please write a short Project Description of what you want us to do?";
+          nextStep = 8;
+
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: botText1,
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: botText2,
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+          setLeadStep(nextStep);
+        } else if (leadStep === 8) {
+          updateLeadFields({ projectDescription: text });
+
+          botText1 =
+            "Perfect, I am saving your lead information to our database...";
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now() + 1,
+              sender: "bot",
+              text: botText1,
+              time: getFormattedTime(),
+            },
+          ]);
+
+          try {
+            const currentChatMessages = [
+              ...messages,
+              { sender: "user", text, time: getFormattedTime() },
+            ].map((m) => ({
+              sender: m.sender || "bot",
+              text: m.text || "",
+              time: m.time || "",
+            }));
+
+            const finalPayload = {
+              name: leadDataRef.current.name,
+              email: leadDataRef.current.email,
+              mobile: leadDataRef.current.mobile,
+              businessName: leadDataRef.current.businessName,
+              chatMessages: currentChatMessages,
+              selectedService: leadDataRef.current.selectedService,
+              budgetRange: leadDataRef.current.budgetRange,
+              projectDeadline: leadDataRef.current.projectDeadline,
+              projectDescription: text,
+              leadStatus: "New",
+            };
+
+            let response;
+            if (leadIdRef.current) {
+              response = await fetch(
+                `${API_URL}/api/chat-submissions/${leadIdRef.current}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(finalPayload),
+                },
+              );
+            } else {
+              response = await fetch(`${API_URL}/api/chat-submissions`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(finalPayload),
+              });
+            }
+
+            if (response.ok) {
+              botText2 = `🎉 Thank you, ${leadDataRef.current.name}! Your request has been successfully registered. Our team will get back to you shortly at ${leadDataRef.current.email} or on ${leadDataRef.current.mobile}.`;
+            } else {
+              botText2 = `Thank you, ${leadDataRef.current.name}! Although our database connection encountered a brief delay, I have logged your details. Our team will contact you shortly!`;
+            }
+          } catch (err) {
+            console.error("Failed to post final chat lead:", err);
+            botText2 = `Thank you, ${leadDataRef.current.name}! I have recorded your details and our team will get in touch with you shortly.`;
+          }
+
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: botText2,
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: "Anything else?",
+                isAnythingElseMenu: true,
+                time: getFormattedTime(),
+              },
+            ];
+            // Clear ref to allow a brand-new form if they fill another service
+            leadIdRef.current = null;
+            return updated;
+          });
+
+          // Reset lead flow status
+          setLeadStep(0);
+          updateLeadFields({
+            name: "",
             email: "",
             mobile: "",
             businessName: "",
-            selectedService: updatedLeadData.selectedService || "General Inquiry",
-            chatMessages: [
-              ...messages,
-              { sender: "user", text, time: getFormattedTime() }
-            ].map(m => ({
-              sender: m.sender || "bot",
-              text: m.text || "",
-              time: m.time || "",
-            })),
-            leadStatus: "New",
-          };
-          fetch("https://auto-garage-network.onrender.com/api/chat-submissions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }).then(async (response) => {
-            if (response.ok) {
-              const resData = await response.json();
-              if (resData.success && resData.data) {
-                leadIdRef.current = resData.data._id;
-                console.log("Draft lead created:", leadIdRef.current);
-              }
-            }
-          }).catch(err => console.error("Error creating draft lead:", err));
-        } catch (e) {
-          console.error("Sync error:", e);
+            selectedService: "",
+            budgetRange: "",
+            projectDeadline: "",
+            projectDescription: "",
+          });
         }
-      } else if (leadStep === 2) {
-        updatedLeadData.email = text;
-        setLeadData(updatedLeadData);
-        botText1 = "Got it, email address saved.";
-        botText2 = "Could you please enter your Mobile Number?";
-        nextStep = 3;
-
-        // Async Sync to DB: Update Email
-        if (leadIdRef.current) {
-          const updatePayload = {
-            email: text,
-            chatMessages: [
-              ...messages,
-              { sender: "user", text, time: getFormattedTime() }
-            ].map(m => ({
-              sender: m.sender || "bot",
-              text: m.text || "",
-              time: m.time || "",
-            })),
-          };
-          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatePayload),
-          }).catch(err => console.error("Error updating email:", err));
-        }
-      } else if (leadStep === 3) {
-        updatedLeadData.mobile = text;
-        setLeadData(updatedLeadData);
-        botText1 = "Thank you.";
-        botText2 = "What is your Business Name? (Type 'skip' or 'no' if you don't have one)";
-        nextStep = 4;
-
-        // Async Sync to DB: Update Phone
-        if (leadIdRef.current) {
-          const updatePayload = {
-            mobile: text,
-            chatMessages: [
-              ...messages,
-              { sender: "user", text, time: getFormattedTime() }
-            ].map(m => ({
-              sender: m.sender || "bot",
-              text: m.text || "",
-              time: m.time || "",
-            })),
-          };
-          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatePayload),
-          }).catch(err => console.error("Error updating phone:", err));
-        }
-      } else if (leadStep === 4) {
-        const company = (text.toLowerCase() === "skip" || text.toLowerCase() === "no") ? "" : text;
-        updatedLeadData.businessName = company;
-        setLeadData(updatedLeadData);
-        
-        if (!updatedLeadData.selectedService) {
-          botText1 = "Perfect. What Service Required are you interested in?";
-          nextStep = 5;
-        } else {
-          botText1 = `Thank you. For your ${updatedLeadData.selectedService} project, what is your estimated Budget Range?`;
-          botText2 = "Please select from the options below or type your budget.";
-          nextStep = 6;
-        }
-
-        // Async Sync to DB: Update Company Name
-        if (leadIdRef.current) {
-          const updatePayload = {
-            businessName: company,
-            chatMessages: [
-              ...messages,
-              { sender: "user", text, time: getFormattedTime() }
-            ].map(m => ({
-              sender: m.sender || "bot",
-              text: m.text || "",
-              time: m.time || "",
-            })),
-          };
-          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatePayload),
-          }).catch(err => console.error("Error updating company:", err));
-        }
-      } else if (leadStep === 5) {
-        updatedLeadData.selectedService = text;
-        setLeadData(updatedLeadData);
-        botText1 = `Understood. For ${text}, what is your estimated Budget Range?`;
-        botText2 = "Please select from the options below or type your budget.";
-        nextStep = 6;
-
-        // Async Sync to DB: Update Selected Service Fallback
-        if (leadIdRef.current) {
-          const updatePayload = {
-            selectedService: text,
-            chatMessages: [
-              ...messages,
-              { sender: "user", text, time: getFormattedTime() }
-            ].map(m => ({
-              sender: m.sender || "bot",
-              text: m.text || "",
-              time: m.time || "",
-            })),
-          };
-          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatePayload),
-          }).catch(err => console.error("Error updating service:", err));
-        }
-      } else if (leadStep === 6) {
-        updatedLeadData.budgetRange = text;
-        setLeadData(updatedLeadData);
-        botText1 = `Budget set to ${text}.`;
-        botText2 = "What is your desired Project Deadline? (e.g. 2 weeks, 1 month, 3 months)";
-        nextStep = 7;
-
-        // Async Sync to DB: Update Budget Range
-        if (leadIdRef.current) {
-          const updatePayload = {
-            budgetRange: text,
-            chatMessages: [
-              ...messages,
-              { sender: "user", text, time: getFormattedTime() }
-            ].map(m => ({
-              sender: m.sender || "bot",
-              text: m.text || "",
-              time: m.time || "",
-            })),
-          };
-          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatePayload),
-          }).catch(err => console.error("Error updating budget:", err));
-        }
-      } else if (leadStep === 7) {
-        updatedLeadData.projectDeadline = text;
-        setLeadData(updatedLeadData);
-        botText1 = `Project deadline set to ${text}.`;
-        botText2 = "Lastly, could you please write a short Project Description of what you want us to do?";
-        nextStep = 8;
-
-        // Async Sync to DB: Update Deadline
-        if (leadIdRef.current) {
-          const updatePayload = {
-            projectDeadline: text,
-            chatMessages: [
-              ...messages,
-              { sender: "user", text, time: getFormattedTime() }
-            ].map(m => ({
-              sender: m.sender || "bot",
-              text: m.text || "",
-              time: m.time || "",
-            })),
-          };
-          fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatePayload),
-          }).catch(err => console.error("Error updating deadline:", err));
-        }
-      } else if (leadStep === 8) {
-        updatedLeadData.projectDescription = text;
-        setLeadData(updatedLeadData);
-        
-        botText1 = "Perfect, I am saving your lead information to our database...";
-        
-        setMessages((prev) => [
-          ...prev,
-          { id: Date.now() + 1, sender: "bot", text: botText1, time: getFormattedTime() }
-        ]);
-
-        try {
-          const currentChatMessages = [
-            ...messages,
-            { sender: "user", text, time: getFormattedTime() }
-          ].map(m => ({
-            sender: m.sender || "bot",
-            text: m.text || "",
-            time: m.time || "",
-          }));
-
-          const finalPayload = {
-            name: updatedLeadData.name,
-            email: updatedLeadData.email,
-            mobile: updatedLeadData.mobile,
-            businessName: updatedLeadData.businessName,
-            chatMessages: currentChatMessages,
-            selectedService: updatedLeadData.selectedService,
-            budgetRange: updatedLeadData.budgetRange,
-            projectDeadline: updatedLeadData.projectDeadline,
-            projectDescription: text,
-            leadStatus: "New",
-          };
-
-          let response;
-          if (leadIdRef.current) {
-            response = await fetch(`https://auto-garage-network.onrender.com/api/chat-submissions/${leadIdRef.current}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                projectDescription: text,
-                chatMessages: currentChatMessages,
-              }),
-            });
-          } else {
-            response = await fetch("https://auto-garage-network.onrender.com/api/chat-submissions", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(finalPayload),
-            });
-          }
-
-          if (response.ok) {
-            botText2 = `🎉 Thank you, ${updatedLeadData.name}! Your request has been successfully registered. Our team will get back to you shortly at ${updatedLeadData.email} or on ${updatedLeadData.mobile}.`;
-          } else {
-            let errMsg = "";
-            try {
-              const errData = await response.json();
-              console.error("Server error:", errData);
-              errMsg = errData.message || errData.error || "";
-            } catch (e) {
-              console.error("Failed to parse error response:", e);
-            }
-            botText2 = `Thank you, ${updatedLeadData.name}! Although our database connection encountered an issue${errMsg ? " (" + errMsg + ")" : ""}, I have logged your details. Our team will contact you shortly!`;
-          }
-        } catch (err) {
-          console.error("Failed to post chat lead:", err);
-          botText2 = `Thank you, ${updatedLeadData.name}! I have recorded your details and our team will get in touch with you shortly.`;
-        }
-
-        leadIdRef.current = null;
-        nextStep = 0;
-        setLeadData({
-          name: "",
-          email: "",
-          mobile: "",
-          businessName: "",
-          selectedService: "",
-          budgetRange: "",
-          projectDeadline: "",
-          projectDescription: "",
-        });
-      }
-
-      setLeadStep(nextStep);
-
-      const replies = [];
-      if (botText1) {
-        replies.push({
-          id: Date.now() + 2,
-          sender: "bot",
-          text: botText1,
-          time: getFormattedTime(),
-        });
-      }
-      if (botText2) {
-        replies.push({
-          id: Date.now() + 3,
-          sender: "bot",
-          text: botText2,
-          time: getFormattedTime(),
-        });
-      }
-      
-      if (nextStep === 0 && leadStep === 8) {
-        replies.push({
-          id: Date.now() + 4,
-          sender: "bot",
-          text: "",
-          isCompletedMenu: true,
-          time: getFormattedTime(),
-        });
-      }
-
-      setMessages((prev) => [...prev, ...replies]);
-      setIsTyping(false);
-    }, 1000);
+        setIsTyping(false);
+      }, 1000);
+    }
   };
+
+  const handleAnythingElseChoice = (choice) => {
+    const userChoiceText = choice === "yes" ? "Yes" : "No";
+    const userMsg = {
+      id: Date.now(),
+      sender: "user",
+      text: userChoiceText,
+      time: getFormattedTime(),
+    };
+    const newMessagesList = [...messages, userMsg];
+    setMessages(newMessagesList);
+    setIsTyping(true);
+
+    // Sync Yes/No user choice to DB
+    syncChatToDatabase(newMessagesList);
+
+    setTimeout(() => {
+      if (choice === "yes") {
+        if (unselectedOptions.length > 0) {
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: "Please choose from the remaining options:",
+                time: getFormattedTime(),
+              },
+              {
+                id: Date.now() + 2,
+                sender: "bot",
+                text: "",
+                isMenu: true,
+                options: [...unselectedOptions],
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated); // Sync next menu options to DB
+            return updated;
+          });
+        } else {
+          setMessages((prev) => {
+            const updated = [
+              ...prev,
+              {
+                id: Date.now() + 1,
+                sender: "bot",
+                text: "You have explored all available options! If you have other inquiries, feel free to contact us at info@autogaragenetwork.com.",
+                time: getFormattedTime(),
+              },
+            ];
+            syncChatToDatabase(updated);
+            return updated;
+          });
+        }
+      } else {
+        setMessages((prev) => {
+          const updated = [
+            ...prev,
+            {
+              id: Date.now() + 1,
+              sender: "bot",
+              text: "Thank you for contacting AGN Support. If you have any other questions in the future, feel free to chat with us again.",
+              time: getFormattedTime(),
+            },
+          ];
+          syncChatToDatabase(updated); // Sync final thank you response to DB
+          return updated;
+        });
+      }
+      setIsTyping(false);
+    }, 800);
+  };
+
+  const completedMenuOptions = [
+    { text: "Explore GMS Features ⚙️", value: "navigate_gms" },
+    { text: "Read Latest Insights 📚", value: "navigate_blog" },
+    { text: "Follow Our Socials 📱", value: "show_socials" },
+    { text: "Start New Inquiry 🔄", value: "restart_chat" },
+  ];
 
   const formatMessageText = (text) => {
     if (!text) return "";
@@ -1191,7 +1466,7 @@ const Footer = () => {
                       <div key={msg.id} className="flex justify-start">
                         <div className="flex flex-col items-start max-w-[85%]">
                           <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-none shadow-md overflow-hidden w-full">
-                            {menuOptions.map((opt, idx) => (
+                            {(msg.options || []).map((opt, idx) => (
                               <button
                                 key={idx}
                                 type="button"
@@ -1199,7 +1474,7 @@ const Footer = () => {
                                   handleUserMessage(opt.text, opt.value)
                                 }
                                 className={`w-full text-left px-4 py-3.5 text-xs font-semibold text-blue-600 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer ${
-                                  idx < menuOptions.length - 1
+                                  idx < (msg.options || []).length - 1
                                     ? "border-b border-gray-150"
                                     : ""
                                 }`}
@@ -1210,6 +1485,38 @@ const Footer = () => {
                                 </span>
                               </button>
                             ))}
+                          </div>
+                          <span className="text-[9px] text-gray-400 mt-1 ml-1 select-none">
+                            {msg.time}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+                  if (msg.isAnythingElseMenu) {
+                    return (
+                      <div key={msg.id} className="flex justify-start">
+                        <div className="flex flex-col items-start max-w-[85%] w-full">
+                          <div className="bg-white border border-gray-205 rounded-2xl rounded-tl-none shadow-md overflow-hidden p-3.5 w-full flex flex-col gap-2.5">
+                            <span className="text-xs text-slate-800 font-medium">
+                              Anything else?
+                            </span>
+                            <div className="flex gap-2 w-full">
+                              <button
+                                type="button"
+                                onClick={() => handleAnythingElseChoice("yes")}
+                                className="flex-1 py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-1000 rounded-xl text-xs font-semibold transition-all border border-blue-100 cursor-pointer text-center"
+                              >
+                                Yes
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleAnythingElseChoice("no")}
+                                className="flex-1 py-2 px-3 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl text-xs font-semibold transition-all border border-slate-200 cursor-pointer text-center"
+                              >
+                                No
+                              </button>
+                            </div>
                           </div>
                           <span className="text-[9px] text-gray-400 mt-1 ml-1 select-none">
                             {msg.time}
@@ -1302,36 +1609,38 @@ const Footer = () => {
               {/* Quick Choice Buttons for Budget or Deadline */}
               {(leadStep === 6 || leadStep === 7) && (
                 <div className="px-4 py-2 bg-slate-50 border-t border-gray-200 flex flex-wrap gap-2 justify-center">
-                  {leadStep === 6 && [
-                    "Under £1,000",
-                    "£1,000 - £5,000",
-                    "£5,000 - £10,000",
-                    "£10,000+"
-                  ].map((budget) => (
-                    <button
-                      key={budget}
-                      type="button"
-                      onClick={() => handleUserMessage(budget)}
-                      className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-                    >
-                      {budget}
-                    </button>
-                  ))}
-                  {leadStep === 7 && [
-                    "Immediate (< 2 weeks)",
-                    "1 Month",
-                    "2-3 Months",
-                    "Flexible"
-                  ].map((deadline) => (
-                    <button
-                      key={deadline}
-                      type="button"
-                      onClick={() => handleUserMessage(deadline)}
-                      className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-                    >
-                      {deadline}
-                    </button>
-                  ))}
+                  {leadStep === 6 &&
+                    [
+                      "Under £1,000",
+                      "£1,000 - £5,000",
+                      "£5,000 - £10,000",
+                      "£10,000+",
+                    ].map((budget) => (
+                      <button
+                        key={budget}
+                        type="button"
+                        onClick={() => handleUserMessage(budget)}
+                        className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                      >
+                        {budget}
+                      </button>
+                    ))}
+                  {leadStep === 7 &&
+                    [
+                      "Immediate (< 2 weeks)",
+                      "1 Month",
+                      "2-3 Months",
+                      "Flexible",
+                    ].map((deadline) => (
+                      <button
+                        key={deadline}
+                        type="button"
+                        onClick={() => handleUserMessage(deadline)}
+                        className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                      >
+                        {deadline}
+                      </button>
+                    ))}
                 </div>
               )}
 

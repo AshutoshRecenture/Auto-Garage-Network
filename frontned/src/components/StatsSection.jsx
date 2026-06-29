@@ -97,7 +97,7 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="py-10 md:py-20 bg-gradient-to-b from-[#050816] to-[#0c1222]">
+    <section className="pt-6 pb-10 md:pt-8 md:pb-20 bg-gradient-to-b from-[#050816] to-[#0c1222]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div
           ref={ref}
