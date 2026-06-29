@@ -12,11 +12,24 @@ const getCloudinaryUrl = (imagePath) => {
 // @access  Public
 const getBlogs = async (req, res) => {
   try {
-    const blogs = blogsData.map((blog, index) => ({
-      _id: String(index + 1),
-      ...blog,
-      image: getCloudinaryUrl(blog.image),
-    }));
+    let blogs = await Blog.find({}).sort({ createdAt: -1 });
+
+    if (blogs.length === 0) {
+      console.log("No blogs found in DB. Seeding from blogs.json...");
+      const seededBlogs = blogsData.map((blog) => ({
+        category: blog.category,
+        title: blog.title,
+        date: blog.date,
+        readTime: blog.readTime,
+        excerpt: blog.excerpt,
+        content: blog.content || "",
+        color: blog.color || "bg-blue-500/10 text-blue-400",
+        image: getCloudinaryUrl(blog.image),
+      }));
+      await Blog.insertMany(seededBlogs);
+      blogs = await Blog.find({}).sort({ createdAt: -1 });
+    }
+
     res.json(blogs);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -28,12 +41,7 @@ const getBlogs = async (req, res) => {
 // @access  Public
 const getBlogById = async (req, res) => {
   try {
-    const blogs = blogsData.map((blog, index) => ({
-      _id: String(index + 1),
-      ...blog,
-      image: getCloudinaryUrl(blog.image),
-    }));
-    const blog = blogs.find((b) => b._id === req.params.id);
+    const blog = await Blog.findById(req.params.id);
     if (blog) {
       res.json(blog);
     } else {

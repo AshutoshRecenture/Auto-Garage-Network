@@ -29,12 +29,11 @@ const Features = lazy(() => import("./pages/Features.jsx"));
 const LatestWork = lazy(() => import("./pages/LatestWork.jsx"));
 const Blog = lazy(() => import("./pages/Blog.jsx"));
 const ContactUs = lazy(() => import("./pages/ContactUs.jsx"));
-const LogIn = lazy(() => import("./pages/LogIn.jsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.jsx"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService.jsx"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy.jsx"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard.jsx"));
 const Sitemap = lazy(() => import("./pages/Sitemap.jsx"));
+const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -139,14 +138,6 @@ const AnimatedRoutes = () => {
           }
         />
         <Route
-          path="/login"
-          element={
-            <PageTransition>
-              <LogIn />
-            </PageTransition>
-          }
-        />
-        <Route
           path="/privacy-policy"
           element={
             <PageTransition>
@@ -171,18 +162,18 @@ const AnimatedRoutes = () => {
           }
         />
         <Route
-          path="/admin"
-          element={
-            <PageTransition>
-              <AdminDashboard />
-            </PageTransition>
-          }
-        />
-        <Route
           path="/sitemap"
           element={
             <PageTransition>
               <Sitemap />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <PageTransition>
+              <NotFound />
             </PageTransition>
           }
         />

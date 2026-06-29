@@ -1,5 +1,5 @@
 const express = require("express");
-const { createChatLead, updateChatLead, getChatLeads } = require("../controllers/chatLead.controller");
+const { createChatLead, updateChatLead, getChatLeads, deleteChatLead } = require("../controllers/chatLead.controller");
 const { protect, admin } = require("../middleware/auth.middleware");
 
 const router = express.Router();
@@ -9,6 +9,7 @@ router.route("/")
   .post(createChatLead);
 
 router.route("/:id")
-  .put(updateChatLead);
+  .put(updateChatLead)
+  .delete(protect, admin, deleteChatLead);
 
 module.exports = router;

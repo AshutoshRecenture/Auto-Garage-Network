@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLogo } from "../utils/LogoContext.jsx";
 import {
   FaFacebookF,
   FaInstagram,
@@ -65,6 +66,7 @@ const menuOptions = [
 ];
 
 const Footer = () => {
+  const { logoUrl } = useLogo();
   // Chatbot State
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
@@ -373,7 +375,7 @@ const Footer = () => {
                 {
                   id: Date.now() + 2,
                   sender: "bot",
-                  text: "Anything else?",
+                  text: "Would you like to explore other services or ask another question?",
                   isAnythingElseMenu: true,
                   time: getFormattedTime(),
                 },
@@ -574,7 +576,7 @@ const Footer = () => {
                 {
                   id: Date.now() + 2,
                   sender: "bot",
-                  text: "Anything else?",
+                  text: "Would you like to explore other services or ask another question?",
                   isAnythingElseMenu: true,
                   time: getFormattedTime(),
                 },
@@ -859,7 +861,7 @@ const Footer = () => {
               {
                 id: Date.now() + 2,
                 sender: "bot",
-                text: "Anything else?",
+                text: "Would you like to explore other services or ask another question?",
                 isAnythingElseMenu: true,
                 time: getFormattedTime(),
               },
@@ -888,7 +890,7 @@ const Footer = () => {
   };
 
   const handleAnythingElseChoice = (choice) => {
-    const userChoiceText = choice === "yes" ? "Yes" : "No";
+    const userChoiceText = choice === "yes" ? "Yes, show options" : "No, thank you";
     const userMsg = {
       id: Date.now(),
       sender: "user",
@@ -1066,7 +1068,7 @@ const Footer = () => {
             <div className="space-y-5 text-center md:text-left flex flex-col items-center md:items-start pb-6 md:pb-0 border-b border-white/5 md:border-0">
               <Link to="/" className="inline-block cursor-pointer">
                 <img
-                  src="/logo-color.png"
+                  src={logoUrl || "/logo-color.png"}
                   alt="Auto Garage Network Logo"
                   className="h-10 lg:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105"
                   loading="lazy"
@@ -1493,13 +1495,13 @@ const Footer = () => {
                       </div>
                     );
                   }
-                  if (msg.isAnythingElseMenu) {
+                   if (msg.isAnythingElseMenu) {
                     return (
                       <div key={msg.id} className="flex justify-start">
                         <div className="flex flex-col items-start max-w-[85%] w-full">
                           <div className="bg-white border border-gray-205 rounded-2xl rounded-tl-none shadow-md overflow-hidden p-3.5 w-full flex flex-col gap-2.5">
-                            <span className="text-xs text-slate-800 font-medium">
-                              Anything else?
+                            <span className="text-xs text-slate-800 font-medium leading-relaxed">
+                              {msg.text || "Would you like to explore other services or ask another question?"}
                             </span>
                             <div className="flex gap-2 w-full">
                               <button
@@ -1507,14 +1509,14 @@ const Footer = () => {
                                 onClick={() => handleAnythingElseChoice("yes")}
                                 className="flex-1 py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-1000 rounded-xl text-xs font-semibold transition-all border border-blue-100 cursor-pointer text-center"
                               >
-                                Yes
+                                Yes, show options
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleAnythingElseChoice("no")}
                                 className="flex-1 py-2 px-3 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl text-xs font-semibold transition-all border border-slate-200 cursor-pointer text-center"
                               >
-                                No
+                                No, thank you
                               </button>
                             </div>
                           </div>

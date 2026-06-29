@@ -6,7 +6,10 @@ const app = require("./src/app");
 const connectDB = require("./src/config/db");
 
 // Establish Database Connection
-connectDB();
+connectDB().then(() => {
+  const seedAdmin = require("./src/utils/seedAdmin");
+  seedAdmin();
+});
 
 const PORT = process.env.PORT || 5000;
 

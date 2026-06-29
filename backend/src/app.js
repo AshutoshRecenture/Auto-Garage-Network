@@ -15,6 +15,7 @@ const serviceRoutes = require("./routes/service.routes");
 const bookingRoutes = require("./routes/booking.routes");
 const mediaRoutes = require("./routes/media.routes");
 const chatLeadRoutes = require("./routes/chatLead.routes");
+const settingsRoutes = require("./routes/settings.routes");
 
 const path = require("path");
 
@@ -42,6 +43,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/chat-submissions", chatLeadRoutes);
+app.use("/api/settings", settingsRoutes);
 
 // Fallback middlewares for error handling
 app.use(notFound);

@@ -301,6 +301,13 @@ html:not(.light) img[src*="logo-color.png"],
   filter: invert(1) hue-rotate(180deg) brightness(1.2);
 }
 
+/* Navbar hover & active state overrides for Light Mode */
+.light header a:hover,
+.light header button:hover,
+.light header button[aria-expanded="true"] {
+  color: #4f46e5 !important;
+}
+
 /* Text Color Mappings */
 .light .text-white {
   color: #0f172a !important;

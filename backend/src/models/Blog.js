@@ -23,8 +23,8 @@ const blogSchema = new mongoose.Schema(
       required: true,
     },
     content: {
-      type: String,
-      default: "",
+      type: mongoose.Schema.Types.Mixed,
+      default: [],
     },
     color: {
       type: String,

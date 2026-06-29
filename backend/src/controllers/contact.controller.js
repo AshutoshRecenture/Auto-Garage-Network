@@ -73,8 +73,47 @@ const deleteContact = async (req, res) => {
   }
 };
 
+// @desc    Update a contact submission
+// @route   PUT /api/contact/:id
+// @access  Private/Admin
+const updateContact = async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+
+    if (contact) {
+      const {
+        name,
+        garageName,
+        email,
+        phone,
+        interestedIn,
+        interest,
+        address,
+        message,
+      } = req.body || {};
+
+      contact.name = name !== undefined ? name : contact.name;
+      contact.garageName = garageName !== undefined ? garageName : contact.garageName;
+      contact.email = email !== undefined ? email : contact.email;
+      contact.phone = phone !== undefined ? phone : contact.phone;
+      contact.interestedIn = interestedIn || interest || contact.interestedIn;
+      contact.address = address !== undefined ? address : contact.address;
+      contact.message = message !== undefined ? message : contact.message;
+
+      const updatedContact = await contact.save();
+      res.json(updatedContact);
+    } else {
+      res.status(404).json({ message: "Contact submission not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   submitContact,
   getContacts,
   deleteContact,
+  updateContact,
 };
+

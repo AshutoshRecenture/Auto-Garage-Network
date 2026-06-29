@@ -27,11 +27,9 @@ async function run() {
     "/latest-work",
     "/blog",
     "/contact-us",
-    "/login",
     "/privacy-policy",
     "/terms-of-service",
     "/cookie-policy",
-    "/admin",
     "/sitemap",
   ];
 
@@ -82,8 +80,6 @@ async function run() {
 `;
 
   for (const url of routes) {
-    if (url === "/admin") continue; // Exclude admin dashboard from sitemap
-
     let changefreq = "monthly";
     let priority = "0.8";
 
@@ -109,7 +105,7 @@ async function run() {
     ) {
       changefreq = "monthly";
       priority = "0.5";
-    } else if (url === "/login" || url === "/sitemap") {
+    } else if (url === "/sitemap") {
       changefreq = "monthly";
       priority = "0.6";
     }

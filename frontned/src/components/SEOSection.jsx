@@ -48,18 +48,18 @@ const SEOSection = ({ isPage = false }) => {
 
   const features = [
     {
-      title: "Google Business Profile",
-      desc: "Sync your reviews and business information directly with Google Maps to show up on local searches.",
+      title: "Google Business Optimization",
+      desc: "Dominate Google Maps and local pack queries. Synchronize live hours, location reviews, and workshop photos to maximize local search presence.",
       icon: <FiMapPin />,
     },
     {
-      title: "Automated Review Collection",
-      desc: "Automatically send feedback requests via SMS after a job is completed to build trust online.",
+      title: "Automated Review Generation",
+      desc: "Automatically collect 5-star Google reviews via smart post-job SMS triggers. Build massive local credibility and trust seamlessly.",
       icon: <FiStar />,
     },
     {
-      title: "Optimized Landing Pages",
-      desc: "High-converting organic search pages tailored specifically for services like MOT Testing or Diagnostics.",
+      title: "High-Intent Service Landing Pages",
+      desc: "Deploy custom-engineered service landing pages optimized for keywords like MOT Testing, Diagnostics, and Repairs to capture local bookings.",
       icon: <FiGlobe />,
     },
   ];
@@ -307,13 +307,11 @@ const SEOSection = ({ isPage = false }) => {
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
                 Dominate{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-                  Local Search Results
+                  Local Search & Drive Bookings
                 </span>
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed">
-                Our built-in SEO tools ensure your garage ranks at the top when
-                local customers search for MOTs, servicing, and repairs in your
-                area.
+                Unlock a continuous stream of organic bookings. Our specialized SEO platform places your workshop at the peak of local search results when nearby car owners actively search for MOTs, servicing, and repairs.
               </p>
             </motion.div>
 

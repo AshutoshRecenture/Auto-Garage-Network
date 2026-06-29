@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLogo } from "../utils/LogoContext.jsx";
 import {
   FiMenu,
   FiX,
@@ -104,6 +105,7 @@ const ThemeToggle = ({ theme, toggleTheme }) => {
 };
 
 const Navbar = () => {
+  const { logoUrl, navbarLineColor } = useLogo();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -321,9 +323,34 @@ const Navbar = () => {
       <header
         className={`fixed top-0 sm:top-11 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? "bg-[#050816]/95 backdrop-blur-xl border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.8)] py-2.5 lg:py-3.5"
+            ? "bg-[#050816]/95 backdrop-blur-xl border-b shadow-[0_10px_30px_rgba(0,0,0,0.8)] py-2.5 lg:py-3.5"
             : "bg-[#050816]/95 backdrop-blur-md sm:bg-transparent py-4 lg:py-5"
         }`}
+        style={
+          isScrolled
+            ? {
+                borderBottom: `1px solid ${
+                  navbarLineColor === "none"
+                    ? "transparent"
+                    : navbarLineColor === "indigo"
+                    ? "#6366f1"
+                    : navbarLineColor === "blue"
+                    ? "#3b82f6"
+                    : navbarLineColor === "violet"
+                    ? "#8b5cf6"
+                    : navbarLineColor === "emerald"
+                    ? "#10b981"
+                    : navbarLineColor === "cyan"
+                    ? "#06b6d4"
+                    : navbarLineColor === "pink"
+                    ? "#ec4899"
+                    : navbarLineColor === "red"
+                    ? "#f43f5e"
+                    : navbarLineColor || "rgba(255, 255, 255, 0.1)"
+                }`,
+              }
+            : {}
+        }
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 relative z-30">
           <div className="flex items-center justify-between">
@@ -333,7 +360,7 @@ const Navbar = () => {
               className="flex-shrink-0 flex items-center cursor-pointer"
             >
               <img
-                src="/logo-color.png"
+                src={logoUrl || "/logo-color.png"}
                 alt="AG Network Logo"
                 className="logo-img h-10 lg:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105"
                 width="120"
@@ -563,7 +590,7 @@ const Navbar = () => {
                     className="flex-shrink-0 flex items-center"
                   >
                     <img
-                      src="/logo-color.png"
+                      src={logoUrl || "/logo-color.png"}
                       alt="AG Network Logo"
                       className="h-8 w-auto object-contain"
                     />

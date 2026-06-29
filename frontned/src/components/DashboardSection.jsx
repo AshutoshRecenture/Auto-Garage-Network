@@ -382,27 +382,10 @@ const DashboardSection = ({ isPage = false }) => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="dashboard-mockup relative rounded-3xl border border-white/10 bg-[#090d1f]/60 backdrop-blur-xl p-3 md:p-6 shadow-[0_30px_100px_rgba(0,0,0,0.8),0_0_80px_rgba(79,70,229,0.15)] mx-auto max-w-5xl overflow-hidden flex flex-col h-[520px] md:h-[580px] lg:h-[620px] lg:aspect-[16/10]"
+          className="dashboard-mockup relative rounded-3xl border border-white/10 bg-[#090d1f]/60 backdrop-blur-xl p-2 md:p-4 shadow-[0_30px_100px_rgba(0,0,0,0.8),0_0_80px_rgba(79,70,229,0.15)] mx-auto max-w-5xl overflow-hidden flex flex-col h-[520px] md:h-[580px] lg:h-[620px] lg:aspect-[16/10]"
         >
-          {/* Dashboard Window Header (mock status bar) */}
-          <div className="flex items-center justify-between px-4 pb-4 border-b border-white/5 w-full">
-            <div className="flex space-x-2">
-              <div className="w-3 h-3 rounded-full bg-[#ef4444] shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-              <div className="w-3 h-3 rounded-full bg-[#f59e0b] shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
-              <div className="w-3 h-3 rounded-full bg-[#10b981] shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            </div>
-            <div className="bg-[#0b0f19] text-gray-400 text-[10px] md:text-xs px-6 py-1.5 rounded-full border border-white/5 flex items-center space-x-2 shadow-inner">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-gray-500 font-medium">HTTPS://</span>
-              <span className="font-semibold text-gray-300">
-                portal.autogarage.network/live
-              </span>
-            </div>
-            <div className="w-12 h-1 bg-white/5 rounded" />
-          </div>
-
           {/* Interactive HTML/CSS Dashboard Content Container */}
-          <div className="bg-[#04060f] rounded-2xl border border-white/5 overflow-hidden mt-4 flex-1 flex flex-col lg:flex-row relative font-sans">
+          <div className="bg-[#04060f] rounded-2xl border border-white/5 overflow-hidden flex-1 flex flex-col lg:flex-row relative font-sans">
             {/* 1. Left-Side Navigation Panel (Glassmorphic) */}
             <div className="w-full lg:w-[24%] border-b lg:border-b-0 lg:border-r border-white/5 bg-[#070b18]/90 p-3 lg:p-4 flex flex-row lg:flex-col justify-between items-center lg:items-stretch select-none">
               <div className="flex flex-row lg:flex-col items-center lg:items-stretch lg:space-y-6 w-full justify-between lg:justify-start">

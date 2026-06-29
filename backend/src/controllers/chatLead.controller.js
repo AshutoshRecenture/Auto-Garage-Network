@@ -81,8 +81,27 @@ const getChatLeads = async (req, res) => {
   }
 };
 
+// @desc    Delete a chatbot lead by ID
+// @route   DELETE /api/chat-submissions/:id
+// @access  Private/Admin
+const deleteChatLead = async (req, res) => {
+  try {
+    const chatLead = await ChatLead.findById(req.params.id);
+
+    if (chatLead) {
+      await chatLead.deleteOne();
+      res.json({ message: "Chatbot lead removed" });
+    } else {
+      res.status(404).json({ message: "Chatbot lead not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createChatLead,
   updateChatLead,
   getChatLeads,
+  deleteChatLead,
 };
