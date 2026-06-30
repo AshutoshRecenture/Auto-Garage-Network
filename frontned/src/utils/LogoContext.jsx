@@ -4,7 +4,7 @@ import { API_URL } from "../config";
 const LogoContext = createContext(null);
 
 export const LogoProvider = ({ children }) => {
-  const [logoUrl, setLogoUrl] = useState("https://www.autogaragenetwork.com/catalog/view/theme/avnv1/assets/img/logo-color.png");
+  const [logoUrl, setLogoUrl] = useState("/logo-color.webp");
   const [navbarLineColor, setNavbarLineColor] = useState("indigo");
   const [loading, setLoading] = useState(true);
 
