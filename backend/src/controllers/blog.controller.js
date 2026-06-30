@@ -12,7 +12,7 @@ const getCloudinaryUrl = (imagePath) => {
 // @access  Public
 const getBlogs = async (req, res) => {
   try {
-    let blogs = await Blog.find({}).sort({ createdAt: -1 });
+    let blogs = await Blog.find({}).select("-content").sort({ createdAt: -1 }).lean();
 
     if (blogs.length === 0) {
       console.log("No blogs found in DB. Seeding from blogs.json...");
@@ -27,7 +27,7 @@ const getBlogs = async (req, res) => {
         image: getCloudinaryUrl(blog.image),
       }));
       await Blog.insertMany(seededBlogs);
-      blogs = await Blog.find({}).sort({ createdAt: -1 });
+      blogs = await Blog.find({}).select("-content").sort({ createdAt: -1 }).lean();
     }
 
     res.json(blogs);
@@ -41,7 +41,7 @@ const getBlogs = async (req, res) => {
 // @access  Public
 const getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
+    const blog = await Blog.findById(req.params.id).lean();
     if (blog) {
       res.json(blog);
     } else {

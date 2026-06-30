@@ -200,7 +200,11 @@ const BlogModal = ({ post, onClose }) => {
           </p>
 
           <div className="space-y-3.5 text-gray-300 text-xs md:text-sm leading-relaxed">
-            {post.content ? (
+            {post.isLoading ? (
+              <div className="flex justify-center items-center py-8">
+                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : post.content ? (
               post.content.map((item, idx) => {
                 if (item.type === "heading") {
                   return (
@@ -436,6 +440,23 @@ const BlogSection = ({ limit }) => {
     return [totalPages - 1, totalPages];
   };
 
+  const handleReadMore = async (post) => {
+    // Show modal immediately with basic details and a loading state
+    setSelectedPost({ ...post, isLoading: true });
+    try {
+      const res = await fetch(`${API_URL}/api/blogs/${post._id}`);
+      if (res.ok) {
+        const fullPost = await res.json();
+        setSelectedPost(fullPost);
+      } else {
+        setSelectedPost(post);
+      }
+    } catch (err) {
+      console.error("Error fetching full blog:", err);
+      setSelectedPost(post);
+    }
+  };
+
   return (
     <section
       id="blog"
@@ -556,7 +577,7 @@ const BlogSection = ({ limit }) => {
               >
                 <BlogCard
                   post={post}
-                  onReadMore={() => setSelectedPost(post)}
+                  onReadMore={() => handleReadMore(post)}
                 />
               </div>
             ))
