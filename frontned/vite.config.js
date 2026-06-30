@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
 
@@ -12,24 +13,20 @@ try {
   const destDashboardPng = "./src/assets/images/dashboard/dashboard.png";
 
   if (fs.existsSync(src)) {
-    // Ensure parent directories exist
     fs.mkdirSync(path.dirname(destHeroJpg), { recursive: true });
     fs.mkdirSync(path.dirname(destDashboardJpg), { recursive: true });
 
-    // Copy to both PNG and JPG filenames to ensure maximum compatibility and zero import failures
     fs.copyFileSync(src, destHeroJpg);
     fs.copyFileSync(src, destHeroPng);
     fs.copyFileSync(src, destDashboardJpg);
     fs.copyFileSync(src, destDashboardPng);
     
     console.log("Successfully copied clean dashboard image to assets!");
-  } else {
-    console.warn("Clean dashboard image source not found at:", src);
   }
 } catch (error) {
   console.error("Error copying dashboard image:", error);
 }
 
 export default defineConfig({
-  plugins: [tailwindcss()],
+  plugins: [react(), tailwindcss()]
 });

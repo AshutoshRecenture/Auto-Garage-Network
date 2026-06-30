@@ -17,7 +17,7 @@ const PartnerLogos = () => {
   const duplicatedPartners = [...partners, ...partners]
 
   return (
-    <section className="pt-4 pb-6 md:pt-6 md:pb-10 border-t border-white/5 bg-[#050816] overflow-hidden">
+    <section className="pt-8 pb-5 md:pt-11 md:pb-8 px-12 md:px-15 bg-gradient-to-b from-[#050816] to-[#0c1222] overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-4 md:mb-8 text-center">
           INTEGRATED WITH LEADING AUTOMOTIVE BRANDS & SOFTWARE
@@ -29,13 +29,13 @@ const PartnerLogos = () => {
           <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#050816] to-transparent z-10"></div>
           
           <motion.div 
-            animate={{ x: ["0%", "-50%"] }}
+            animate={{ x: ["-50%", "0%"] }}
             transition={{ 
               repeat: Infinity, 
               ease: "linear", 
               duration: 20 
             }}
-            className="flex items-center space-x-16 whitespace-nowrap opacity-60"
+            className="flex w-max items-center space-x-16 whitespace-nowrap opacity-60"
           >
             {duplicatedPartners.map((p, i) => (
               <div 

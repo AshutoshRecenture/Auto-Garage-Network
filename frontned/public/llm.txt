@@ -42,3 +42,16 @@ Targeted local SEO services positioning automotive workshops at the top of local
 - [Autotech Data](https://autogaragenetwork.com/autotech-data) - Real-time vehicle database lookup services.
 - [MOT Diary Scheduler](https://autogaragenetwork.com/mot-diary) - Interactive booking system demo.
 - [SEO Solutions](https://autogaragenetwork.com/seo) - Dedicated optimization strategies for local garage search.
+
+## UI Components & Front-end Architecture
+
+The frontend is built using React, Vite, and Tailwind CSS. The following key components have been implemented to create a premium user experience:
+
+- **Navbar**: Responsive navigation with mobile drawer and Light/Dark mode theme toggler.
+- **HeroSection**: Engaging landing area with clear call-to-actions, dynamic headings, and statistics.
+- **FeaturesSection**: Highlights core platform capabilities like DVLA lookup, MOT diaries, and Job cards.
+- **PricingSection**: Displays the Elite, ProMax, and ProMax Plus membership plans with feature comparisons.
+- **TestimonialsSection**: Social proof showcasing reviews from real UK independent garage owners.
+- **FAQSection**: Frequently Asked Questions covering accounting integrations (QuickBooks/Xero), MOT diaries, DVLA lookups, Autodata, and SEO.
+- **Footer**: Comprehensive site footer with navigation links, contact details, social media icons, and a floating Chatbot integration.
+- **Chatbot Widget**: Persistent floating chat widget for immediate customer support and sales inquiries.

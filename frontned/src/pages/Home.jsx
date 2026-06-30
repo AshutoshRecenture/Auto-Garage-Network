@@ -13,7 +13,7 @@ import SEOSection from "../components/SEOSection.jsx";
 import MobileAppSection from "../components/MobileAppSection.jsx";
 import PricingSection from "../components/PricingSection.jsx";
 import TestimonialsSection from "../components/TestimonialsSection.jsx";
-import BlogSection from "../components/BlogSection.jsx";
+import FAQSection from "../components/FAQSection.jsx";
 import Footer from "../components/Footer.jsx";
 
 const Home = () => {
@@ -26,7 +26,6 @@ const Home = () => {
         canonicalPath="/"
       />
       <Navbar />
-      <MotionConfig reducedMotion="always">
         <main className="flex-grow home-main">
           <HeroSection />
           <PartnerLogos />
@@ -39,9 +38,8 @@ const Home = () => {
           <MobileAppSection />
           <PricingSection isHomepage={true} />
           <TestimonialsSection />
-          <BlogSection limit={3} />
+          <FAQSection />
         </main>
-      </MotionConfig>
       <Footer />
     </div>
   );

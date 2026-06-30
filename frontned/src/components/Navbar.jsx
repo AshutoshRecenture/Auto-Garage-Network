@@ -110,6 +110,15 @@ const Navbar = () => {
     setActiveLink(location.pathname);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.classList.add("mobile-menu-open");
+    } else {
+      document.body.classList.remove("mobile-menu-open");
+    }
+    return () => document.body.classList.remove("mobile-menu-open");
+  }, [mobileMenuOpen]);
+
   const handlePreload = (href) => {
     const pages = {
       "/about-us": () => import("../pages/AboutUs.jsx"),
@@ -511,7 +520,7 @@ const Navbar = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setMobileMenuOpen(false)}
-                className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden"
+                className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-xs lg:hidden"
               />
 
               <motion.div
@@ -519,7 +528,7 @@ const Navbar = () => {
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className={`fixed right-0 top-0 bottom-0 h-screen w-[82%] max-w-[340px] lg:hidden overflow-hidden shadow-2xl z-50 flex flex-col transition-all duration-300 ${
+                className={`fixed right-0 top-0 bottom-0 h-screen w-[82%] max-w-[340px] lg:hidden overflow-hidden shadow-2xl z-[70] flex flex-col transition-all duration-300 ${
                   theme === "light"
                     ? "bg-white border-l border-slate-200"
                     : "bg-[#0d1324] border-l border-white/10"
@@ -531,17 +540,22 @@ const Navbar = () => {
                     theme === "light" ? "border-slate-100" : "border-white/5"
                   }`}
                 >
-                  <Link
-                    to="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex-shrink-0 flex items-center"
-                  >
-                    <img
-                      src={logoUrl || "/logo-color.png"}
-                      alt="AG Network Logo"
-                      className="h-8 w-auto object-contain"
-                    />
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      to="/"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex-shrink-0 flex items-center"
+                    >
+                      <img
+                        src={logoUrl || "/logo-color.png"}
+                        alt="AG Network Logo"
+                        className="h-8 w-auto object-contain"
+                      />
+                    </Link>
+                    <div className="no-invert scale-90 origin-left flex items-center">
+                      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+                    </div>
+                  </div>
 
                   <button
                     onClick={() => setMobileMenuOpen(false)}
@@ -557,18 +571,6 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex-grow overflow-y-auto px-5 pb-8 pt-4 space-y-6">
-                  {/* Switch Theme Row */}
-                  <div className="flex items-center justify-between no-invert pb-2 px-1 sm:hidden border-b border-black/5 dark:border-white/5">
-                    <span
-                      className={`text-[11px] font-extrabold uppercase tracking-wider ${
-                        theme === "light" ? "text-slate-500" : "text-gray-400"
-                      }`}
-                    >
-                      Switch Theme
-                    </span>
-                    <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-                  </div>
-
                   {/* Services Bento Grid Section */}
                   <div className="space-y-1">
                     <div

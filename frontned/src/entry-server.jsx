@@ -3,6 +3,7 @@ import { prerenderToNodeStream } from "react-dom/static";
 import { StaticRouter } from "react-router";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App.jsx";
+import { LogoProvider } from "./utils/LogoContext.jsx";
 
 async function streamToString(stream) {
   const chunks = [];
@@ -16,7 +17,9 @@ export async function render(url, helmetContext = {}) {
   const { prelude } = await prerenderToNodeStream(
     <HelmetProvider context={helmetContext}>
       <StaticRouter location={url}>
-        <App />
+        <LogoProvider>
+          <App />
+        </LogoProvider>
       </StaticRouter>
     </HelmetProvider>
   );

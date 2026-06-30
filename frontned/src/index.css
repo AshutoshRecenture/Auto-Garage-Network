@@ -1335,3 +1335,5 @@ html:not(.light) .gms-hero-gradient-2 {
 
 .light footer a { color: #0f172a !important; }
 .light footer a:hover { color: #4f46e5 !important; }
+
+body.mobile-menu-open #chatbot-widget-container { display: none !important; }

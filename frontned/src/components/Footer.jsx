@@ -890,7 +890,8 @@ const Footer = () => {
   };
 
   const handleAnythingElseChoice = (choice) => {
-    const userChoiceText = choice === "yes" ? "Yes, show options" : "No, thank you";
+    const userChoiceText =
+      choice === "yes" ? "Yes, show options" : "No, thank you";
     const userMsg = {
       id: Date.now(),
       sender: "user",
@@ -1385,6 +1386,7 @@ const Footer = () => {
 
       {/* Floating Chatbot Assistant Widget */}
       <div
+        id="chatbot-widget-container"
         className={`fixed bottom-6 right-6 z-50 flex flex-col items-end transition-opacity duration-300 ${
           isAtBottom ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
@@ -1500,13 +1502,14 @@ const Footer = () => {
                       </div>
                     );
                   }
-                   if (msg.isAnythingElseMenu) {
+                  if (msg.isAnythingElseMenu) {
                     return (
                       <div key={msg.id} className="flex justify-start">
                         <div className="flex flex-col items-start max-w-[85%] w-full">
                           <div className="bg-white border border-gray-205 rounded-2xl rounded-tl-none shadow-md overflow-hidden p-3.5 w-full flex flex-col gap-2.5">
                             <span className="text-xs text-slate-800 font-medium leading-relaxed">
-                              {msg.text || "Would you like to explore other services or ask another question?"}
+                              {msg.text ||
+                                "Would you like to explore other services or ask another question?"}
                             </span>
                             <div className="flex gap-2 w-full">
                               <button
