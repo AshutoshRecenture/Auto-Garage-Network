@@ -45,8 +45,8 @@ const FAQSection = () => {
   return (
     <section className="pt-2 pb-8 md:pt-1 md:pb-1 px-5 bg-[#050816] relative overflow-hidden">
       {/* Background Glow Effects */}
-      <div className="absolute top-1/4 left-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/4 left-0 w-96 h-96 bg-indigo-600/10 rounded-full hidden md:block blur-[] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-blue-600/10 rounded-full hidden md:block blur-[] pointer-events-none"></div>
 
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="text-center mb-3 md:mb-9"> 

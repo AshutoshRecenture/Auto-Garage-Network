@@ -441,7 +441,7 @@ const BlogSection = ({ limit }) => {
       id="blog"
       className={`px-6 md:px-12 bg-[#050816] border-b border-white/5 relative overflow-hidden ${limit ? "py-12 md:py-24" : "pt-6 pb-10 md:pb-20"}`}
     >
-      <div className="absolute top-1/2 left-1/4 w-[450px] h-[450px] bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/4 w-[450px] h-[450px] bg-indigo-600/5 rounded-full hidden md:block blur-[] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto">
         {limit && (

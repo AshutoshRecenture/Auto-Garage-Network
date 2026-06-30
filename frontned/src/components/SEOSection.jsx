@@ -293,7 +293,7 @@ const SEOSection = ({ isPage = false }) => {
       }`}
     >
       {/* Background radial glow recolored from emerald to blue */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full hidden md:block blur-[] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
@@ -377,7 +377,7 @@ const SEOSection = ({ isPage = false }) => {
             viewport={{ once: true }}
             className="order-1 md:order-2 relative w-full flex justify-center items-center"
           >
-            <div className="absolute inset-0 bg-blue-600/5 blur-[100px] rounded-full pointer-events-none"></div>
+            <div className="absolute inset-0 bg-blue-600/5 hidden md:block blur-[] rounded-full pointer-events-none"></div>
 
             {/* SEO Dashboard Mockup Box recolored from green to blue */}
             <motion.div

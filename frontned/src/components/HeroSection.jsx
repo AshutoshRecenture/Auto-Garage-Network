@@ -276,7 +276,7 @@ const HeroSection = () => {
           opacity: [0.1, 0.2, 0.1],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"
+        className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-indigo-600/20 rounded-full hidden md:block blur-[] pointer-events-none"
       />
       <motion.div
         animate={{
@@ -289,7 +289,7 @@ const HeroSection = () => {
           ease: "easeInOut",
           delay: 1,
         }}
-        className="absolute top-1/3 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"
+        className="absolute top-1/3 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full hidden md:block blur-[] pointer-events-none"
       />
 
       <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">

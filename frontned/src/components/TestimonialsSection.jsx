@@ -29,7 +29,7 @@ const TestimonialsSection = () => {
 
   return (
     <section className="pt-10 pb-12 md:pt-12 md:pb-24 px-6 md:px-12 bg-[#050816] relative overflow-hidden">
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-blue-600/10 rounded-full hidden md:block blur-[] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">

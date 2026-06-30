@@ -299,7 +299,7 @@ const MobileAppSection = () => {
   return (
     <section className="pt-6 pb-12 md:pt-8 md:pb-24 px-6 md:px-12 bg-gradient-to-b from-[#050816] to-[#0c1222] overflow-hidden relative">
       {/* Background radial glow recolored from orange to blue */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-600/5 rounded-full hidden md:block blur-[] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
@@ -405,7 +405,7 @@ const MobileAppSection = () => {
 
           {/* Right Column: Detailed Mobile Phone Mockup */}
           <div className="order-1 md:order-2 relative flex justify-center perspective-1000">
-            <div className="absolute inset-0 bg-blue-600/10 blur-[120px] rounded-full w-3/4 mx-auto pointer-events-none"></div>
+            <div className="absolute inset-0 bg-blue-600/10 hidden md:block blur-[] rounded-full w-3/4 mx-auto pointer-events-none"></div>
 
             <motion.div
               initial={{ opacity: 0, y: 50, rotateY: 10 }}
