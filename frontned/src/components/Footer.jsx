@@ -997,9 +997,9 @@ const Footer = () => {
 
   return (
     <>
-      <footer className="footer-no-invert bg-[#000000] pt-0 pb-0 relative text-white font-sans">
+      <footer className="bg-[#050816] pt-0 pb-0 relative text-white font-sans">
         {/* 1. Blue Top Bar */}
-        <div className="bg-[#1e73be] w-full py-4 border-b border-white/5">
+        <div className="no-invert bg-[#1e73be] w-full py-4 border-b border-white/5">
           <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col sm:flex-row justify-between items-center gap-4">
             {/* Follow Us & Social Icons */}
             <div className="flex items-center space-x-4">
@@ -1098,7 +1098,7 @@ const Footer = () => {
                 aria-expanded={openSections.company}
                 aria-controls="footer-company-links"
               >
-                <h4 className="text-white font-extrabold text-base select-none">
+                <h4 className="font-extrabold text-base select-none">
                   Company
                 </h4>
                 <span className="md:hidden text-gray-400 font-bold text-lg leading-none pr-1">
@@ -1197,7 +1197,7 @@ const Footer = () => {
                 aria-expanded={openSections.industries}
                 aria-controls="footer-industries-links"
               >
-                <h4 className="text-white font-extrabold text-base select-none">
+                <h4 className="font-extrabold text-base select-none">
                   Industries
                 </h4>
                 <span className="md:hidden text-gray-400 font-bold text-lg leading-none pr-1">
@@ -1242,7 +1242,7 @@ const Footer = () => {
                 aria-expanded={openSections.products}
                 aria-controls="footer-products-links"
               >
-                <h4 className="text-white font-extrabold text-base select-none">
+                <h4 className="font-extrabold text-base select-none">
                   Products
                 </h4>
                 <span className="md:hidden text-gray-400 font-bold text-lg leading-none pr-1">
@@ -1298,7 +1298,7 @@ const Footer = () => {
                 aria-expanded={openSections.contact}
                 aria-controls="footer-contact-links"
               >
-                <h4 className="text-white font-extrabold text-base select-none">
+                <h4 className="font-extrabold text-base select-none">
                   Contact Information
                 </h4>
                 <span className="md:hidden text-gray-400 font-bold text-lg leading-none pr-1">
@@ -1512,7 +1512,7 @@ const Footer = () => {
                               <button
                                 type="button"
                                 onClick={() => handleAnythingElseChoice("yes")}
-                                className="flex-1 py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-1000 rounded-xl text-xs font-semibold transition-all border border-blue-100 cursor-pointer text-center"
+                                className="flex-1 py-2 px-3 bg-[#eff6ff] hover:bg-[#dbeafe] text-[#1e3a8a] rounded-xl text-xs font-semibold transition-all border border-[#dbeafe] cursor-pointer text-center"
                               >
                                 Yes, show options
                               </button>
@@ -1627,7 +1627,7 @@ const Footer = () => {
                         key={budget}
                         type="button"
                         onClick={() => handleUserMessage(budget)}
-                        className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                        className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-[#eff6ff] border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
                       >
                         {budget}
                       </button>
@@ -1643,7 +1643,7 @@ const Footer = () => {
                         key={deadline}
                         type="button"
                         onClick={() => handleUserMessage(deadline)}
-                        className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                        className="chat-choice-btn px-3 py-1.5 bg-white hover:bg-[#eff6ff] border border-gray-200 hover:border-blue-300 text-blue-600 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
                       >
                         {deadline}
                       </button>

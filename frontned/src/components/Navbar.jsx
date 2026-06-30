@@ -13,6 +13,8 @@ import {
   FiDatabase,
   FiCalendar,
   FiSend,
+  FiSun,
+  FiMoon,
 } from "react-icons/fi";
 import {
   FaFacebookF,
@@ -22,85 +24,35 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 
-// Spring-animated theme toggle switch component matching the premium design
+// Elegant icon-only theme toggle
 const ThemeToggle = ({ theme, toggleTheme }) => {
   const isLight = theme === "light";
 
   return (
-    <div className="flex items-center gap-2.5 select-none font-sans no-invert">
-      {/* Light label */}
-      <span
-        onClick={() => theme !== "light" && toggleTheme()}
-        className={`text-xs font-bold cursor-pointer transition-colors duration-300 ${
-          isLight
-            ? "text-[#0f172a] font-extrabold"
-            : "text-gray-400 hover:text-white"
-        }`}
+    <button
+      onClick={toggleTheme}
+      className={`relative p-2 rounded-full transition-all duration-300 focus:outline-none flex items-center justify-center overflow-hidden border shadow-sm ${
+        isLight
+          ? "bg-white hover:bg-slate-50 border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+          : "bg-white/5 hover:bg-white/10 border-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.2)]"
+      }`}
+      aria-label="Toggle theme"
+      title={`Switch to ${isLight ? 'dark' : 'light'} mode`}
+    >
+      <motion.div
+        key={theme} // Key forces an instant re-render with a quick pop-in animation
+        initial={{ opacity: 0, rotate: -45, scale: 0.8 }}
+        animate={{ opacity: 1, rotate: 0, scale: 1 }}
+        transition={{ duration: 0.15, ease: "easeOut" }}
+        className="flex items-center justify-center"
       >
-        Light
-      </span>
-
-      {/* Pill Switch */}
-      <button
-        onClick={toggleTheme}
-        className={`relative w-14 h-7 rounded-full p-1 transition-colors duration-500 focus:outline-none flex items-center cursor-pointer border ${
-          isLight
-            ? "bg-[#5D8EFA] border-[#5D8EFA]/20 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]"
-            : "bg-[#1E293B] border-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-        }`}
-        aria-label="Toggle theme"
-      >
-        {/* Decorative elements inside track */}
-        {/* Light mode: 2 white dots on the right */}
-        <div
-          className={`absolute right-2.5 flex items-center gap-1 transition-opacity duration-300 pointer-events-none ${
-            isLight ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="w-1.5 h-1.5 rounded-full bg-white/90" />
-          <div className="w-0.5 h-0.5 rounded-full bg-white/70" />
-        </div>
-
-        {/* Dark mode: 2 small stars/dots on the left */}
-        <div
-          className={`absolute left-2.5 flex items-center gap-1 transition-opacity duration-300 pointer-events-none ${
-            !isLight ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="w-0.5 h-0.5 rounded-full bg-yellow-200/80" />
-          <div className="w-1 h-1 bg-yellow-100/90 rounded-full" />
-        </div>
-
-        {/* Sliding Knob */}
-        <motion.div
-          className="w-5 h-5 rounded-full bg-white shadow-md z-10"
-          layout
-          transition={{
-            type: "spring",
-            stiffness: 400,
-            damping: 25,
-          }}
-          initial={{
-            x: isLight ? 0 : 28,
-          }}
-          animate={{
-            x: isLight ? 0 : 28, // 56px (w-14) - 20px (w-5) - 8px (padding) = 28px
-          }}
-        />
-      </button>
-
-      {/* Dark label */}
-      <span
-        onClick={() => theme !== "dark" && toggleTheme()}
-        className={`text-xs font-bold cursor-pointer transition-colors duration-300 ${
-          !isLight
-            ? "text-white font-extrabold"
-            : "text-slate-400 hover:text-slate-600"
-        }`}
-      >
-        Dark
-      </span>
-    </div>
+        {isLight ? (
+          <FiSun className="w-[18px] h-[18px] text-amber-500" />
+        ) : (
+          <FiMoon className="w-[18px] h-[18px] text-indigo-400" />
+        )}
+      </motion.div>
+    </button>
   );
 };
 
@@ -226,8 +178,12 @@ const Navbar = () => {
   return (
     <>
       {/* Top Bar with social icons and contacts */}
-      <header className="hidden sm:block fixed top-0 left-0 right-0 z-50 bg-[#050816]/90 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-[1536px] mx-auto px-4 md:px-8 flex items-center justify-between h-10 sm:h-12 text-gray-400 text-xs">
+      <header className={`hidden sm:block fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-colors duration-300 ${
+        theme === "light" ? "bg-white/90 border-slate-200" : "bg-[#050816]/90 border-white/5"
+      }`}>
+        <div className={`max-w-[1536px] mx-auto px-4 md:px-8 flex items-center justify-between h-10 sm:h-12 text-xs ${
+          theme === "light" ? "text-slate-600" : "text-gray-400"
+        }`}>
           {/* Social Icons */}
           <div className="flex items-center space-x-3 sm:space-x-4">
             <a
@@ -328,8 +284,12 @@ const Navbar = () => {
       <header
         className={`fixed top-0 sm:top-11 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? "bg-[#050816]/95 backdrop-blur-xl border-b shadow-[0_10px_30px_rgba(0,0,0,0.8)] py-2.5 lg:py-3.5"
-            : "bg-[#050816]/95 backdrop-blur-md sm:bg-transparent py-4 lg:py-5"
+            ? theme === "light"
+              ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm py-2.5 lg:py-3.5"
+              : "bg-[#050816]/95 backdrop-blur-xl border-b shadow-[0_10px_30px_rgba(0,0,0,0.8)] py-2.5 lg:py-3.5"
+            : theme === "light"
+              ? "bg-white/95 backdrop-blur-md sm:bg-transparent py-4 lg:py-5"
+              : "bg-[#050816]/95 backdrop-blur-md sm:bg-transparent py-4 lg:py-5"
         }`}
         style={
           isScrolled
@@ -400,24 +360,15 @@ const Navbar = () => {
                         className={`flex items-center gap-1.5 text-xs xl:text-[13px] 2xl:text-[14.5px] font-semibold transition-all duration-300 whitespace-nowrap py-2 px-1.5 lg:px-2 xl:px-2.5 2xl:px-3.5 rounded-full relative cursor-pointer ${
                           isActive
                             ? "text-[#2196f3] font-bold"
-                            : "text-gray-300 hover:text-white"
+                            : theme === "light"
+                              ? "text-slate-800 hover:text-black"
+                              : "text-gray-300 hover:text-white"
                         }`}
                         aria-haspopup="true"
                         aria-expanded={
                           dropdownOpen && hoveredLink === link.name
                         }
                       >
-                        {hoveredLink === link.name && (
-                          <motion.span
-                            layoutId="navHoverPill"
-                            className="absolute inset-0 bg-white/5 rounded-full -z-10"
-                            transition={{
-                              type: "spring",
-                              stiffness: 380,
-                              damping: 30,
-                            }}
-                          />
-                        )}
                         <span>{link.name}</span>
                         <FiChevronDown
                           className={`w-3.5 h-3.5 transition-transform duration-300 ${
@@ -448,8 +399,12 @@ const Navbar = () => {
                                     }
                                     className={`flex items-start gap-3.5 p-3 rounded-lg transition-all duration-300 ${
                                       isSubActive
-                                        ? "bg-indigo-500/15 border-l-2 border-indigo-500"
-                                        : "hover:bg-white/5 border-l-2 border-transparent"
+                                        ? theme === "light"
+                                          ? "bg-indigo-50 border-l-2 border-indigo-500"
+                                          : "bg-indigo-500/15 border-l-2 border-indigo-500"
+                                        : theme === "light"
+                                          ? "hover:bg-slate-50 border-l-2 border-transparent"
+                                          : "hover:bg-white/5 border-l-2 border-transparent"
                                     }`}
                                   >
                                     <div
@@ -461,13 +416,17 @@ const Navbar = () => {
                                       <h4
                                         className={`text-xs font-bold ${
                                           isSubActive
-                                            ? "text-indigo-400"
-                                            : "text-white group-hover:text-indigo-400"
+                                            ? "text-indigo-500"
+                                            : theme === "light"
+                                              ? "text-slate-800 group-hover:text-indigo-600"
+                                              : "text-white group-hover:text-indigo-400"
                                         }`}
                                       >
                                         {subItem.name}
                                       </h4>
-                                      <p className="text-[10px] text-gray-400 mt-0.5 leading-relaxed font-normal">
+                                      <p className={`text-[10px] mt-0.5 leading-relaxed font-normal ${
+                                        theme === "light" ? "text-slate-500" : "text-gray-400"
+                                      }`}>
                                         {subItem.desc}
                                       </p>
                                     </div>
@@ -485,17 +444,11 @@ const Navbar = () => {
                 let linkClass =
                   "relative text-xs xl:text-[13px] 2xl:text-[14.5px] font-semibold transition-all duration-300 whitespace-nowrap py-2 px-1.5 lg:px-2 xl:px-2.5 2xl:px-3.5 rounded-full flex items-center ";
 
-                if (link.type === "pricing") {
-                  linkClass +=
-                    "text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 hover:border-emerald-500/40";
-                } else if (link.type === "seo" || link.type === "latest-work") {
-                  linkClass +=
-                    "text-rose-400 border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 hover:border-rose-500/40";
-                } else {
-                  linkClass += isActive
-                    ? "text-indigo-400 font-bold"
+                linkClass += isActive
+                  ? "text-[#2196f3] font-bold"
+                  : theme === "light"
+                    ? "text-slate-800 hover:text-black"
                     : "text-gray-300 hover:text-white";
-                }
 
                 return (
                   <Link
@@ -507,22 +460,11 @@ const Navbar = () => {
                       handlePreload(link.href);
                     }}
                   >
-                    {hoveredLink === link.name && !link.type && (
-                      <motion.span
-                        layoutId="navHoverPill"
-                        className="absolute inset-0 bg-white/5 rounded-full -z-10"
-                        transition={{
-                          type: "spring",
-                          stiffness: 380,
-                          damping: 30,
-                        }}
-                      />
-                    )}
                     <span>{link.name}</span>
-                    {isActive && !link.type && (
+                    {isActive && (
                       <motion.span
                         layoutId="activeNavIndicator"
-                        className="absolute bottom-[2px] left-3 right-3 h-[2px] bg-indigo-500 shadow-[0_0_8px_#6366f1] rounded-full"
+                        className="absolute bottom-[2px] left-3 right-3 h-[2px] bg-[#2196f3] rounded-full"
                         transition={{
                           type: "spring",
                           stiffness: 350,
@@ -615,6 +557,18 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex-grow overflow-y-auto px-5 pb-8 pt-4 space-y-6">
+                  {/* Switch Theme Row */}
+                  <div className="flex items-center justify-between no-invert pb-2 px-1 sm:hidden border-b border-black/5 dark:border-white/5">
+                    <span
+                      className={`text-[11px] font-extrabold uppercase tracking-wider ${
+                        theme === "light" ? "text-slate-500" : "text-gray-400"
+                      }`}
+                    >
+                      Switch Theme
+                    </span>
+                    <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+                  </div>
+
                   {/* Services Bento Grid Section */}
                   <div className="space-y-1">
                     <div
@@ -700,50 +654,11 @@ const Navbar = () => {
                         let textColor = "";
                         let badge = null;
 
-                        if (link.type === "pricing") {
-                          textColor =
-                            theme === "light"
-                              ? "text-emerald-600"
-                              : "text-emerald-400";
-                          badge = (
-                            <span
-                              className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider ${
-                                theme === "light"
-                                  ? "bg-emerald-100 text-emerald-800"
-                                  : "bg-emerald-500/20 text-emerald-300"
-                              }`}
-                            >
-                              Plans
-                            </span>
-                          );
-                        } else if (
-                          link.type === "seo" ||
-                          link.type === "latest-work"
-                        ) {
-                          textColor =
-                            theme === "light"
-                              ? "text-rose-600"
-                              : "text-rose-400";
-                          badge = (
-                            <span
-                              className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider ${
-                                theme === "light"
-                                  ? "bg-rose-100 text-rose-800"
-                                  : "bg-rose-500/20 text-rose-300"
-                              }`}
-                            >
-                              Hot
-                            </span>
-                          );
-                        } else {
-                          textColor = isActive
-                            ? theme === "light"
-                              ? "text-indigo-600 font-bold"
-                              : "text-indigo-400 font-bold"
-                            : theme === "light"
-                              ? "text-slate-700 hover:text-slate-900"
-                              : "text-gray-300 hover:text-white";
-                        }
+                        textColor = isActive
+                          ? "text-[#2196f3] font-bold"
+                          : theme === "light"
+                            ? "text-slate-700 hover:text-slate-900"
+                            : "text-gray-300 hover:text-white";
 
                         return (
                           <Link
@@ -770,17 +685,6 @@ const Navbar = () => {
                         );
                       })}
 
-                    {/* Switch Theme Row */}
-                    <div className="flex items-center justify-between no-invert py-3 px-1 sm:hidden col-span-1 sm:col-span-2">
-                      <span
-                        className={`text-[10px] font-extrabold uppercase tracking-wider ${
-                          theme === "light" ? "text-slate-400" : "text-gray-500"
-                        }`}
-                      >
-                        Switch Theme
-                      </span>
-                      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-                    </div>
                   </div>
                 </div>
               </motion.div>

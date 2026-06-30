@@ -319,13 +319,16 @@ html:not(.light) img[src*="logo-color.png"],
   color: #1e293b !important;
 }
 .light .text-gray-300 {
-  color: #334155 !important;
+  color: #0f1b37 !important;
 }
 .light .text-gray-400 {
-  color: #475569 !important;
+  color: #0f172a !important;
 }
 .light .text-gray-500 {
-  color: #64748b !important;
+  color: #1e293b !important;
+}
+.light .text-gray-600 {
+  color: #334155 !important;
 }
 .light .text-slate-100 {
   color: #0f172a !important;
@@ -334,10 +337,16 @@ html:not(.light) img[src*="logo-color.png"],
   color: #1e293b !important;
 }
 .light .text-slate-300 {
-  color: #334155 !important;
+  color: #1e293b !important;
 }
 .light .text-slate-400 {
-  color: #475569 !important;
+  color: #1e293b !important;
+}
+.light .text-slate-500 {
+  color: #334155 !important;
+}
+.light .text-slate-600 {
+  color: #334155 !important;
 }
 
 /* Contrast enhancers for color accents in Light Mode */
@@ -1323,3 +1332,6 @@ html:not(.light) .gms-hero-gradient-2 {
   color: #ffffff !important;
   box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3) !important;
 }
+
+.light footer a { color: #0f172a !important; }
+.light footer a:hover { color: #4f46e5 !important; }

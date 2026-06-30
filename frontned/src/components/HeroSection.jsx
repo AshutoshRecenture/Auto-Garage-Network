@@ -548,7 +548,7 @@ const HeroSection = () => {
                                 key={i}
                                 className={`w-3 h-3 flex items-center justify-center rounded-full mx-auto transition-all duration-300 ${
                                   isSelected
-                                    ? "bg-indigo-600/40 text-white font-bold"
+                                      ? "bg-indigo-600 text-white font-bold shadow-sm"
                                     : isToday
                                       ? "bg-cyan-500 text-white font-bold"
                                       : "text-gray-400"
