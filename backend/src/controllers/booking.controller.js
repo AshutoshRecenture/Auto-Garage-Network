@@ -1,12 +1,20 @@
 const Booking = require("../models/Booking");
+const { verifyCaptchaToken } = require("../utils/captcha");
 
 // @desc    Submit a booking inquiry
 // @route   POST /api/bookings
 // @access  Public
 const submitBooking = async (req, res) => {
   try {
-    const { name, garageName, email, phone, interestedIn, address, message } =
+    const { name, garageName, email, phone, interestedIn, address, message, captchaToken } =
       req.body || {};
+
+    if (!verifyCaptchaToken(captchaToken)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid or expired Captcha verification. Please try again.",
+      });
+    }
 
     if (!name || !garageName || !email || !phone || !interestedIn || !address) {
       return res.status(400).json({

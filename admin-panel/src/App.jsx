@@ -9,8 +9,9 @@ function App() {
     <LogoProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<AdminDashboard />} />
           <Route path="/login" element={<LogIn />} />
+          <Route path="/:tab" element={<AdminDashboard />} />
+          <Route path="/" element={<AdminDashboard />} />
         </Routes>
       </Router>
     </LogoProvider>

@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
+const { verifyCaptchaToken } = require("../utils/captcha");
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -49,7 +50,13 @@ const registerUser = async (req, res) => {
 // @access  Public
 const authUser = async (req, res) => {
   try {
-    const { email, password } = req.body || {};
+    const { email, password, captchaToken } = req.body || {};
+
+    if (!verifyCaptchaToken(captchaToken)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired Captcha verification. Please try again." });
+    }
 
     if (!email || !password) {
       return res

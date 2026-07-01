@@ -1,4 +1,5 @@
 const Contact = require("../models/Contact");
+const { verifyCaptchaToken } = require("../utils/captcha");
 
 // @desc    Submit a contact form / inquiry
 // @route   POST /api/contact
@@ -14,7 +15,15 @@ const submitContact = async (req, res) => {
       interest,
       address,
       message,
+      captchaToken,
     } = req.body || {};
+
+    if (!verifyCaptchaToken(captchaToken)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid or expired Captcha verification. Please try again.",
+      });
+    }
 
     if (!name || !email || !phone) {
       return res.status(400).json({

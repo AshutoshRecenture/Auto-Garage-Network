@@ -8,6 +8,7 @@ configureCloudinary();
 
 // Routes imports
 const authRoutes = require("./routes/auth.routes");
+const captchaRoutes = require("./routes/captcha.routes");
 const contactRoutes = require("./routes/contact.routes");
 const blogRoutes = require("./routes/blog.routes");
 const projectRoutes = require("./routes/project.routes");
@@ -38,6 +39,7 @@ app.get("/", (req, res) => {
 
 // API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/captcha", captchaRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/projects", projectRoutes);

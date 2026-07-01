@@ -26,6 +26,7 @@ import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import DashboardSection from "../components/DashboardSection.jsx";
 import Footer from "../components/Footer.jsx";
+import ReCaptcha from "../components/ReCaptcha.jsx";
 import { API_URL } from "../config";
 
 import { getCloudinaryUrl, useBackendOnline } from "../utils/cloudinary.js";
@@ -173,6 +174,7 @@ const GarageManagementSystem = () => {
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   // Scroll to booking form helper
   const scrollToForm = (planName = "") => {
@@ -192,6 +194,10 @@ const GarageManagementSystem = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert("Please verify that you are not a robot.");
+      return;
+    }
     if (
       !formData.name.trim() ||
       !formData.garageName.trim() ||
@@ -219,6 +225,7 @@ const GarageManagementSystem = () => {
           interestedIn: formData.interestedIn,
           address: formData.address,
           message: formData.message,
+          captchaToken: captchaToken,
         }),
       });
 
@@ -246,6 +253,8 @@ const GarageManagementSystem = () => {
       alert(`Submission failed: ${error.message}`);
     } finally {
       setIsSubmitting(false);
+      window.dispatchEvent(new Event("reset-captcha"));
+      setCaptchaToken(null);
     }
   };
 
@@ -834,6 +843,11 @@ const GarageManagementSystem = () => {
                             />
                           </div>
                         </div>
+
+                        <ReCaptcha 
+                          onVerify={(token) => setCaptchaToken(token)} 
+                          onExpired={() => setCaptchaToken(null)} 
+                        />
 
                         {/* Submit */}
                         <button

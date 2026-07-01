@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiLock, FiArrowLeft } from "react-icons/fi";
 import SEOHeader from "../components/SEOHeader.jsx";
+import ReCaptcha from "../components/ReCaptcha.jsx";
 import { API_URL } from "../config";
 
 const LogIn = () => {
@@ -9,9 +10,14 @@ const LogIn = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!captchaToken) {
+      setErrorMsg("Please verify that you are not a robot.");
+      return;
+    }
     setLoading(true);
     setErrorMsg("");
 
@@ -21,7 +27,7 @@ const LogIn = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, captchaToken }),
       });
 
       const data = await response.json();
@@ -49,6 +55,8 @@ const LogIn = () => {
       setErrorMsg(err.message || "Invalid credentials.");
     } finally {
       setLoading(false);
+      window.dispatchEvent(new Event("reset-captcha"));
+      setCaptchaToken(null);
     }
   };
 
@@ -137,6 +145,11 @@ const LogIn = () => {
               />
             </div>
           </div>
+
+          <ReCaptcha 
+            onVerify={(token) => setCaptchaToken(token)} 
+            onExpired={() => setCaptchaToken(null)} 
+          />
 
           <button
             type="submit"

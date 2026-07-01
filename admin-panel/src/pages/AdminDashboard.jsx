@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,6 +36,8 @@ import SEOHeader from "../components/SEOHeader.jsx";
 
 const AdminDashboard = () => {
   const { logoUrl, navbarLineColor, refreshSettings } = useLogo();
+  const { tab } = useParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("contact-leads");
 
   // Authentication states
@@ -174,6 +176,18 @@ const AdminDashboard = () => {
     }
   };
 
+  const isTabPermitted = (tabName, role) => {
+    if (role === "super_admin") return true;
+    if (tabName === "contact-leads") return canRead("contacts");
+    if (tabName === "chat-leads") return canRead("chatLeads");
+    if (tabName === "blogs") return canRead("blogs");
+    if (tabName === "faqs") return canRead("faqs");
+    if (tabName === "media") return canRead("media");
+    if (tabName === "settings") return canRead("settings");
+    if (tabName === "admins") return false; // admins only for super_admin
+    return false;
+  };
+
   // Load Admin auth and fetch data
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -185,25 +199,6 @@ const AdminDashboard = () => {
       setIsAuthenticated(true);
       setAdminName(name || "Administrator");
       setAdminRole(role);
-      
-      // Determine default active tab dynamically based on role/permissions
-      let defaultTab = "contact-leads";
-      if (role !== "super_admin") {
-        try {
-          const permStr = localStorage.getItem("agn_user_permissions");
-          const perm = permStr ? JSON.parse(permStr) : {};
-          if (perm.contacts?.read === true) defaultTab = "contact-leads";
-          else if (perm.chatLeads?.read === true) defaultTab = "chat-leads";
-          else if (perm.blogs?.read === true) defaultTab = "blogs";
-          else if (perm.faqs?.read === true) defaultTab = "faqs";
-          else if (perm.media?.read === true) defaultTab = "media";
-          else if (perm.settings?.read === true) defaultTab = "settings";
-          else defaultTab = "no-access";
-        } catch (e) {
-          defaultTab = "no-access";
-        }
-      }
-      setActiveTab(defaultTab);
       
       loadAllData(token, role);
       setCheckingAuth(false);
@@ -219,6 +214,56 @@ const AdminDashboard = () => {
       window.location.href = "/login";
     }
   }, []);
+
+  // Sync activeTab state with URL tab parameter
+  useEffect(() => {
+    const role = localStorage.getItem("agn_user_role");
+    if (isAuthenticated) {
+      if (tab) {
+        if (isTabPermitted(tab, role)) {
+          setActiveTab(tab);
+        } else {
+          // Determine default active tab dynamically based on role/permissions
+          let defaultTab = "contact-leads";
+          if (role !== "super_admin") {
+            try {
+              const permStr = localStorage.getItem("agn_user_permissions");
+              const perm = permStr ? JSON.parse(permStr) : {};
+              if (perm.contacts?.read === true) defaultTab = "contact-leads";
+              else if (perm.chatLeads?.read === true) defaultTab = "chat-leads";
+              else if (perm.blogs?.read === true) defaultTab = "blogs";
+              else if (perm.faqs?.read === true) defaultTab = "faqs";
+              else if (perm.media?.read === true) defaultTab = "media";
+              else if (perm.settings?.read === true) defaultTab = "settings";
+              else defaultTab = "no-access";
+            } catch (e) {
+              defaultTab = "no-access";
+            }
+          }
+          navigate(`/${defaultTab}`, { replace: true });
+        }
+      } else {
+        // Tab is not in URL, redirect to default
+        let defaultTab = "contact-leads";
+        if (role !== "super_admin") {
+          try {
+            const permStr = localStorage.getItem("agn_user_permissions");
+            const perm = permStr ? JSON.parse(permStr) : {};
+            if (perm.contacts?.read === true) defaultTab = "contact-leads";
+            else if (perm.chatLeads?.read === true) defaultTab = "chat-leads";
+            else if (perm.blogs?.read === true) defaultTab = "blogs";
+            else if (perm.faqs?.read === true) defaultTab = "faqs";
+            else if (perm.media?.read === true) defaultTab = "media";
+            else if (perm.settings?.read === true) defaultTab = "settings";
+            else defaultTab = "no-access";
+          } catch (e) {
+            defaultTab = "no-access";
+          }
+        }
+        navigate(`/${defaultTab}`, { replace: true });
+      }
+    }
+  }, [tab, isAuthenticated, navigate]);
 
   const loadAllData = async (token, role) => {
     // Only poll leads/contacts if we actually have read permissions
@@ -1293,7 +1338,7 @@ const AdminDashboard = () => {
               {canRead("contacts") && (
                 <button
                   onClick={() => {
-                    setActiveTab("contact-leads");
+                    navigate("/contact-leads");
                     setShowBlogForm(false);
                     setShowContactForm(false);
                   }}
@@ -1311,7 +1356,7 @@ const AdminDashboard = () => {
               {canRead("chatLeads") && (
                 <button
                   onClick={() => {
-                    setActiveTab("chat-leads");
+                    navigate("/chat-leads");
                     setShowBlogForm(false);
                     setShowChatLeadForm(false);
                   }}
@@ -1329,7 +1374,7 @@ const AdminDashboard = () => {
               {canRead("blogs") && (
                 <button
                   onClick={() => {
-                    setActiveTab("blogs");
+                    navigate("/blogs");
                     setShowFaqForm(false);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
@@ -1346,7 +1391,7 @@ const AdminDashboard = () => {
               {canRead("faqs") && (
                 <button
                   onClick={() => {
-                    setActiveTab("faqs");
+                    navigate("/faqs");
                     setShowFaqForm(false);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
@@ -1363,7 +1408,7 @@ const AdminDashboard = () => {
               {canRead("media") && (
                 <button
                   onClick={() => {
-                    setActiveTab("media");
+                    navigate("/media");
                     setShowBlogForm(false);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
@@ -1380,7 +1425,7 @@ const AdminDashboard = () => {
               {canRead("settings") && (
                 <button
                   onClick={() => {
-                    setActiveTab("settings");
+                    navigate("/settings");
                     setShowBlogForm(false);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
@@ -1397,7 +1442,7 @@ const AdminDashboard = () => {
               {adminRole === "super_admin" && (
                 <button
                   onClick={() => {
-                    setActiveTab("admins");
+                    navigate("/admins");
                     setShowAdminForm(false);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
@@ -2989,7 +3034,7 @@ const AdminDashboard = () => {
                         alert(
                           "Select any image URL from Media Manager and paste here.",
                         );
-                        setActiveTab("media");
+                        navigate("/media");
                       }}
                       className="bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/20 text-xs font-bold px-4 py-3 rounded-xl transition-all cursor-pointer"
                     >

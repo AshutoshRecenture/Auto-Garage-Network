@@ -53,7 +53,7 @@ const Navbar = ({ role, notifications = [], setNotifications }) => {
         <div className="flex items-center gap-3">
           <img src={logoUrl} alt="Auto Garage Network Logo" className="h-9 w-auto object-contain" />
           <span className="text-[10px] tracking-widest font-black uppercase text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
-            Admin Suite
+            {role === "super_admin" ? "Super Admin Panel" : "Admin Panel"}
           </span>
         </div>
 

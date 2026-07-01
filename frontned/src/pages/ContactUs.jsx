@@ -4,6 +4,7 @@ import { API_URL } from "../config";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
+import ReCaptcha from "../components/ReCaptcha.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiPhone, FiMail, FiMapPin, FiSend } from "react-icons/fi";
 import {
@@ -36,9 +37,14 @@ const ContactUs = () => {
   const [submitted, setSubmitted] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert("Please verify that you are not a robot.");
+      return;
+    }
     if (formData.phone.length < 10) {
       alert("Please enter a valid phone number (at least 10 digits).");
       return;
@@ -57,6 +63,7 @@ const ContactUs = () => {
           phone: formData.phone,
           interest: formData.interest,
           message: formData.message,
+          captchaToken: captchaToken,
         }),
       });
 
@@ -106,6 +113,8 @@ const ContactUs = () => {
       alert(`Submission failed: ${error.message}`);
     } finally {
       setSubmitted(false);
+      window.dispatchEvent(new Event("reset-captcha"));
+      setCaptchaToken(null);
     }
   };
 
@@ -382,6 +391,11 @@ const ContactUs = () => {
                     {formData.message.length}/500 characters
                   </div>
                 </div>
+
+                <ReCaptcha 
+                  onVerify={(token) => setCaptchaToken(token)} 
+                  onExpired={() => setCaptchaToken(null)} 
+                />
 
                 <button
                   type="submit"
