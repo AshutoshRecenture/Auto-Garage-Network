@@ -1,8 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLogo } from "../utils/LogoContext.jsx";
+import { FiMoon, FiSun } from "react-icons/fi";
 
 const Navbar = () => {
   const { logoUrl, navbarLineColor } = useLogo();
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    // Check local storage for theme preference
+    const savedTheme = localStorage.getItem("agn_admin_theme");
+    if (savedTheme === "light") {
+      setIsDarkMode(false);
+      document.documentElement.classList.add("light-mode");
+    } else {
+      setIsDarkMode(true);
+      document.documentElement.classList.remove("light-mode");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("light-mode");
+      localStorage.setItem("agn_admin_theme", "light");
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.remove("light-mode");
+      localStorage.setItem("agn_admin_theme", "dark");
+      setIsDarkMode(true);
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-[#0c1222]/85 backdrop-blur-md border-b border-white/10 select-none font-sans no-invert transition-all duration-300">
@@ -15,11 +41,18 @@ const Navbar = () => {
           </span>
         </div>
 
-        {/* Info */}
+        {/* Info & Actions */}
         <div className="flex items-center gap-6">
-          <span className="text-gray-400 text-xs font-semibold">
+          <span className="text-gray-400 text-xs font-semibold hidden sm:inline-block">
             Port: 5174 (Standalone)
           </span>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white transition-all cursor-pointer flex items-center justify-center"
+            title="Toggle Light/Dark Mode"
+          >
+            {isDarkMode ? <FiSun size={18} /> : <FiMoon size={18} />}
+          </button>
         </div>
       </div>
       {/* Bottom accent border matching main page lining settings */}

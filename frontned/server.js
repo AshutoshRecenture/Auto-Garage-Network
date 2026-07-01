@@ -20,6 +20,17 @@ async function startServer() {
     vite.middlewares(req, res, async () => {
       const url = req.url;
 
+      // Serve static files from public directory directly
+      if (url === "/llm.txt" || url === "/robots.txt" || url === "/sitemap.xml") {
+        const publicPath = path.resolve(__dirname, "public", url.substring(1));
+        if (fs.existsSync(publicPath)) {
+          const ext = path.extname(publicPath);
+          const contentType = ext === ".xml" ? "application/xml" : "text/plain";
+          res.writeHead(200, { "Content-Type": contentType });
+          return res.end(fs.readFileSync(publicPath, "utf-8"));
+        }
+      }
+
       try {
         // 1. Read the source index.html template
         let template = fs.readFileSync(path.resolve(__dirname, "index.html"), "utf-8");

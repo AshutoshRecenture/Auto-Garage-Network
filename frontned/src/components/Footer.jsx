@@ -121,7 +121,7 @@ const Footer = () => {
     company: false,
     industries: false,
     products: false,
-    contact: false,
+    contact: true,
   });
 
   const toggleSection = (section) => {

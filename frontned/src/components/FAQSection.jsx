@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiChevronDown, FiHelpCircle } from "react-icons/fi";
+import { API_URL } from "../config";
 
-const faqs = [
+const fallbackFaqs = [
   {
     question: "What exactly does Auto Garage Network offer?",
     answer:
@@ -37,10 +38,30 @@ const faqs = [
 
 const FAQSection = () => {
   const [openIndex, setOpenIndex] = useState(null);
+  const [dynamicFaqs, setDynamicFaqs] = useState([]);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/faqs`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setDynamicFaqs(data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch FAQs:", err);
+      }
+    };
+    fetchFaqs();
+  }, []);
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };
+
+  const displayFaqs = dynamicFaqs.length > 0 ? dynamicFaqs : fallbackFaqs;
 
   return (
     <section className="pt-2 pb-8 md:pt-1 md:pb-1 px-5 bg-[#050816] relative overflow-hidden">
@@ -62,7 +83,7 @@ const FAQSection = () => {
         </div>
 
         <div className="flex flex-col border-t border-white/10">
-          {faqs.map((faq, index) => (
+          {displayFaqs.map((faq, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 15 }}

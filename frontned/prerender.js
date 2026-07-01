@@ -80,41 +80,9 @@ async function run() {
 `;
 
   for (const url of routes) {
-    let changefreq = "monthly";
-    let priority = "0.8";
-
-    if (url === "/") {
-      changefreq = "daily";
-      priority = "1.0";
-    } else if (
-      url === "/features" ||
-      url === "/pricing" ||
-      url === "/garage-management-system" ||
-      url === "/website-for-garages" ||
-      url === "/blog"
-    ) {
-      changefreq = "weekly";
-      priority = "0.9";
-    } else if (url === "/latest-work") {
-      changefreq = "weekly";
-      priority = "0.7";
-    } else if (
-      url === "/privacy-policy" ||
-      url === "/terms-of-service" ||
-      url === "/cookie-policy"
-    ) {
-      changefreq = "monthly";
-      priority = "0.5";
-    } else if (url === "/sitemap") {
-      changefreq = "monthly";
-      priority = "0.6";
-    }
-
     const loc = `${siteUrl}${url === "/" ? "" : url}`;
     sitemapXml += `  <url>
     <loc>${loc}</loc>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
   </url>\n`;
   }
   sitemapXml += `</urlset>\n`;

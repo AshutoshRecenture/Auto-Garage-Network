@@ -33,3 +33,14 @@ body,
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.95);
 }
+
+/* Light Mode Override via CSS Filter (Invert & Hue-Rotate) */
+html.light-mode {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+html.light-mode img,
+html.light-mode video,
+html.light-mode .no-invert {
+  filter: invert(1) hue-rotate(180deg);
+}

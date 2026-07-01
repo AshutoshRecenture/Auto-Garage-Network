@@ -29,7 +29,8 @@ import {
   FiCalendar,
   FiClock,
   FiMessageSquare,
-  FiChevronRight
+  FiChevronRight,
+  FiHelpCircle
 } from "react-icons/fi";
 import SEOHeader from "../components/SEOHeader.jsx";
 
@@ -75,6 +76,18 @@ const AdminDashboard = () => {
   const [mediaTitle, setMediaTitle] = useState("");
   const [mediaDesc, setMediaDesc] = useState("");
   const [showMediaPickerModal, setShowMediaPickerModal] = useState(false); // picker modal inside blog form
+
+  // FAQ state
+  const [faqs, setFaqs] = useState([]);
+  const [faqSearch, setFaqSearch] = useState("");
+  const [faqSubmitLoading, setFaqSubmitLoading] = useState(false);
+  const [showFaqForm, setShowFaqForm] = useState(false);
+  const [editingFaq, setEditingFaq] = useState(null);
+  const [faqForm, setFaqForm] = useState({
+    question: "",
+    answer: "",
+    order: 0
+  });
 
   // Settings state
   const [settingsForm, setSettingsForm] = useState({
@@ -138,6 +151,7 @@ const AdminDashboard = () => {
     fetchBlogs();
     fetchMedia();
     fetchSettings();
+    fetchFaqs(token);
   };
 
   const getHeaders = () => {
@@ -213,6 +227,20 @@ const AdminDashboard = () => {
       }
     } catch (e) {
       console.error("Error fetching settings:", e);
+    }
+  };
+
+  const fetchFaqs = async (token) => {
+    try {
+      const res = await fetch(`${API_URL}/api/faqs`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setFaqs(data || []);
+      }
+    } catch (e) {
+      console.error("Error fetching faqs:", e);
     }
   };
 
@@ -762,6 +790,77 @@ const AdminDashboard = () => {
     }
   };
 
+  // --- FAQ Handlers ---
+  const handleFaqFormSubmit = async (e) => {
+    e.preventDefault();
+    setFaqSubmitLoading(true);
+    try {
+      const url = editingFaq 
+        ? `${API_URL}/api/faqs/${editingFaq._id}` 
+        : `${API_URL}/api/faqs`;
+      
+      const method = editingFaq ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: getHeaders(),
+        body: JSON.stringify(faqForm)
+      });
+
+      if (res.ok) {
+        alert(editingFaq ? "FAQ updated successfully!" : "FAQ created successfully!");
+        setShowFaqForm(false);
+        setEditingFaq(null);
+        setFaqForm({ question: "", answer: "", order: 0 });
+        const token = localStorage.getItem("agn_token");
+        fetchFaqs(token);
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message || "Failed to save FAQ.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving FAQ.");
+    } finally {
+      setFaqSubmitLoading(false);
+    }
+  };
+
+  const handleEditFaq = (faq) => {
+    setEditingFaq(faq);
+    setFaqForm({
+      question: faq.question || "",
+      answer: faq.answer || "",
+      order: faq.order || 0
+    });
+    setShowFaqForm(true);
+  };
+
+  const handleDeleteFaq = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this FAQ?")) return;
+    try {
+      const res = await fetch(`${API_URL}/api/faqs/${id}`, {
+        method: "DELETE",
+        headers: getHeaders()
+      });
+      if (res.ok) {
+        setFaqs(faqs.filter(f => f._id !== id));
+        alert("FAQ deleted successfully.");
+      } else {
+        alert("Failed to delete FAQ.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Filter FAQs
+  const filteredFaqs = faqs.filter(f => {
+    const query = faqSearch.toLowerCase();
+    return (f.question || "").toLowerCase().includes(query) ||
+           (f.answer || "").toLowerCase().includes(query);
+  });
+
   // Filter Leads
   const filteredChatLeads = chatLeads.filter(c => {
     if (!c) return false;
@@ -866,7 +965,7 @@ const AdminDashboard = () => {
               </button>
 
               <button
-                onClick={() => { setActiveTab("blogs"); }}
+                onClick={() => { setActiveTab("blogs"); setShowFaqForm(false); }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
                   activeTab === "blogs"
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
@@ -875,6 +974,18 @@ const AdminDashboard = () => {
               >
                 <FiLayers size={16} />
                 <span>Manage Blogs</span>
+              </button>
+
+              <button
+                onClick={() => { setActiveTab("faqs"); setShowFaqForm(false); }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "faqs"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <FiHelpCircle size={16} />
+                <span>Manage FAQs</span>
               </button>
 
               <button
@@ -1884,6 +1995,111 @@ const AdminDashboard = () => {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* TAB: FAQs */}
+          {activeTab === "faqs" && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white">Manage FAQs</h1>
+                  <p className="text-gray-400 text-xs">Create, update, and organize the Frequently Asked Questions displayed on the main website.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  {!showFaqForm && (
+                    <button
+                      onClick={() => {
+                        setEditingFaq(null);
+                        setFaqForm({ question: "", answer: "", order: 0 });
+                        setShowFaqForm(true);
+                      }}
+                      className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer shadow-md"
+                    >
+                      <FiPlus />
+                      <span>Add New FAQ</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {showFaqForm ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-[#050816]/70 border border-white/10 p-6 rounded-3xl space-y-6 text-left"
+                >
+                  <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                    <h3 className="text-sm uppercase font-black tracking-widest text-indigo-400">
+                      {editingFaq ? "Edit FAQ" : "Create New FAQ"}
+                    </h3>
+                    <button onClick={() => setShowFaqForm(false)} className="text-gray-400 hover:text-white cursor-pointer">
+                      <FiX size={18} />
+                    </button>
+                  </div>
+                  <form onSubmit={handleFaqFormSubmit} className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-slate-400">Question</label>
+                      <input type="text" required value={faqForm.question} onChange={(e) => setFaqForm({ ...faqForm, question: e.target.value })} placeholder="Enter question..." className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-slate-400">Answer</label>
+                      <textarea rows={4} required value={faqForm.answer} onChange={(e) => setFaqForm({ ...faqForm, answer: e.target.value })} placeholder="Enter detailed answer..." className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-slate-400">Sort Order (Optional)</label>
+                      <input type="number" value={faqForm.order} onChange={(e) => setFaqForm({ ...faqForm, order: Number(e.target.value) })} className="w-full max-w-xs bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white" />
+                    </div>
+                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                      <button type="button" onClick={() => setShowFaqForm(false)} className="bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer">Cancel</button>
+                      <button type="submit" disabled={faqSubmitLoading} className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl disabled:opacity-50 cursor-pointer">
+                        {faqSubmitLoading ? "Saving..." : editingFaq ? "Update FAQ" : "Save FAQ"}
+                      </button>
+                    </div>
+                  </form>
+                </motion.div>
+              ) : (
+                <>
+                  <div className="bg-[#050816] p-4 rounded-2xl border border-white/10 flex items-center justify-between">
+                    <div className="relative w-full max-w-md">
+                      <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                      <input type="text" placeholder="Search FAQs..." value={faqSearch} onChange={(e) => setFaqSearch(e.target.value)} className="w-full bg-[#050816] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-indigo-500 text-white" />
+                    </div>
+                  </div>
+                  
+                  <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
+                    {filteredFaqs.length === 0 ? (
+                      <p className="text-center text-gray-500 py-10 text-xs">No FAQs found.</p>
+                    ) : (
+                      <table className="w-full border-collapse text-left text-xs">
+                        <thead>
+                          <tr className="border-b border-white/5 bg-[#050816]/80 text-gray-400 uppercase font-bold text-[10px]">
+                            <th className="py-3 px-5">Order</th>
+                            <th className="py-3 px-5">Question</th>
+                            <th className="py-3 px-5">Answer</th>
+                            <th className="py-3 px-5 text-center">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {filteredFaqs.map(f => (
+                            <tr key={f._id} className="hover:bg-white/[0.01]">
+                              <td className="py-3 px-5 font-bold text-gray-400">{f.order}</td>
+                              <td className="py-3 px-5 font-bold text-white max-w-[200px] truncate">{f.question}</td>
+                              <td className="py-3 px-5 text-gray-400 max-w-xs truncate">{f.answer}</td>
+                              <td className="py-3 px-5 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <button onClick={() => handleEditFaq(f)} className="text-indigo-400 hover:text-white p-2 hover:bg-indigo-500/20 rounded-xl cursor-pointer" title="Edit FAQ"><FiEdit2 size={14}/></button>
+                                  <button onClick={() => handleDeleteFaq(f._id)} className="text-rose-400 hover:text-white p-2 hover:bg-rose-500/20 rounded-xl cursor-pointer" title="Delete FAQ"><FiTrash2 size={14}/></button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
