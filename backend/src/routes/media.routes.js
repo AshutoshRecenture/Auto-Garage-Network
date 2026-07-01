@@ -2,8 +2,12 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
-const { uploadMedia, getMedia, deleteMedia } = require("../controllers/media.controller");
-const { protect, admin } = require("../middleware/auth.middleware");
+const {
+  uploadMedia,
+  getMedia,
+  deleteMedia,
+} = require("../controllers/media.controller");
+const { protect, checkPermission } = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
@@ -34,9 +38,11 @@ const upload = multer({
 router.route("/").get(getMedia);
 
 // POST upload media (Admin protected)
-router.route("/upload").post(protect, admin, upload.single("file"), uploadMedia);
+router
+  .route("/upload")
+  .post(protect, checkPermission("media", "write"), upload.single("file"), uploadMedia);
 
 // DELETE media (Admin protected)
-router.route("/:id").delete(protect, admin, deleteMedia);
+router.route("/:id").delete(protect, checkPermission("media", "write"), deleteMedia);
 
 module.exports = router;

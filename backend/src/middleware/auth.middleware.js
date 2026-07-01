@@ -14,7 +14,9 @@ const protect = async (req, res, next) => {
 
       req.user = await User.findById(decoded.id).select("-password");
       if (!req.user) {
-        return res.status(401).json({ message: "Not authorized, user not found" });
+        return res
+          .status(401)
+          .json({ message: "Not authorized, user not found" });
       }
 
       next();
@@ -30,11 +32,42 @@ const protect = async (req, res, next) => {
 };
 
 const admin = (req, res, next) => {
-  if (req.user && req.user.role === "admin") {
+  if (req.user && (req.user.role === "admin" || req.user.role === "super_admin")) {
     next();
   } else {
     res.status(403).json({ message: "Not authorized as an admin" });
   }
 };
 
-module.exports = { protect, admin };
+const superAdmin = (req, res, next) => {
+  if (req.user && req.user.role === "super_admin") {
+    next();
+  } else {
+    res.status(403).json({ message: "Not authorized. Super Admin privileges required." });
+  }
+};
+
+const checkPermission = (moduleName, action) => {
+  return (req, res, next) => {
+    // Super admins bypass all permission checks
+    if (req.user && req.user.role === "super_admin") {
+      return next();
+    }
+
+    // Check specific module and read/write permission
+    if (
+      req.user &&
+      req.user.permissions &&
+      req.user.permissions[moduleName] &&
+      req.user.permissions[moduleName][action] === true
+    ) {
+      return next();
+    }
+
+    res.status(403).json({
+      message: `Access denied. You do not have '${action}' permission for ${moduleName}.`,
+    });
+  };
+};
+
+module.exports = { protect, admin, superAdmin, checkPermission };

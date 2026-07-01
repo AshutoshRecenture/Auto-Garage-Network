@@ -9,7 +9,9 @@ const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body || {};
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Please provide name, email, and password" });
+      return res
+        .status(400)
+        .json({ message: "Please provide name, email, and password" });
     }
 
     const userExists = await User.findOne({ email });
@@ -31,6 +33,7 @@ const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        permissions: user.permissions,
         token: generateToken(user._id),
       });
     } else {
@@ -49,7 +52,9 @@ const authUser = async (req, res) => {
     const { email, password } = req.body || {};
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Please provide email and password" });
+      return res
+        .status(400)
+        .json({ message: "Please provide email and password" });
     }
 
     const user = await User.findOne({ email });
@@ -60,6 +65,7 @@ const authUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        permissions: user.permissions,
         token: generateToken(user._id),
       });
     } else {
@@ -83,6 +89,7 @@ const getUserProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        permissions: user.permissions,
       });
     } else {
       res.status(404).json({ message: "User not found" });

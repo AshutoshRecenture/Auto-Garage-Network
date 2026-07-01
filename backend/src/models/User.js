@@ -18,18 +18,44 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: ["super_admin", "admin"],
+      default: "admin",
+    },
+    permissions: {
+      contacts: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
+      chatLeads: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
+      blogs: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
+      faqs: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
+      media: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
+      settings: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    return next();
+    return;
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);

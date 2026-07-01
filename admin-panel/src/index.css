@@ -44,3 +44,20 @@ html.light-mode video,
 html.light-mode .no-invert {
   filter: invert(1) hue-rotate(180deg);
 }
+
+/* Premium Border Blink Animation for Alerts */
+@keyframes border-blink {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.1);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 1);
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.animate-border-blink {
+  animation: border-blink 1.8s infinite ease-in-out;
+}
+

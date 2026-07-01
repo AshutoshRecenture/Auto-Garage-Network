@@ -205,19 +205,23 @@ const BlogModal = ({ post, onClose }) => {
                 <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : post.content ? (
-              post.content.map((item, idx) => {
-                if (item.type === "heading") {
-                  return (
-                    <h3
-                      key={idx}
-                      className="text-sm md:text-base font-extrabold text-white pt-2.5"
-                    >
-                      {item.value}
-                    </h3>
-                  );
-                }
-                return <p key={idx}>{item.value}</p>;
-              })
+              Array.isArray(post.content) ? (
+                post.content.map((item, idx) => {
+                  if (item.type === "heading") {
+                    return (
+                      <h3
+                        key={idx}
+                        className="text-sm md:text-base font-extrabold text-white pt-2.5"
+                      >
+                        {item.value}
+                      </h3>
+                    );
+                  }
+                  return <p key={idx}>{item.value}</p>;
+                })
+              ) : (
+                <p className="whitespace-pre-line">{post.content}</p>
+              )
             ) : (
               <>
                 <p>{p1}</p>

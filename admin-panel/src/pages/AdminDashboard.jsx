@@ -30,18 +30,20 @@ import {
   FiClock,
   FiMessageSquare,
   FiChevronRight,
-  FiHelpCircle
+  FiHelpCircle,
 } from "react-icons/fi";
 import SEOHeader from "../components/SEOHeader.jsx";
 
 const AdminDashboard = () => {
   const { logoUrl, navbarLineColor, refreshSettings } = useLogo();
   const [activeTab, setActiveTab] = useState("contact-leads");
-  
+
   // Authentication states
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [adminName, setAdminName] = useState("");
+  const [adminRole, setAdminRole] = useState("");
+  const [notifications, setNotifications] = useState([]);
 
   // Leads state
   const [chatLeads, setChatLeads] = useState([]);
@@ -56,7 +58,7 @@ const AdminDashboard = () => {
   const [blogSubmitLoading, setBlogSubmitLoading] = useState(false);
   const [showBlogForm, setShowBlogForm] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
-  
+
   // Blog Form fields
   const [blogForm, setBlogForm] = useState({
     title: "",
@@ -65,7 +67,7 @@ const AdminDashboard = () => {
     excerpt: "",
     content: "",
     color: "bg-blue-500/10 text-blue-400",
-    image: ""
+    image: "",
   });
 
   // Media state
@@ -86,15 +88,34 @@ const AdminDashboard = () => {
   const [faqForm, setFaqForm] = useState({
     question: "",
     answer: "",
-    order: 0
+    order: 0,
   });
 
   // Settings state
   const [settingsForm, setSettingsForm] = useState({
     logoUrl: "",
-    navbarLineColor: "indigo"
+    navbarLineColor: "indigo",
   });
   const [settingsSaveLoading, setSettingsSaveLoading] = useState(false);
+
+  // Admins state (for Super Admin management)
+  const [admins, setAdmins] = useState([]);
+  const [showAdminForm, setShowAdminForm] = useState(false);
+  const [adminSubmitLoading, setAdminSubmitLoading] = useState(false);
+  const [editingAdmin, setEditingAdmin] = useState(null);
+  const [adminForm, setAdminForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    permissions: {
+      contacts: { read: false, write: false },
+      chatLeads: { read: false, write: false },
+      blogs: { read: false, write: false },
+      faqs: { read: false, write: false },
+      media: { read: false, write: false },
+      settings: { read: false, write: false },
+    },
+  });
 
   // Contact Form states
   const [contactSubmitLoading, setContactSubmitLoading] = useState(false);
@@ -107,7 +128,7 @@ const AdminDashboard = () => {
     phone: "",
     interestedIn: "Garage Management System",
     address: "",
-    message: ""
+    message: "",
   });
 
   // Chatbot Lead Form states
@@ -123,9 +144,35 @@ const AdminDashboard = () => {
     budgetRange: "",
     projectDeadline: "",
     projectDescription: "",
-    leadStatus: "New"
+    leadStatus: "New",
   });
 
+  // Helper permission checking functions
+  const canRead = (moduleName) => {
+    const role = localStorage.getItem("agn_user_role");
+    if (role === "super_admin") return true;
+
+    try {
+      const permStr = localStorage.getItem("agn_user_permissions");
+      const perm = permStr ? JSON.parse(permStr) : {};
+      return perm[moduleName]?.read === true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const canWrite = (moduleName) => {
+    const role = localStorage.getItem("agn_user_role");
+    if (role === "super_admin") return true;
+
+    try {
+      const permStr = localStorage.getItem("agn_user_permissions");
+      const perm = permStr ? JSON.parse(permStr) : {};
+      return perm[moduleName]?.write === true;
+    } catch (e) {
+      return false;
+    }
+  };
 
   // Load Admin auth and fetch data
   useEffect(() => {
@@ -133,32 +180,241 @@ const AdminDashboard = () => {
     const token = localStorage.getItem("agn_token");
     const role = localStorage.getItem("agn_user_role");
     const name = localStorage.getItem("agn_user_name");
-    
-    if (token && role === "admin") {
+
+    if (token && (role === "admin" || role === "super_admin")) {
       setIsAuthenticated(true);
       setAdminName(name || "Administrator");
-      loadAllData(token);
+      setAdminRole(role);
+      
+      // Determine default active tab dynamically based on role/permissions
+      let defaultTab = "contact-leads";
+      if (role !== "super_admin") {
+        try {
+          const permStr = localStorage.getItem("agn_user_permissions");
+          const perm = permStr ? JSON.parse(permStr) : {};
+          if (perm.contacts?.read === true) defaultTab = "contact-leads";
+          else if (perm.chatLeads?.read === true) defaultTab = "chat-leads";
+          else if (perm.blogs?.read === true) defaultTab = "blogs";
+          else if (perm.faqs?.read === true) defaultTab = "faqs";
+          else if (perm.media?.read === true) defaultTab = "media";
+          else if (perm.settings?.read === true) defaultTab = "settings";
+          else defaultTab = "no-access";
+        } catch (e) {
+          defaultTab = "no-access";
+        }
+      }
+      setActiveTab(defaultTab);
+      
+      loadAllData(token, role);
       setCheckingAuth(false);
+
+      // Start real-time notifications polling every 6 seconds
+      const interval = setInterval(() => {
+        pollNewData(token);
+      }, 6000);
+
+      return () => clearInterval(interval);
     } else {
       // Redirect to login if not authenticated
       window.location.href = "/login";
     }
   }, []);
 
-  const loadAllData = (token) => {
-    fetchLeads(token);
-    fetchContacts(token);
-    fetchBlogs();
-    fetchMedia();
-    fetchSettings();
-    fetchFaqs(token);
+  const loadAllData = async (token, role) => {
+    // Only poll leads/contacts if we actually have read permissions
+    const activeRole = role || localStorage.getItem("agn_user_role");
+    if (activeRole === "super_admin" || canRead("contacts") || canRead("chatLeads")) {
+      await pollNewData(token);
+    }
+    
+    if (activeRole === "super_admin" || canRead("blogs")) {
+      fetchBlogs();
+    }
+    if (activeRole === "super_admin" || canRead("media")) {
+      fetchMedia();
+    }
+    if (activeRole === "super_admin" || canRead("settings")) {
+      fetchSettings();
+    }
+    if (activeRole === "super_admin" || canRead("faqs")) {
+      fetchFaqs(token);
+    }
+    if (activeRole === "super_admin") {
+      fetchAdmins();
+    }
+  };
+
+  // --- Super Admin Admin CRUD APIs ---
+  const fetchAdmins = async () => {
+    try {
+      const token = localStorage.getItem("agn_token");
+      const res = await fetch(`${API_URL}/api/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAdmins(data || []);
+      }
+    } catch (e) {
+      console.error("Error fetching admins:", e);
+    }
+  };
+
+  const handleAdminFormSubmit = async (e) => {
+    e.preventDefault();
+    setAdminSubmitLoading(true);
+    try {
+      const url = editingAdmin
+        ? `${API_URL}/api/users/${editingAdmin._id}`
+        : `${API_URL}/api/users`;
+      const method = editingAdmin ? "PUT" : "POST";
+      const token = localStorage.getItem("agn_token");
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(adminForm),
+      });
+
+      if (res.ok) {
+        alert(editingAdmin ? "Admin user updated successfully!" : "Admin user created successfully!");
+        setShowAdminForm(false);
+        setEditingAdmin(null);
+        setAdminForm({
+          name: "",
+          email: "",
+          password: "",
+          permissions: {
+            contacts: { read: false, write: false },
+            chatLeads: { read: false, write: false },
+            blogs: { read: false, write: false },
+            faqs: { read: false, write: false },
+            media: { read: false, write: false },
+            settings: { read: false, write: false },
+          },
+        });
+        fetchAdmins();
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message || "Failed to save admin user.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving admin user.");
+    } finally {
+      setAdminSubmitLoading(false);
+    }
+  };
+
+  const handleEditAdmin = (adm) => {
+    setEditingAdmin(adm);
+    setAdminForm({
+      name: adm.name || "",
+      email: adm.email || "",
+      password: "", // blank password field for edits
+      permissions: adm.permissions || {
+        contacts: { read: false, write: false },
+        chatLeads: { read: false, write: false },
+        blogs: { read: false, write: false },
+        faqs: { read: false, write: false },
+        media: { read: false, write: false },
+        settings: { read: false, write: false },
+      },
+    });
+    setShowAdminForm(true);
+  };
+
+  const handleDeleteAdmin = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this admin account?")) return;
+    try {
+      const token = localStorage.getItem("agn_token");
+      const res = await fetch(`${API_URL}/api/users/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setAdmins(admins.filter((a) => a._id !== id));
+        alert("Admin deleted successfully.");
+      } else {
+        alert("Failed to delete admin.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const pollNewData = async (token) => {
+    const leads = await fetchLeads(token);
+    const contacts = await fetchContacts(token);
+    checkNewDataForNotifications(contacts, leads);
+  };
+
+  const checkNewDataForNotifications = (newContacts, newChatLeads) => {
+    if (!newContacts || !newChatLeads) return;
+
+    const initialized = localStorage.getItem("agn_notif_initialized");
+    const seenIdsStr = localStorage.getItem("agn_seen_lead_ids");
+    let seenIds = seenIdsStr ? JSON.parse(seenIdsStr) : [];
+
+    let updatedSeenIds = [...seenIds];
+    let createdNotifications = [];
+    let hasNew = false;
+
+    // Process contacts
+    newContacts.forEach((c) => {
+      if (c && c._id && !seenIds.includes(c._id)) {
+        updatedSeenIds.push(c._id);
+        hasNew = true;
+        if (initialized === "true") {
+          createdNotifications.push({
+            id: c._id,
+            type: "contact",
+            title: "New Contact Form Request",
+            message: `${c.name} has submitted a contact request for "${c.interestedIn || 'General Inquiry'}".`,
+            time: new Date(),
+          });
+        }
+      }
+    });
+
+    // Process chat leads
+    newChatLeads.forEach((ch) => {
+      if (ch && ch._id && !seenIds.includes(ch._id)) {
+        updatedSeenIds.push(ch._id);
+        hasNew = true;
+        if (initialized === "true") {
+          createdNotifications.push({
+            id: ch._id,
+            type: "chat",
+            title: "New Chatbot Lead",
+            message: `${ch.name} left contact details via Chatbot Assistant for "${ch.selectedService || 'General Inquiry'}".`,
+            time: new Date(),
+          });
+        }
+      }
+    });
+
+    if (hasNew) {
+      localStorage.setItem("agn_seen_lead_ids", JSON.stringify(updatedSeenIds));
+    }
+    
+    if (initialized !== "true") {
+      localStorage.setItem("agn_notif_initialized", "true");
+    }
+
+    if (createdNotifications.length > 0) {
+      setNotifications((prev) => [...createdNotifications, ...prev]);
+    }
   };
 
   const getHeaders = () => {
     const token = localStorage.getItem("agn_token");
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     };
   };
 
@@ -166,29 +422,35 @@ const AdminDashboard = () => {
   const fetchLeads = async (token) => {
     try {
       const res = await fetch(`${API_URL}/api/chat-submissions`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const data = await res.json();
-        setChatLeads(data.data || data || []);
+        const leads = data.data || data || [];
+        setChatLeads(leads);
+        return leads;
       }
     } catch (e) {
       console.error("Error fetching chat leads:", e);
     }
+    return [];
   };
 
   const fetchContacts = async (token) => {
     try {
       const res = await fetch(`${API_URL}/api/contact`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const data = await res.json();
-        setContactLeads(data || []);
+        const contacts = data || [];
+        setContactLeads(contacts);
+        return contacts;
       }
     } catch (e) {
       console.error("Error fetching contacts:", e);
     }
+    return [];
   };
 
   const fetchBlogs = async () => {
@@ -222,7 +484,7 @@ const AdminDashboard = () => {
         const data = await res.json();
         setSettingsForm({
           logoUrl: data.logoUrl || "/logo-color.png",
-          navbarLineColor: data.navbarLineColor || "indigo"
+          navbarLineColor: data.navbarLineColor || "indigo",
         });
       }
     } catch (e) {
@@ -233,7 +495,7 @@ const AdminDashboard = () => {
   const fetchFaqs = async (token) => {
     try {
       const res = await fetch(`${API_URL}/api/faqs`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const data = await res.json();
@@ -249,20 +511,27 @@ const AdminDashboard = () => {
     localStorage.removeItem("agn_token");
     localStorage.removeItem("agn_user_role");
     localStorage.removeItem("agn_user_name");
+    localStorage.removeItem("agn_user_email");
+    localStorage.removeItem("agn_user_permissions");
     localStorage.removeItem("agn_admin_authenticated");
     window.location.href = "/login";
   };
 
   // --- Leads Handlers ---
   const handleDeleteContact = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this contact submission?")) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this contact submission?",
+      )
+    )
+      return;
     try {
       const res = await fetch(`${API_URL}/api/contact/${id}`, {
         method: "DELETE",
-        headers: getHeaders()
+        headers: getHeaders(),
       });
       if (res.ok) {
-        setContactLeads(contactLeads.filter(c => c._id !== id));
+        setContactLeads(contactLeads.filter((c) => c._id !== id));
         alert("Contact lead deleted successfully.");
       }
     } catch (e) {
@@ -277,17 +546,21 @@ const AdminDashboard = () => {
       const url = editingContact
         ? `${API_URL}/api/contact/${editingContact._id}`
         : `${API_URL}/api/contact`;
-      
+
       const method = editingContact ? "PUT" : "POST";
-      
+
       const res = await fetch(url, {
         method,
         headers: getHeaders(),
-        body: JSON.stringify(contactForm)
+        body: JSON.stringify(contactForm),
       });
 
       if (res.ok) {
-        alert(editingContact ? "Contact lead updated successfully!" : "Contact lead created successfully!");
+        alert(
+          editingContact
+            ? "Contact lead updated successfully!"
+            : "Contact lead created successfully!",
+        );
         setShowContactForm(false);
         setEditingContact(null);
         setContactForm({
@@ -297,7 +570,7 @@ const AdminDashboard = () => {
           phone: "",
           interestedIn: "Garage Management System",
           address: "",
-          message: ""
+          message: "",
         });
         const token = localStorage.getItem("agn_token");
         fetchContacts(token);
@@ -322,7 +595,7 @@ const AdminDashboard = () => {
       phone: contact.phone || "",
       interestedIn: contact.interestedIn || "Garage Management System",
       address: contact.address || "",
-      message: contact.message || ""
+      message: contact.message || "",
     });
     setShowContactForm(true);
   };
@@ -335,7 +608,7 @@ const AdminDashboard = () => {
       const res = await fetch(url, {
         method: "PUT",
         headers: getHeaders(),
-        body: JSON.stringify(chatLeadForm)
+        body: JSON.stringify(chatLeadForm),
       });
 
       if (res.ok) {
@@ -367,20 +640,25 @@ const AdminDashboard = () => {
       budgetRange: ch.budgetRange || "",
       projectDeadline: ch.projectDeadline || "",
       projectDescription: ch.projectDescription || "",
-      leadStatus: ch.leadStatus || "New"
+      leadStatus: ch.leadStatus || "New",
     });
     setShowChatLeadForm(true);
   };
 
   const handleDeleteChatLead = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this chatbot lead session?")) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this chatbot lead session?",
+      )
+    )
+      return;
     try {
       const res = await fetch(`${API_URL}/api/chat-submissions/${id}`, {
         method: "DELETE",
-        headers: getHeaders()
+        headers: getHeaders(),
       });
       if (res.ok) {
-        setChatLeads(chatLeads.filter(c => c._id !== id));
+        setChatLeads(chatLeads.filter((c) => c._id !== id));
         alert("Chatbot lead deleted successfully.");
       } else {
         alert("Failed to delete chatbot lead.");
@@ -390,15 +668,14 @@ const AdminDashboard = () => {
     }
   };
 
-
   const formatDate = (dateString) => {
     if (!dateString) return "";
     try {
       const d = new Date(dateString);
       if (isNaN(d.getTime())) return "";
       const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     } catch (e) {
       return "";
@@ -411,8 +688,16 @@ const AdminDashboard = () => {
       return;
     }
 
-    const headers = ["Name", "Email", "Phone", "Garage Name", "Interest", "Message/Notes", "Date"];
-    
+    const headers = [
+      "Name",
+      "Email",
+      "Phone",
+      "Garage Name",
+      "Interest",
+      "Message/Notes",
+      "Date",
+    ];
+
     let tableRows = "";
     contactLeads.forEach((c) => {
       tableRows += `
@@ -459,7 +744,7 @@ const AdminDashboard = () => {
         <table>
           <thead>
             <tr>
-              ${headers.map(h => `<th>${h}</th>`).join("")}
+              ${headers.map((h) => `<th>${h}</th>`).join("")}
             </tr>
           </thead>
           <tbody>
@@ -470,12 +755,17 @@ const AdminDashboard = () => {
       </html>
     `;
 
-    const blob = new Blob([excelHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+    const blob = new Blob([excelHtml], {
+      type: "application/vnd.ms-excel;charset=utf-8;",
+    });
     const blobUrl = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.setAttribute("href", blobUrl);
-    link.setAttribute("download", `agn_contact_leads_${formatDate(new Date())}.xls`);
+    link.setAttribute(
+      "download",
+      `agn_contact_leads_${formatDate(new Date())}.xls`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -488,8 +778,19 @@ const AdminDashboard = () => {
       return;
     }
 
-    const headers = ["Name", "Email", "Mobile", "Business Name", "Selected Service", "Project Deadline", "Budget Range", "Status", "Chat Messages Count", "Date"];
-    
+    const headers = [
+      "Name",
+      "Email",
+      "Mobile",
+      "Business Name",
+      "Selected Service",
+      "Project Deadline",
+      "Budget Range",
+      "Status",
+      "Chat Messages Count",
+      "Date",
+    ];
+
     let tableRows = "";
     chatLeads.forEach((ch) => {
       tableRows += `
@@ -539,7 +840,7 @@ const AdminDashboard = () => {
         <table>
           <thead>
             <tr>
-              ${headers.map(h => `<th>${h}</th>`).join("")}
+              ${headers.map((h) => `<th>${h}</th>`).join("")}
             </tr>
           </thead>
           <tbody>
@@ -550,12 +851,17 @@ const AdminDashboard = () => {
       </html>
     `;
 
-    const blob = new Blob([excelHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+    const blob = new Blob([excelHtml], {
+      type: "application/vnd.ms-excel;charset=utf-8;",
+    });
     const blobUrl = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.setAttribute("href", blobUrl);
-    link.setAttribute("download", `agn_chatbot_leads_${formatDate(new Date())}.xls`);
+    link.setAttribute(
+      "download",
+      `agn_chatbot_leads_${formatDate(new Date())}.xls`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -590,7 +896,10 @@ const AdminDashboard = () => {
 
       if (res.ok) {
         const data = await res.json();
-        setBlogForm(prev => ({ ...prev, image: data.secure_url || data.url }));
+        setBlogForm((prev) => ({
+          ...prev,
+          image: data.secure_url || data.url,
+        }));
         alert("Image uploaded and selected successfully!");
         if (typeof fetchMedia === "function") {
           fetchMedia();
@@ -611,10 +920,10 @@ const AdminDashboard = () => {
     e.preventDefault();
     setBlogSubmitLoading(true);
     try {
-      const url = editingBlog 
-        ? `${API_URL}/api/blogs/${editingBlog._id}` 
+      const url = editingBlog
+        ? `${API_URL}/api/blogs/${editingBlog._id}`
         : `${API_URL}/api/blogs`;
-      
+
       const method = editingBlog ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -622,12 +931,16 @@ const AdminDashboard = () => {
         headers: getHeaders(),
         body: JSON.stringify({
           ...blogForm,
-          date: editingBlog ? editingBlog.date : undefined // preserve original date or let backend handle it
-        })
+          date: editingBlog ? editingBlog.date : undefined, // preserve original date or let backend handle it
+        }),
       });
 
       if (res.ok) {
-        alert(editingBlog ? "Blog post updated successfully!" : "Blog post created successfully!");
+        alert(
+          editingBlog
+            ? "Blog post updated successfully!"
+            : "Blog post created successfully!",
+        );
         setShowBlogForm(false);
         setEditingBlog(null);
         setBlogForm({
@@ -637,7 +950,7 @@ const AdminDashboard = () => {
           excerpt: "",
           content: "",
           color: "bg-blue-500/10 text-blue-400",
-          image: ""
+          image: "",
         });
         fetchBlogs();
       } else {
@@ -659,24 +972,25 @@ const AdminDashboard = () => {
       category: blog.category || "Workflow Optimization",
       readTime: blog.readTime || "5 min read",
       excerpt: blog.excerpt || "",
-      content: Array.isArray(blog.content) 
-        ? blog.content.map(c => c.value).join("\n\n") 
+      content: Array.isArray(blog.content)
+        ? blog.content.map((c) => c.value).join("\n\n")
         : blog.content || "",
       color: blog.color || "bg-blue-500/10 text-blue-400",
-      image: blog.image || ""
+      image: blog.image || "",
     });
     setShowBlogForm(true);
   };
 
   const handleDeleteBlog = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this blog post?")) return;
+    if (!window.confirm("Are you sure you want to delete this blog post?"))
+      return;
     try {
       const res = await fetch(`${API_URL}/api/blogs/${id}`, {
         method: "DELETE",
-        headers: getHeaders()
+        headers: getHeaders(),
       });
       if (res.ok) {
-        setBlogs(blogs.filter(b => b._id !== id));
+        setBlogs(blogs.filter((b) => b._id !== id));
         alert("Blog post deleted successfully.");
       } else {
         alert("Failed to delete blog.");
@@ -689,13 +1003,19 @@ const AdminDashboard = () => {
   // Helper categories colors
   const categoryColors = [
     { name: "Blue / Workflow", class: "bg-blue-500/10 text-blue-400" },
-    { name: "Indigo / Industry & News", class: "bg-indigo-500/10 text-indigo-400" },
+    {
+      name: "Indigo / Industry & News",
+      class: "bg-indigo-500/10 text-indigo-400",
+    },
     { name: "Purple / Automation", class: "bg-purple-500/10 text-purple-400" },
-    { name: "Emerald / CRM & Relations", class: "bg-emerald-500/10 text-emerald-400" },
+    {
+      name: "Emerald / CRM & Relations",
+      class: "bg-emerald-500/10 text-emerald-400",
+    },
     { name: "Rose / Efficiency", class: "bg-rose-500/10 text-rose-400" },
     { name: "Cyan / Case Study", class: "bg-cyan-500/10 text-cyan-400" },
     { name: "Amber / Guide", class: "bg-amber-500/10 text-amber-400" },
-    { name: "Teal / Features & Diary", class: "bg-teal-500/10 text-teal-400" }
+    { name: "Teal / Features & Diary", class: "bg-teal-500/10 text-teal-400" },
   ];
 
   // --- Media Handlers ---
@@ -717,9 +1037,9 @@ const AdminDashboard = () => {
       const res = await fetch(`${API_URL}/api/media/upload`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: formData
+        body: formData,
       });
 
       if (res.ok) {
@@ -744,14 +1064,19 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteMedia = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this file from Cloudinary and DB?")) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this file from Cloudinary and DB?",
+      )
+    )
+      return;
     try {
       const res = await fetch(`${API_URL}/api/media/${id}`, {
         method: "DELETE",
-        headers: getHeaders()
+        headers: getHeaders(),
       });
       if (res.ok) {
-        setMedia(media.filter(m => m._id !== id));
+        setMedia(media.filter((m) => m._id !== id));
         alert("Media file deleted successfully.");
       } else {
         alert("Failed to delete media.");
@@ -774,7 +1099,7 @@ const AdminDashboard = () => {
       const res = await fetch(`${API_URL}/api/settings`, {
         method: "PUT",
         headers: getHeaders(),
-        body: JSON.stringify(settingsForm)
+        body: JSON.stringify(settingsForm),
       });
       if (res.ok) {
         alert("Settings saved successfully!");
@@ -795,20 +1120,24 @@ const AdminDashboard = () => {
     e.preventDefault();
     setFaqSubmitLoading(true);
     try {
-      const url = editingFaq 
-        ? `${API_URL}/api/faqs/${editingFaq._id}` 
+      const url = editingFaq
+        ? `${API_URL}/api/faqs/${editingFaq._id}`
         : `${API_URL}/api/faqs`;
-      
+
       const method = editingFaq ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
         headers: getHeaders(),
-        body: JSON.stringify(faqForm)
+        body: JSON.stringify(faqForm),
       });
 
       if (res.ok) {
-        alert(editingFaq ? "FAQ updated successfully!" : "FAQ created successfully!");
+        alert(
+          editingFaq
+            ? "FAQ updated successfully!"
+            : "FAQ created successfully!",
+        );
         setShowFaqForm(false);
         setEditingFaq(null);
         setFaqForm({ question: "", answer: "", order: 0 });
@@ -831,7 +1160,7 @@ const AdminDashboard = () => {
     setFaqForm({
       question: faq.question || "",
       answer: faq.answer || "",
-      order: faq.order || 0
+      order: faq.order || 0,
     });
     setShowFaqForm(true);
   };
@@ -841,10 +1170,10 @@ const AdminDashboard = () => {
     try {
       const res = await fetch(`${API_URL}/api/faqs/${id}`, {
         method: "DELETE",
-        headers: getHeaders()
+        headers: getHeaders(),
       });
       if (res.ok) {
-        setFaqs(faqs.filter(f => f._id !== id));
+        setFaqs(faqs.filter((f) => f._id !== id));
         alert("FAQ deleted successfully.");
       } else {
         alert("Failed to delete FAQ.");
@@ -855,31 +1184,38 @@ const AdminDashboard = () => {
   };
 
   // Filter FAQs
-  const filteredFaqs = faqs.filter(f => {
+  const filteredFaqs = faqs.filter((f) => {
     const query = faqSearch.toLowerCase();
-    return (f.question || "").toLowerCase().includes(query) ||
-           (f.answer || "").toLowerCase().includes(query);
+    return (
+      (f.question || "").toLowerCase().includes(query) ||
+      (f.answer || "").toLowerCase().includes(query)
+    );
   });
 
   // Filter Leads
-  const filteredChatLeads = chatLeads.filter(c => {
+  const filteredChatLeads = chatLeads.filter((c) => {
     if (!c) return false;
     const query = leadsSearch.toLowerCase();
-    const matchQuery = 
+    const matchQuery =
       (c.name || "").toLowerCase().includes(query) ||
       (c.email || "").toLowerCase().includes(query) ||
       (c.mobile || "").includes(query) ||
       (c.businessName || "").toLowerCase().includes(query) ||
       (c.selectedService || "").toLowerCase().includes(query);
-    
+
     if (leadsFilter === "all") return matchQuery;
-    return matchQuery && (c.selectedService || "").toLowerCase().includes(leadsFilter.toLowerCase());
+    return (
+      matchQuery &&
+      (c.selectedService || "")
+        .toLowerCase()
+        .includes(leadsFilter.toLowerCase())
+    );
   });
 
-  const filteredContactLeads = contactLeads.filter(c => {
+  const filteredContactLeads = contactLeads.filter((c) => {
     if (!c) return false;
     const query = leadsSearch.toLowerCase();
-    const matchQuery = 
+    const matchQuery =
       (c.name || "").toLowerCase().includes(query) ||
       (c.email || "").toLowerCase().includes(query) ||
       (c.phone || "").includes(query) ||
@@ -887,24 +1223,31 @@ const AdminDashboard = () => {
       (c.interestedIn || "").toLowerCase().includes(query);
 
     if (leadsFilter === "all") return matchQuery;
-    return matchQuery && (c.interestedIn || "").toLowerCase().includes(leadsFilter.toLowerCase());
+    return (
+      matchQuery &&
+      (c.interestedIn || "").toLowerCase().includes(leadsFilter.toLowerCase())
+    );
   });
 
   // Filter Blogs
-  const filteredBlogs = blogs.filter(b => {
+  const filteredBlogs = blogs.filter((b) => {
     const query = blogSearch.toLowerCase();
-    return b.title.toLowerCase().includes(query) || 
-           b.category.toLowerCase().includes(query) ||
-           b.excerpt.toLowerCase().includes(query);
+    return (
+      b.title.toLowerCase().includes(query) ||
+      b.category.toLowerCase().includes(query) ||
+      b.excerpt.toLowerCase().includes(query)
+    );
   });
 
   // Filter Media
-  const filteredMedia = media.filter(m => {
+  const filteredMedia = media.filter((m) => {
     const query = mediaSearch.toLowerCase();
-    return (m.original_filename || "").toLowerCase().includes(query) ||
-           (m.title || "").toLowerCase().includes(query) ||
-           (m.format || "").toLowerCase().includes(query) ||
-           (m.resource_type || "").toLowerCase().includes(query);
+    return (
+      (m.original_filename || "").toLowerCase().includes(query) ||
+      (m.title || "").toLowerCase().includes(query) ||
+      (m.format || "").toLowerCase().includes(query) ||
+      (m.resource_type || "").toLowerCase().includes(query)
+    );
   });
 
   // Main UI render
@@ -923,94 +1266,150 @@ const AdminDashboard = () => {
         description="Administrative panel for Auto Garage Network."
         canonicalPath="/admin"
       />
-      <Navbar />
+      <Navbar 
+        role={adminRole} 
+        notifications={notifications} 
+        setNotifications={setNotifications} 
+      />
 
       {/* Main panel layout */}
       <main className="flex-grow pt-24 pb-16 px-6 lg:px-12 max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-8">
-        
         {/* Sidebar Nav */}
         <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-4">
           <div className="bg-[#0c1222] border border-white/10 p-6 rounded-3xl shadow-xl space-y-6">
             <div>
               <span className="text-[10px] tracking-widest font-black uppercase text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full">
-                System Admin
+                {adminRole === "super_admin" ? "Super Admin" : "System Admin"}
               </span>
-              <h2 className="text-lg font-black text-white mt-3 truncate">{adminName}</h2>
-              <p className="text-gray-500 text-xs truncate">admin@autogaragenetwork.com</p>
+              <h2 className="text-lg font-black text-white mt-3 truncate">
+                {adminName}
+              </h2>
+              <p className="text-gray-500 text-xs truncate">
+                {localStorage.getItem("agn_user_email") || "admin@autogaragenetwork.com"}
+              </p>
             </div>
 
             <nav className="flex flex-col gap-1.5 border-t border-white/5 pt-5">
-              <button
-                onClick={() => { setActiveTab("contact-leads"); setShowBlogForm(false); setShowContactForm(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === "contact-leads"
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <FiDatabase size={16} />
-                <span>Contact Form Requests</span>
-              </button>
+              {canRead("contacts") && (
+                <button
+                  onClick={() => {
+                    setActiveTab("contact-leads");
+                    setShowBlogForm(false);
+                    setShowContactForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "contact-leads"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiDatabase size={16} />
+                  <span>Contact Form Requests</span>
+                </button>
+              )}
 
-              <button
-                onClick={() => { setActiveTab("chat-leads"); setShowBlogForm(false); setShowChatLeadForm(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === "chat-leads"
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <FiMessageSquare size={16} />
-                <span>Chatbot Assistant Leads</span>
-              </button>
+              {canRead("chatLeads") && (
+                <button
+                  onClick={() => {
+                    setActiveTab("chat-leads");
+                    setShowBlogForm(false);
+                    setShowChatLeadForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "chat-leads"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiMessageSquare size={16} />
+                  <span>Chatbot Assistant Leads</span>
+                </button>
+              )}
 
-              <button
-                onClick={() => { setActiveTab("blogs"); setShowFaqForm(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === "blogs"
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <FiLayers size={16} />
-                <span>Manage Blogs</span>
-              </button>
+              {canRead("blogs") && (
+                <button
+                  onClick={() => {
+                    setActiveTab("blogs");
+                    setShowFaqForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "blogs"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiLayers size={16} />
+                  <span>Manage Blogs</span>
+                </button>
+              )}
 
-              <button
-                onClick={() => { setActiveTab("faqs"); setShowFaqForm(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === "faqs"
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <FiHelpCircle size={16} />
-                <span>Manage FAQs</span>
-              </button>
+              {canRead("faqs") && (
+                <button
+                  onClick={() => {
+                    setActiveTab("faqs");
+                    setShowFaqForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "faqs"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiHelpCircle size={16} />
+                  <span>Manage FAQs</span>
+                </button>
+              )}
 
-              <button
-                onClick={() => { setActiveTab("media"); setShowBlogForm(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === "media"
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <FiImage size={16} />
-                <span>Media Gallery</span>
-              </button>
+              {canRead("media") && (
+                <button
+                  onClick={() => {
+                    setActiveTab("media");
+                    setShowBlogForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "media"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiImage size={16} />
+                  <span>Media Gallery</span>
+                </button>
+              )}
 
-              <button
-                onClick={() => { setActiveTab("settings"); setShowBlogForm(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === "settings"
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <FiSettings size={16} />
-                <span>Site Settings</span>
-              </button>
+              {canRead("settings") && (
+                <button
+                  onClick={() => {
+                    setActiveTab("settings");
+                    setShowBlogForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "settings"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiSettings size={16} />
+                  <span>Site Settings</span>
+                </button>
+              )}
+
+              {adminRole === "super_admin" && (
+                <button
+                  onClick={() => {
+                    setActiveTab("admins");
+                    setShowAdminForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "admins"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiKey size={16} />
+                  <span>Manage Admins</span>
+                </button>
+              )}
             </nav>
 
             <button
@@ -1027,13 +1426,20 @@ const AdminDashboard = () => {
         <section className="flex-grow min-w-0 bg-[#0c1222] border border-white/10 p-6 md:p-8 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
 
+
+
           {/* TAB 1: Contact Form Requests */}
           {activeTab === "contact-leads" && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-black text-white">Contact Form Requests</h1>
-                  <p className="text-gray-400 text-xs">Manage incoming visitor requests submitted via the Contact Us form.</p>
+                  <h1 className="text-2xl font-black text-white">
+                    Contact Form Requests
+                  </h1>
+                  <p className="text-gray-400 text-xs">
+                    Manage incoming visitor requests submitted via the Contact
+                    Us form.
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   {!showContactForm && (
@@ -1047,7 +1453,7 @@ const AdminDashboard = () => {
                           phone: "",
                           interestedIn: "Garage Management System",
                           address: "",
-                          message: ""
+                          message: "",
                         });
                         setShowContactForm(true);
                       }}
@@ -1075,7 +1481,9 @@ const AdminDashboard = () => {
                 >
                   <div className="flex justify-between items-center border-b border-white/5 pb-4">
                     <h3 className="text-sm uppercase font-black tracking-widest text-indigo-400">
-                      {editingContact ? "Edit Contact Lead" : "Create New Contact Lead"}
+                      {editingContact
+                        ? "Edit Contact Lead"
+                        : "Create New Contact Lead"}
                     </h3>
                     <button
                       onClick={() => setShowContactForm(false)}
@@ -1085,26 +1493,43 @@ const AdminDashboard = () => {
                     </button>
                   </div>
 
-                  <form onSubmit={handleContactFormSubmit} className="space-y-4">
+                  <form
+                    onSubmit={handleContactFormSubmit}
+                    className="space-y-4"
+                  >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Name</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Name
+                        </label>
                         <input
                           type="text"
                           required
                           value={contactForm.name}
-                          onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                          onChange={(e) =>
+                            setContactForm({
+                              ...contactForm,
+                              name: e.target.value,
+                            })
+                          }
                           placeholder="e.g. John Doe"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Garage Name</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Garage Name
+                        </label>
                         <input
                           type="text"
                           value={contactForm.garageName}
-                          onChange={(e) => setContactForm({ ...contactForm, garageName: e.target.value })}
+                          onChange={(e) =>
+                            setContactForm({
+                              ...contactForm,
+                              garageName: e.target.value,
+                            })
+                          }
                           placeholder="e.g. AutoTech Services"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
@@ -1113,24 +1538,38 @@ const AdminDashboard = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Email Address</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Email Address
+                        </label>
                         <input
                           type="email"
                           required
                           value={contactForm.email}
-                          onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                          onChange={(e) =>
+                            setContactForm({
+                              ...contactForm,
+                              email: e.target.value,
+                            })
+                          }
                           placeholder="e.g. john@example.com"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Phone Number</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Phone Number
+                        </label>
                         <input
                           type="text"
                           required
                           value={contactForm.phone}
-                          onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                          onChange={(e) =>
+                            setContactForm({
+                              ...contactForm,
+                              phone: e.target.value,
+                            })
+                          }
                           placeholder="e.g. +1 234 567 890"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
@@ -1139,26 +1578,48 @@ const AdminDashboard = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Interested In / Services</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Interested In / Services
+                        </label>
                         <select
                           value={contactForm.interestedIn}
-                          onChange={(e) => setContactForm({ ...contactForm, interestedIn: e.target.value })}
+                          onChange={(e) =>
+                            setContactForm({
+                              ...contactForm,
+                              interestedIn: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white cursor-pointer"
                         >
-                          <option value="Garage Management System">Garage Management System</option>
-                          <option value="Autotech Data Integration">Autotech Data Integration</option>
-                          <option value="SEO / Marketing / Branding">SEO / Marketing / Branding</option>
-                          <option value="Custom Web Development">Custom Web Development</option>
+                          <option value="Garage Management System">
+                            Garage Management System
+                          </option>
+                          <option value="Autotech Data Integration">
+                            Autotech Data Integration
+                          </option>
+                          <option value="SEO / Marketing / Branding">
+                            SEO / Marketing / Branding
+                          </option>
+                          <option value="Custom Web Development">
+                            Custom Web Development
+                          </option>
                           <option value="Others">Others</option>
                         </select>
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Address / Location</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Address / Location
+                        </label>
                         <input
                           type="text"
                           value={contactForm.address}
-                          onChange={(e) => setContactForm({ ...contactForm, address: e.target.value })}
+                          onChange={(e) =>
+                            setContactForm({
+                              ...contactForm,
+                              address: e.target.value,
+                            })
+                          }
                           placeholder="e.g. London, UK"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
@@ -1166,11 +1627,18 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">Message / Notes</label>
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        Message / Notes
+                      </label>
                       <textarea
                         rows={4}
                         value={contactForm.message}
-                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                        onChange={(e) =>
+                          setContactForm({
+                            ...contactForm,
+                            message: e.target.value,
+                          })
+                        }
                         placeholder="Additional notes or message from the lead..."
                         className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white font-sans"
                       />
@@ -1189,7 +1657,11 @@ const AdminDashboard = () => {
                         disabled={contactSubmitLoading}
                         className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer shadow-lg disabled:opacity-50"
                       >
-                        {contactSubmitLoading ? "Saving..." : editingContact ? "Update Contact" : "Create Contact"}
+                        {contactSubmitLoading
+                          ? "Saving..."
+                          : editingContact
+                            ? "Update Contact"
+                            : "Create Contact"}
                       </button>
                     </div>
                   </form>
@@ -1199,18 +1671,41 @@ const AdminDashboard = () => {
                   {/* Metrics */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="bg-[#050816] border border-white/10 p-4 rounded-2xl col-span-2 sm:col-span-1">
-                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Web Contacts</span>
-                      <p className="text-2xl font-black text-emerald-400 mt-1">{contactLeads.length}</p>
+                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Total Web Contacts
+                      </span>
+                      <p className="text-2xl font-black text-emerald-400 mt-1">
+                        {contactLeads.length}
+                      </p>
                     </div>
                     <div className="bg-[#050816] border border-white/10 p-4 rounded-2xl col-span-2 sm:col-span-1">
-                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Active Logo</span>
-                      <p className="text-xs font-semibold text-slate-200 mt-2 truncate" title={logoUrl}>{logoUrl}</p>
+                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Active Logo
+                      </span>
+                      <p
+                        className="text-xs font-semibold text-slate-200 mt-2 truncate"
+                        title={logoUrl}
+                      >
+                        {logoUrl}
+                      </p>
                     </div>
                     <div className="bg-[#050816] border border-white/10 p-4 rounded-2xl col-span-2 md:col-span-2">
-                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Navbar lining</span>
+                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Navbar lining
+                      </span>
                       <div className="flex items-center gap-2 mt-2">
-                        <span className="w-3.5 h-3.5 rounded-full border border-white/20" style={{ backgroundColor: navbarLineColor === "indigo" ? "#6366f1" : navbarLineColor }} />
-                        <span className="text-xs font-bold text-slate-200 capitalize">{navbarLineColor}</span>
+                        <span
+                          className="w-3.5 h-3.5 rounded-full border border-white/20"
+                          style={{
+                            backgroundColor:
+                              navbarLineColor === "indigo"
+                                ? "#6366f1"
+                                : navbarLineColor,
+                          }}
+                        />
+                        <span className="text-xs font-bold text-slate-200 capitalize">
+                          {navbarLineColor}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -1245,7 +1740,9 @@ const AdminDashboard = () => {
                   {/* Contacts Table */}
                   <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
                     {filteredContactLeads.length === 0 ? (
-                      <p className="text-center text-gray-500 py-10 text-xs">No contact form requests matching filters.</p>
+                      <p className="text-center text-gray-500 py-10 text-xs">
+                        No contact form requests matching filters.
+                      </p>
                     ) : (
                       <table className="w-full border-collapse text-left text-xs">
                         <thead>
@@ -1261,17 +1758,30 @@ const AdminDashboard = () => {
                           {filteredContactLeads.map((c) => (
                             <tr key={c._id} className="hover:bg-white/[0.01]">
                               <td className="py-3 px-5 space-y-0.5">
-                                <span className="font-extrabold text-white block text-sm">{c.name}</span>
-                                <span className="text-gray-400 block">{c.email}</span>
-                                <span className="text-gray-500 text-[10px] block">{c.phone}</span>
+                                <span className="font-extrabold text-white block text-sm">
+                                  {c.name}
+                                </span>
+                                <span className="text-gray-400 block">
+                                  {c.email}
+                                </span>
+                                <span className="text-gray-500 text-[10px] block">
+                                  {c.phone}
+                                </span>
                               </td>
-                              <td className="py-3 px-5 text-gray-300 font-medium">{c.garageName || "-"}</td>
+                              <td className="py-3 px-5 text-gray-300 font-medium">
+                                {c.garageName || "-"}
+                              </td>
                               <td className="py-3 px-5">
                                 <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-bold text-[10px]">
                                   {c.interestedIn}
                                 </span>
                               </td>
-                              <td className="py-3 px-5 max-w-xs truncate text-gray-400" title={c.message}>{c.message}</td>
+                              <td
+                                className="py-3 px-5 max-w-xs truncate text-gray-400"
+                                title={c.message}
+                              >
+                                {c.message}
+                              </td>
                               <td className="py-3 px-5 text-center">
                                 <div className="flex items-center justify-center gap-1.5">
                                   <button
@@ -1306,8 +1816,13 @@ const AdminDashboard = () => {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-black text-white">Chatbot Assistant Leads</h1>
-                  <p className="text-gray-400 text-xs">Manage incoming customer requests gathered by the interactive Chatbot Assistant.</p>
+                  <h1 className="text-2xl font-black text-white">
+                    Chatbot Assistant Leads
+                  </h1>
+                  <p className="text-gray-400 text-xs">
+                    Manage incoming customer requests gathered by the
+                    interactive Chatbot Assistant.
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -1338,25 +1853,42 @@ const AdminDashboard = () => {
                     </button>
                   </div>
 
-                  <form onSubmit={handleChatLeadFormSubmit} className="space-y-4">
+                  <form
+                    onSubmit={handleChatLeadFormSubmit}
+                    className="space-y-4"
+                  >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Visitor Name</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Visitor Name
+                        </label>
                         <input
                           type="text"
                           required
                           value={chatLeadForm.name}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, name: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              name: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Business / Company Name</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Business / Company Name
+                        </label>
                         <input
                           type="text"
                           value={chatLeadForm.businessName}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, businessName: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              businessName: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
@@ -1364,21 +1896,35 @@ const AdminDashboard = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Email Address</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Email Address
+                        </label>
                         <input
                           type="email"
                           value={chatLeadForm.email}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, email: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              email: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Mobile Number</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Mobile Number
+                        </label>
                         <input
                           type="text"
                           value={chatLeadForm.mobile}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, mobile: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              mobile: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
@@ -1386,21 +1932,35 @@ const AdminDashboard = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Selected Service / Interest</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Selected Service / Interest
+                        </label>
                         <input
                           type="text"
                           value={chatLeadForm.selectedService}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, selectedService: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              selectedService: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Budget Range</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Budget Range
+                        </label>
                         <input
                           type="text"
                           value={chatLeadForm.budgetRange}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, budgetRange: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              budgetRange: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
@@ -1408,37 +1968,62 @@ const AdminDashboard = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Project Deadline</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Project Deadline
+                        </label>
                         <input
                           type="text"
                           value={chatLeadForm.projectDeadline}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, projectDeadline: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              projectDeadline: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Lead Status</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Lead Status
+                        </label>
                         <select
                           value={chatLeadForm.leadStatus}
-                          onChange={(e) => setChatLeadForm({ ...chatLeadForm, leadStatus: e.target.value })}
+                          onChange={(e) =>
+                            setChatLeadForm({
+                              ...chatLeadForm,
+                              leadStatus: e.target.value,
+                            })
+                          }
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white cursor-pointer"
                         >
                           <option value="New">New</option>
                           <option value="Contacted">Contacted</option>
                           <option value="In Progress">In Progress</option>
-                          <option value="Closed / Signed">Closed / Signed</option>
-                          <option value="Lost / Unresponsive">Lost / Unresponsive</option>
+                          <option value="Closed / Signed">
+                            Closed / Signed
+                          </option>
+                          <option value="Lost / Unresponsive">
+                            Lost / Unresponsive
+                          </option>
                         </select>
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">Project / Problem Description</label>
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        Project / Problem Description
+                      </label>
                       <textarea
                         rows={3}
                         value={chatLeadForm.projectDescription}
-                        onChange={(e) => setChatLeadForm({ ...chatLeadForm, projectDescription: e.target.value })}
+                        onChange={(e) =>
+                          setChatLeadForm({
+                            ...chatLeadForm,
+                            projectDescription: e.target.value,
+                          })
+                        }
                         className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white font-sans"
                       />
                     </div>
@@ -1456,7 +2041,9 @@ const AdminDashboard = () => {
                         disabled={chatLeadSubmitLoading}
                         className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer shadow-lg disabled:opacity-50"
                       >
-                        {chatLeadSubmitLoading ? "Saving..." : "Update Chat Lead"}
+                        {chatLeadSubmitLoading
+                          ? "Saving..."
+                          : "Update Chat Lead"}
                       </button>
                     </div>
                   </form>
@@ -1466,18 +2053,41 @@ const AdminDashboard = () => {
                   {/* Metrics */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="bg-[#050816] border border-white/10 p-4 rounded-2xl col-span-2 sm:col-span-1">
-                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Chat Leads</span>
-                      <p className="text-2xl font-black text-indigo-400 mt-1">{chatLeads.length}</p>
+                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Total Chat Leads
+                      </span>
+                      <p className="text-2xl font-black text-indigo-400 mt-1">
+                        {chatLeads.length}
+                      </p>
                     </div>
                     <div className="bg-[#050816] border border-white/10 p-4 rounded-2xl col-span-2 sm:col-span-1">
-                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Active Logo</span>
-                      <p className="text-xs font-semibold text-slate-200 mt-2 truncate" title={logoUrl}>{logoUrl}</p>
+                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Active Logo
+                      </span>
+                      <p
+                        className="text-xs font-semibold text-slate-200 mt-2 truncate"
+                        title={logoUrl}
+                      >
+                        {logoUrl}
+                      </p>
                     </div>
                     <div className="bg-[#050816] border border-white/10 p-4 rounded-2xl col-span-2 md:col-span-2">
-                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Navbar lining</span>
+                      <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Navbar lining
+                      </span>
                       <div className="flex items-center gap-2 mt-2">
-                        <span className="w-3.5 h-3.5 rounded-full border border-white/20" style={{ backgroundColor: navbarLineColor === "indigo" ? "#6366f1" : navbarLineColor }} />
-                        <span className="text-xs font-bold text-slate-200 capitalize">{navbarLineColor}</span>
+                        <span
+                          className="w-3.5 h-3.5 rounded-full border border-white/20"
+                          style={{
+                            backgroundColor:
+                              navbarLineColor === "indigo"
+                                ? "#6366f1"
+                                : navbarLineColor,
+                          }}
+                        />
+                        <span className="text-xs font-bold text-slate-200 capitalize">
+                          {navbarLineColor}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -1512,7 +2122,9 @@ const AdminDashboard = () => {
                   {/* Chatbot Leads Table */}
                   <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
                     {filteredChatLeads.length === 0 ? (
-                      <p className="text-center text-gray-500 py-10 text-xs">No chatbot leads found matching search.</p>
+                      <p className="text-center text-gray-500 py-10 text-xs">
+                        No chatbot leads found matching search.
+                      </p>
                     ) : (
                       <table className="w-full border-collapse text-left text-xs">
                         <thead>
@@ -1521,7 +2133,9 @@ const AdminDashboard = () => {
                             <th className="py-3 px-5">Business</th>
                             <th className="py-3 px-5">Service / Budget</th>
                             <th className="py-3 px-5">Chat Log</th>
-                            <th className="py-3 px-5 text-center">Submitted Date</th>
+                            <th className="py-3 px-5 text-center">
+                              Submitted Date
+                            </th>
                             <th className="py-3 px-5 text-center">Actions</th>
                           </tr>
                         </thead>
@@ -1529,25 +2143,45 @@ const AdminDashboard = () => {
                           {filteredChatLeads.map((ch) => (
                             <tr key={ch._id} className="hover:bg-white/[0.01]">
                               <td className="py-3 px-5 space-y-0.5">
-                                <span className="font-extrabold text-white block text-sm">{ch.name}</span>
-                                {ch.email && <span className="text-gray-400 block">{ch.email}</span>}
-                                {ch.mobile && <span className="text-gray-500 text-[10px] block">{ch.mobile}</span>}
+                                <span className="font-extrabold text-white block text-sm">
+                                  {ch.name}
+                                </span>
+                                {ch.email && (
+                                  <span className="text-gray-400 block">
+                                    {ch.email}
+                                  </span>
+                                )}
+                                {ch.mobile && (
+                                  <span className="text-gray-500 text-[10px] block">
+                                    {ch.mobile}
+                                  </span>
+                                )}
                               </td>
-                              <td className="py-3 px-5 text-gray-300 font-medium">{ch.businessName || "-"}</td>
+                              <td className="py-3 px-5 text-gray-300 font-medium">
+                                {ch.businessName || "-"}
+                              </td>
                               <td className="py-3 px-5 space-y-1">
                                 <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold text-[10px] block w-max">
                                   {ch.selectedService || "Inquiry"}
                                 </span>
                                 {ch.budgetRange && (
-                                  <span className="text-gray-400 text-[10px] block">Budget: {ch.budgetRange}</span>
+                                  <span className="text-gray-400 text-[10px] block">
+                                    Budget: {ch.budgetRange}
+                                  </span>
                                 )}
-                                <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md block w-max ${
-                                  ch.leadStatus === "New" ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" :
-                                  ch.leadStatus === "Contacted" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                                  ch.leadStatus === "In Progress" ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" :
-                                  ch.leadStatus === "Closed / Signed" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
-                                  "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                                }`}>
+                                <span
+                                  className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md block w-max ${
+                                    ch.leadStatus === "New"
+                                      ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                      : ch.leadStatus === "Contacted"
+                                        ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                        : ch.leadStatus === "In Progress"
+                                          ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+                                          : ch.leadStatus === "Closed / Signed"
+                                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                            : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                  }`}
+                                >
                                   {ch.leadStatus || "New"}
                                 </span>
                               </td>
@@ -1557,7 +2191,9 @@ const AdminDashboard = () => {
                                   className="flex items-center gap-1 text-indigo-400 hover:text-white bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-600 hover:border-indigo-500 px-3 py-1 rounded-lg font-bold text-[10px] transition-all cursor-pointer"
                                 >
                                   <FiMessageSquare size={12} />
-                                  <span>View Logs ({ch.chatMessages?.length || 0})</span>
+                                  <span>
+                                    View Logs ({ch.chatMessages?.length || 0})
+                                  </span>
                                 </button>
                               </td>
                               <td className="py-3 px-5 text-center text-gray-400 font-medium">
@@ -1597,8 +2233,12 @@ const AdminDashboard = () => {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-black text-white">Manage Blogs</h1>
-                  <p className="text-gray-400 text-xs">Add, edit, or delete automotive industry articles.</p>
+                  <h1 className="text-2xl font-black text-white">
+                    Manage Blogs
+                  </h1>
+                  <p className="text-gray-400 text-xs">
+                    Add, edit, or delete automotive industry articles.
+                  </p>
                 </div>
                 {!showBlogForm && (
                   <button
@@ -1611,7 +2251,7 @@ const AdminDashboard = () => {
                         excerpt: "",
                         content: "",
                         color: "bg-blue-500/10 text-blue-400",
-                        image: ""
+                        image: "",
                       });
                       setShowBlogForm(true);
                     }}
@@ -1645,47 +2285,81 @@ const AdminDashboard = () => {
                   <form onSubmit={handleBlogFormSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Blog Title</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Blog Title
+                        </label>
                         <input
                           type="text"
                           required
                           value={blogForm.title}
-                          onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
+                          onChange={(e) =>
+                            setBlogForm({ ...blogForm, title: e.target.value })
+                          }
                           placeholder="e.g. 5 Tips to Optimize Workshop Scheduling"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Category</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Category
+                        </label>
                         <select
                           value={blogForm.category}
                           onChange={(e) => {
                             const cat = e.target.value;
-                            const matchedColor = categoryColors.find(c => c.name.toLowerCase().includes(cat.split(" ")[0].toLowerCase()))?.class || "bg-indigo-500/10 text-indigo-400";
-                            setBlogForm({ ...blogForm, category: cat, color: matchedColor });
+                            const matchedColor =
+                              categoryColors.find((c) =>
+                                c.name
+                                  .toLowerCase()
+                                  .includes(cat.split(" ")[0].toLowerCase()),
+                              )?.class || "bg-indigo-500/10 text-indigo-400";
+                            setBlogForm({
+                              ...blogForm,
+                              category: cat,
+                              color: matchedColor,
+                            });
                           }}
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white cursor-pointer"
                         >
-                          <option value="Workflow Optimization">Workflow Optimization</option>
-                          <option value="Industry & News">Industry & News</option>
-                          <option value="Garage Automation">Garage Automation</option>
-                          <option value="Customer Relations">Customer Relations</option>
-                          <option value="Efficiency Tips">Efficiency Tips</option>
+                          <option value="Workflow Optimization">
+                            Workflow Optimization
+                          </option>
+                          <option value="Industry & News">
+                            Industry & News
+                          </option>
+                          <option value="Garage Automation">
+                            Garage Automation
+                          </option>
+                          <option value="Customer Relations">
+                            Customer Relations
+                          </option>
+                          <option value="Efficiency Tips">
+                            Efficiency Tips
+                          </option>
                           <option value="Case Studies">Case Studies</option>
-                          <option value="Guides & Tutorials">Guides & Tutorials</option>
+                          <option value="Guides & Tutorials">
+                            Guides & Tutorials
+                          </option>
                         </select>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Read Time</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Read Time
+                        </label>
                         <input
                           type="text"
                           required
                           value={blogForm.readTime}
-                          onChange={(e) => setBlogForm({ ...blogForm, readTime: e.target.value })}
+                          onChange={(e) =>
+                            setBlogForm({
+                              ...blogForm,
+                              readTime: e.target.value,
+                            })
+                          }
                           placeholder="e.g. 5 min read"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
@@ -1693,13 +2367,20 @@ const AdminDashboard = () => {
 
                       {/* Cover Image Selector */}
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Cover Image URL</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Cover Image URL
+                        </label>
                         <div className="flex flex-col sm:flex-row gap-2">
                           <input
                             type="text"
                             required
                             value={blogForm.image}
-                            onChange={(e) => setBlogForm({ ...blogForm, image: e.target.value })}
+                            onChange={(e) =>
+                              setBlogForm({
+                                ...blogForm,
+                                image: e.target.value,
+                              })
+                            }
                             placeholder="Direct URL, upload from computer, or choose from gallery"
                             className="flex-grow bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                           />
@@ -1727,12 +2408,16 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">Short Excerpt (Intro Text)</label>
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        Short Excerpt (Intro Text)
+                      </label>
                       <input
                         type="text"
                         required
                         value={blogForm.excerpt}
-                        onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
+                        onChange={(e) =>
+                          setBlogForm({ ...blogForm, excerpt: e.target.value })
+                        }
                         placeholder="Brief summary showing on the card listings..."
                         className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                       />
@@ -1740,14 +2425,20 @@ const AdminDashboard = () => {
 
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Blog Content (Detailed Text)</label>
-                        <span className="text-[9px] text-gray-500">Separating paragraphs with blank line is supported.</span>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Blog Content (Detailed Text)
+                        </label>
+                        <span className="text-[9px] text-gray-500">
+                          Separating paragraphs with blank line is supported.
+                        </span>
                       </div>
                       <textarea
                         required
                         rows={8}
                         value={blogForm.content}
-                        onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
+                        onChange={(e) =>
+                          setBlogForm({ ...blogForm, content: e.target.value })
+                        }
                         placeholder="Write the full post contents here..."
                         className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white font-sans"
                       />
@@ -1756,10 +2447,18 @@ const AdminDashboard = () => {
                     {/* Previews if cover is set */}
                     {blogForm.image && (
                       <div className="bg-[#050816] border border-white/5 p-4 rounded-2xl flex items-center gap-4">
-                        <img src={blogForm.image} alt="Preview" className="w-24 h-16 object-cover rounded-lg border border-white/10" />
+                        <img
+                          src={blogForm.image}
+                          alt="Preview"
+                          className="w-24 h-16 object-cover rounded-lg border border-white/10"
+                        />
                         <div>
-                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Image Selected</p>
-                          <span className="text-[11px] text-gray-500 truncate block max-w-xs lg:max-w-md">{blogForm.image}</span>
+                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                            Image Selected
+                          </p>
+                          <span className="text-[11px] text-gray-500 truncate block max-w-xs lg:max-w-md">
+                            {blogForm.image}
+                          </span>
                         </div>
                       </div>
                     )}
@@ -1777,7 +2476,11 @@ const AdminDashboard = () => {
                         disabled={blogSubmitLoading}
                         className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer shadow-lg disabled:opacity-50"
                       >
-                        {blogSubmitLoading ? "Saving..." : editingBlog ? "Update Post" : "Publish Post"}
+                        {blogSubmitLoading
+                          ? "Saving..."
+                          : editingBlog
+                            ? "Update Post"
+                            : "Publish Post"}
                       </button>
                     </div>
                   </form>
@@ -1800,32 +2503,50 @@ const AdminDashboard = () => {
                   {filteredBlogs.length === 0 ? (
                     <div className="text-center py-16">
                       <FiLayers className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                      <h4 className="text-white font-bold mb-1">No Blog Posts</h4>
-                      <p className="text-gray-500 text-xs max-w-xs mx-auto">Click "Create New Blog" to write your first automotive post.</p>
+                      <h4 className="text-white font-bold mb-1">
+                        No Blog Posts
+                      </h4>
+                      <p className="text-gray-500 text-xs max-w-xs mx-auto">
+                        Click "Create New Blog" to write your first automotive
+                        post.
+                      </p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {filteredBlogs.map((b) => (
-                        <div key={b._id} className="bg-[#050816] border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-indigo-500/20 transition-all">
+                        <div
+                          key={b._id}
+                          className="bg-[#050816] border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-indigo-500/20 transition-all"
+                        >
                           <div className="relative aspect-video max-h-40 overflow-hidden bg-black/30">
-                            <img src={b.image} alt={b.title} className="w-full h-full object-cover" />
+                            <img
+                              src={b.image}
+                              alt={b.title}
+                              className="w-full h-full object-cover"
+                            />
                             <span className="absolute top-3 left-3 bg-[#0c1222]/80 backdrop-blur-md text-indigo-400 text-[9px] uppercase font-black px-2.5 py-1 rounded-full border border-white/5">
                               {b.category}
                             </span>
                           </div>
-                          
+
                           <div className="p-5 flex-grow space-y-2 text-left">
                             <div className="flex gap-2 text-[10px] text-gray-500">
                               <span>{b.date}</span>
                               <span>&bull;</span>
                               <span>{b.readTime}</span>
                             </div>
-                            <h4 className="text-sm font-extrabold text-white line-clamp-2 leading-snug">{b.title}</h4>
-                            <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed">{b.excerpt}</p>
+                            <h4 className="text-sm font-extrabold text-white line-clamp-2 leading-snug">
+                              {b.title}
+                            </h4>
+                            <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed">
+                              {b.excerpt}
+                            </p>
                           </div>
 
                           <div className="p-4 bg-white/[0.01] border-t border-white/5 flex items-center justify-between">
-                            <span className="text-[10px] text-gray-500 font-bold truncate max-w-xs">{b._id}</span>
+                            <span className="text-[10px] text-gray-500 font-bold truncate max-w-xs">
+                              {b._id}
+                            </span>
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => handleEditBlog(b)}
@@ -1857,8 +2578,12 @@ const AdminDashboard = () => {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-black text-white">Media Manager</h1>
-                  <p className="text-gray-400 text-xs">Upload images and videos to Cloudinary and query links.</p>
+                  <h1 className="text-2xl font-black text-white">
+                    Media Manager
+                  </h1>
+                  <p className="text-gray-400 text-xs">
+                    Upload images and videos to Cloudinary and query links.
+                  </p>
                 </div>
               </div>
 
@@ -1871,7 +2596,9 @@ const AdminDashboard = () => {
                 <form onSubmit={handleMediaUpload} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">File Title (Optional)</label>
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        File Title (Optional)
+                      </label>
                       <input
                         type="text"
                         value={mediaTitle}
@@ -1881,7 +2608,9 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">Short Description (Optional)</label>
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        Short Description (Optional)
+                      </label>
                       <input
                         type="text"
                         value={mediaDesc}
@@ -1903,12 +2632,19 @@ const AdminDashboard = () => {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                     <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
-                      <FiUploadCloud size={32} className="text-gray-500 group-hover:text-indigo-400 transition-colors" />
+                      <FiUploadCloud
+                        size={32}
+                        className="text-gray-500 group-hover:text-indigo-400 transition-colors"
+                      />
                       <p className="text-xs font-bold text-white">
-                        {selectedFile ? selectedFile.name : "Select Image or Video"}
+                        {selectedFile
+                          ? selectedFile.name
+                          : "Select Image or Video"}
                       </p>
                       <span className="text-[10px] text-gray-500">
-                        {selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : "Drag and drop or click here to browse"}
+                        {selectedFile
+                          ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`
+                          : "Drag and drop or click here to browse"}
                       </span>
                     </div>
                   </div>
@@ -1919,7 +2655,9 @@ const AdminDashboard = () => {
                       disabled={mediaUploadLoading || !selectedFile}
                       className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer disabled:opacity-40 transition-all flex items-center gap-2"
                     >
-                      {mediaUploadLoading ? "Uploading to Cloudinary..." : "Start Upload"}
+                      {mediaUploadLoading
+                        ? "Uploading to Cloudinary..."
+                        : "Start Upload"}
                     </button>
                   </div>
                 </form>
@@ -1928,10 +2666,15 @@ const AdminDashboard = () => {
               {/* Gallery Grid */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                  <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Uploaded Assets ({media.length})</h3>
-                  
+                  <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                    Uploaded Assets ({media.length})
+                  </h3>
+
                   <div className="relative w-48 lg:w-64">
-                    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={12} />
+                    <FiSearch
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                      size={12}
+                    />
                     <input
                       type="text"
                       placeholder="Filter by name..."
@@ -1943,29 +2686,44 @@ const AdminDashboard = () => {
                 </div>
 
                 {filteredMedia.length === 0 ? (
-                  <p className="text-center text-gray-500 py-10 text-xs">No media files found.</p>
+                  <p className="text-center text-gray-500 py-10 text-xs">
+                    No media files found.
+                  </p>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     {filteredMedia.map((m) => (
-                      <div key={m._id} className="bg-[#050816] border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-indigo-500/15 transition-all group relative">
-                        
+                      <div
+                        key={m._id}
+                        className="bg-[#050816] border border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-indigo-500/15 transition-all group relative"
+                      >
                         {/* Image/Video Preview */}
                         <div className="aspect-video overflow-hidden bg-black/40 relative flex items-center justify-center border-b border-white/5">
                           {m.resource_type === "video" ? (
                             <div className="relative w-full h-full flex items-center justify-center">
-                              <video src={m.secure_url} className="w-full h-full object-cover" muted />
+                              <video
+                                src={m.secure_url}
+                                className="w-full h-full object-cover"
+                                muted
+                              />
                               <span className="absolute bottom-2 right-2 bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded flex items-center gap-1 shadow-md">
                                 <FiVideo size={8} /> Video
                               </span>
                             </div>
                           ) : (
-                            <img src={m.secure_url} alt={m.title} className="w-full h-full object-cover" />
+                            <img
+                              src={m.secure_url}
+                              alt={m.title}
+                              className="w-full h-full object-cover"
+                            />
                           )}
                         </div>
 
                         {/* Text info */}
                         <div className="p-3 text-left space-y-1">
-                          <p className="text-white font-extrabold text-[11px] truncate" title={m.original_filename}>
+                          <p
+                            className="text-white font-extrabold text-[11px] truncate"
+                            title={m.original_filename}
+                          >
                             {m.title || m.original_filename}
                           </p>
                           <span className="text-gray-500 text-[9px] uppercase tracking-wider block">
@@ -2003,8 +2761,13 @@ const AdminDashboard = () => {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-black text-white">Manage FAQs</h1>
-                  <p className="text-gray-400 text-xs">Create, update, and organize the Frequently Asked Questions displayed on the main website.</p>
+                  <h1 className="text-2xl font-black text-white">
+                    Manage FAQs
+                  </h1>
+                  <p className="text-gray-400 text-xs">
+                    Create, update, and organize the Frequently Asked Questions
+                    displayed on the main website.
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   {!showFaqForm && (
@@ -2033,27 +2796,78 @@ const AdminDashboard = () => {
                     <h3 className="text-sm uppercase font-black tracking-widest text-indigo-400">
                       {editingFaq ? "Edit FAQ" : "Create New FAQ"}
                     </h3>
-                    <button onClick={() => setShowFaqForm(false)} className="text-gray-400 hover:text-white cursor-pointer">
+                    <button
+                      onClick={() => setShowFaqForm(false)}
+                      className="text-gray-400 hover:text-white cursor-pointer"
+                    >
                       <FiX size={18} />
                     </button>
                   </div>
                   <form onSubmit={handleFaqFormSubmit} className="space-y-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">Question</label>
-                      <input type="text" required value={faqForm.question} onChange={(e) => setFaqForm({ ...faqForm, question: e.target.value })} placeholder="Enter question..." className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white" />
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        Question
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={faqForm.question}
+                        onChange={(e) =>
+                          setFaqForm({ ...faqForm, question: e.target.value })
+                        }
+                        placeholder="Enter question..."
+                        className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                      />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">Answer</label>
-                      <textarea rows={4} required value={faqForm.answer} onChange={(e) => setFaqForm({ ...faqForm, answer: e.target.value })} placeholder="Enter detailed answer..." className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white" />
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        Answer
+                      </label>
+                      <textarea
+                        rows={4}
+                        required
+                        value={faqForm.answer}
+                        onChange={(e) =>
+                          setFaqForm({ ...faqForm, answer: e.target.value })
+                        }
+                        placeholder="Enter detailed answer..."
+                        className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                      />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-slate-400">Sort Order (Optional)</label>
-                      <input type="number" value={faqForm.order} onChange={(e) => setFaqForm({ ...faqForm, order: Number(e.target.value) })} className="w-full max-w-xs bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white" />
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        Sort Order (Optional)
+                      </label>
+                      <input
+                        type="number"
+                        value={faqForm.order}
+                        onChange={(e) =>
+                          setFaqForm({
+                            ...faqForm,
+                            order: Number(e.target.value),
+                          })
+                        }
+                        className="w-full max-w-xs bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                      />
                     </div>
                     <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
-                      <button type="button" onClick={() => setShowFaqForm(false)} className="bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer">Cancel</button>
-                      <button type="submit" disabled={faqSubmitLoading} className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl disabled:opacity-50 cursor-pointer">
-                        {faqSubmitLoading ? "Saving..." : editingFaq ? "Update FAQ" : "Save FAQ"}
+                      <button
+                        type="button"
+                        onClick={() => setShowFaqForm(false)}
+                        className="bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={faqSubmitLoading}
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl disabled:opacity-50 cursor-pointer"
+                      >
+                        {faqSubmitLoading
+                          ? "Saving..."
+                          : editingFaq
+                            ? "Update FAQ"
+                            : "Save FAQ"}
                       </button>
                     </div>
                   </form>
@@ -2063,13 +2877,21 @@ const AdminDashboard = () => {
                   <div className="bg-[#050816] p-4 rounded-2xl border border-white/10 flex items-center justify-between">
                     <div className="relative w-full max-w-md">
                       <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                      <input type="text" placeholder="Search FAQs..." value={faqSearch} onChange={(e) => setFaqSearch(e.target.value)} className="w-full bg-[#050816] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-indigo-500 text-white" />
+                      <input
+                        type="text"
+                        placeholder="Search FAQs..."
+                        value={faqSearch}
+                        onChange={(e) => setFaqSearch(e.target.value)}
+                        className="w-full bg-[#050816] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-indigo-500 text-white"
+                      />
                     </div>
                   </div>
-                  
+
                   <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
                     {filteredFaqs.length === 0 ? (
-                      <p className="text-center text-gray-500 py-10 text-xs">No FAQs found.</p>
+                      <p className="text-center text-gray-500 py-10 text-xs">
+                        No FAQs found.
+                      </p>
                     ) : (
                       <table className="w-full border-collapse text-left text-xs">
                         <thead>
@@ -2081,15 +2903,33 @@ const AdminDashboard = () => {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                          {filteredFaqs.map(f => (
+                          {filteredFaqs.map((f) => (
                             <tr key={f._id} className="hover:bg-white/[0.01]">
-                              <td className="py-3 px-5 font-bold text-gray-400">{f.order}</td>
-                              <td className="py-3 px-5 font-bold text-white max-w-[200px] truncate">{f.question}</td>
-                              <td className="py-3 px-5 text-gray-400 max-w-xs truncate">{f.answer}</td>
+                              <td className="py-3 px-5 font-bold text-gray-400">
+                                {f.order}
+                              </td>
+                              <td className="py-3 px-5 font-bold text-white max-w-[200px] truncate">
+                                {f.question}
+                              </td>
+                              <td className="py-3 px-5 text-gray-400 max-w-xs truncate">
+                                {f.answer}
+                              </td>
                               <td className="py-3 px-5 text-center">
                                 <div className="flex items-center justify-center gap-2">
-                                  <button onClick={() => handleEditFaq(f)} className="text-indigo-400 hover:text-white p-2 hover:bg-indigo-500/20 rounded-xl cursor-pointer" title="Edit FAQ"><FiEdit2 size={14}/></button>
-                                  <button onClick={() => handleDeleteFaq(f._id)} className="text-rose-400 hover:text-white p-2 hover:bg-rose-500/20 rounded-xl cursor-pointer" title="Delete FAQ"><FiTrash2 size={14}/></button>
+                                  <button
+                                    onClick={() => handleEditFaq(f)}
+                                    className="text-indigo-400 hover:text-white p-2 hover:bg-indigo-500/20 rounded-xl cursor-pointer"
+                                    title="Edit FAQ"
+                                  >
+                                    <FiEdit2 size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteFaq(f._id)}
+                                    className="text-rose-400 hover:text-white p-2 hover:bg-rose-500/20 rounded-xl cursor-pointer"
+                                    title="Delete FAQ"
+                                  >
+                                    <FiTrash2 size={14} />
+                                  </button>
                                 </div>
                               </td>
                             </tr>
@@ -2107,22 +2947,38 @@ const AdminDashboard = () => {
           {activeTab === "settings" && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-2xl font-black text-white">General Settings</h1>
-                <p className="text-gray-400 text-xs">Configure site branding and navbar bottom line styling.</p>
+                <h1 className="text-2xl font-black text-white">
+                  General Settings
+                </h1>
+                <p className="text-gray-400 text-xs">
+                  Configure site branding and navbar bottom line styling.
+                </p>
               </div>
 
-              <form onSubmit={handleSettingsSubmit} className="bg-[#050816]/70 border border-white/10 p-6 rounded-3xl space-y-6 text-left">
-                
+              <form
+                onSubmit={handleSettingsSubmit}
+                className="bg-[#050816]/70 border border-white/10 p-6 rounded-3xl space-y-6 text-left"
+              >
                 {/* Logo Section */}
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Dynamic Logo File URL</label>
-                  <p className="text-gray-500 text-[10px]">Provide the logo URL (Cloudinary or local) that will update across Navbar, Footer, and SEO Header.</p>
+                  <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                    Dynamic Logo File URL
+                  </label>
+                  <p className="text-gray-500 text-[10px]">
+                    Provide the logo URL (Cloudinary or local) that will update
+                    across Navbar, Footer, and SEO Header.
+                  </p>
                   <div className="flex gap-2 mt-1">
                     <input
                       type="text"
                       required
                       value={settingsForm.logoUrl}
-                      onChange={(e) => setSettingsForm({ ...settingsForm, logoUrl: e.target.value })}
+                      onChange={(e) =>
+                        setSettingsForm({
+                          ...settingsForm,
+                          logoUrl: e.target.value,
+                        })
+                      }
                       placeholder="e.g. /logo-color.png"
                       className="flex-grow bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                     />
@@ -2130,7 +2986,9 @@ const AdminDashboard = () => {
                       type="button"
                       onClick={() => {
                         // Open a simple media picker to copy/select
-                        alert("Select any image URL from Media Manager and paste here.");
+                        alert(
+                          "Select any image URL from Media Manager and paste here.",
+                        );
                         setActiveTab("media");
                       }}
                       className="bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/20 text-xs font-bold px-4 py-3 rounded-xl transition-all cursor-pointer"
@@ -2142,12 +3000,23 @@ const AdminDashboard = () => {
                   {settingsForm.logoUrl && (
                     <div className="mt-3 bg-[#050816] p-4 rounded-2xl border border-white/5 flex items-center justify-between">
                       <div className="text-left">
-                        <span className="text-[9px] text-gray-500 font-extrabold uppercase block">Branding Preview</span>
-                        <img src={settingsForm.logoUrl} alt="Branding Preview" className="h-10 w-auto object-contain mt-2 bg-slate-900/60 p-1.5 rounded" />
+                        <span className="text-[9px] text-gray-500 font-extrabold uppercase block">
+                          Branding Preview
+                        </span>
+                        <img
+                          src={settingsForm.logoUrl}
+                          alt="Branding Preview"
+                          className="h-10 w-auto object-contain mt-2 bg-slate-900/60 p-1.5 rounded"
+                        />
                       </div>
                       <button
                         type="button"
-                        onClick={() => setSettingsForm({ ...settingsForm, logoUrl: "/logo-color.png" })}
+                        onClick={() =>
+                          setSettingsForm({
+                            ...settingsForm,
+                            logoUrl: "/logo-color.png",
+                          })
+                        }
                         className="text-xs font-bold text-indigo-400 hover:underline cursor-pointer"
                       >
                         Reset Default
@@ -2158,15 +3027,34 @@ const AdminDashboard = () => {
 
                 {/* Lining Section */}
                 <div className="space-y-2 border-t border-white/5 pt-5">
-                  <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Navbar Bottom Lining Color</label>
-                  <p className="text-gray-500 text-[10px]">Define the line/border color under the top navbar when scrolled. You can select a preset or type any custom HEX value.</p>
-                  
+                  <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                    Navbar Bottom Lining Color
+                  </label>
+                  <p className="text-gray-500 text-[10px]">
+                    Define the line/border color under the top navbar when
+                    scrolled. You can select a preset or type any custom HEX
+                    value.
+                  </p>
+
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
-                    {["indigo", "blue", "violet", "emerald", "cyan", "pink", "none"].map((c) => (
+                    {[
+                      "indigo",
+                      "blue",
+                      "violet",
+                      "emerald",
+                      "cyan",
+                      "pink",
+                      "none",
+                    ].map((c) => (
                       <button
                         key={c}
                         type="button"
-                        onClick={() => setSettingsForm({ ...settingsForm, navbarLineColor: c })}
+                        onClick={() =>
+                          setSettingsForm({
+                            ...settingsForm,
+                            navbarLineColor: c,
+                          })
+                        }
                         className={`px-3 py-2 rounded-xl text-center text-xs font-bold border transition-all capitalize cursor-pointer ${
                           settingsForm.navbarLineColor === c
                             ? "bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-500/20"
@@ -2179,11 +3067,18 @@ const AdminDashboard = () => {
                   </div>
 
                   <div className="mt-3 space-y-1">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase">Or Custom Color (HEX / RGB)</label>
+                    <label className="text-[9px] font-bold text-slate-500 uppercase">
+                      Or Custom Color (HEX / RGB)
+                    </label>
                     <input
                       type="text"
                       value={settingsForm.navbarLineColor}
-                      onChange={(e) => setSettingsForm({ ...settingsForm, navbarLineColor: e.target.value })}
+                      onChange={(e) =>
+                        setSettingsForm({
+                          ...settingsForm,
+                          navbarLineColor: e.target.value,
+                        })
+                      }
                       placeholder="e.g. #ff007f or rgba(255, 255, 255, 0.2)"
                       className="w-full max-w-xs bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-2.5 text-xs text-white"
                     />
@@ -2202,6 +3097,256 @@ const AdminDashboard = () => {
               </form>
             </div>
           )}
+
+          {/* TAB: Manage Admins (Super Admin Only) */}
+          {activeTab === "admins" && adminRole === "super_admin" && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white">Manage Admins</h1>
+                  <p className="text-gray-400 text-xs">
+                    Create, update, and configure custom permissions for administrator accounts.
+                  </p>
+                </div>
+                {!showAdminForm && (
+                  <button
+                    onClick={() => {
+                      setEditingAdmin(null);
+                      setAdminForm({
+                        name: "",
+                        email: "",
+                        password: "",
+                        permissions: {
+                          contacts: { read: false, write: false },
+                          chatLeads: { read: false, write: false },
+                          blogs: { read: false, write: false },
+                          faqs: { read: false, write: false },
+                          media: { read: false, write: false },
+                          settings: { read: false, write: false },
+                        },
+                      });
+                      setShowAdminForm(true);
+                    }}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer shadow-md"
+                  >
+                    <FiPlus />
+                    <span>Add New Admin</span>
+                  </button>
+                )}
+              </div>
+
+              {showAdminForm ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-[#050816]/70 border border-white/10 p-6 rounded-3xl space-y-6 text-left"
+                >
+                  <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                    <h3 className="text-sm uppercase font-black tracking-widest text-indigo-400">
+                      {editingAdmin ? "Edit Admin Permissions & Details" : "Create New Admin User"}
+                    </h3>
+                    <button
+                      onClick={() => setShowAdminForm(false)}
+                      className="text-gray-400 hover:text-white cursor-pointer"
+                    >
+                      <FiX size={18} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleAdminFormSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">Name</label>
+                        <input
+                          type="text"
+                          required
+                          value={adminForm.name}
+                          onChange={(e) => setAdminForm({ ...adminForm, name: e.target.value })}
+                          placeholder="e.g. Ranjeet Sinha"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">Email Address</label>
+                        <input
+                          type="email"
+                          required
+                          value={adminForm.email}
+                          onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
+                          placeholder="e.g. ranjeet@example.com"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Password {editingAdmin && <span className="text-[9px] text-gray-500">(Leave blank to keep same)</span>}
+                        </label>
+                        <input
+                          type="password"
+                          required={!editingAdmin}
+                          value={adminForm.password}
+                          onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
+                          placeholder="••••••••"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h4 className="text-xs uppercase font-black text-indigo-400 tracking-wider">
+                        Configure Module Permissions
+                      </h4>
+                      <div className="border border-white/10 rounded-2xl overflow-hidden bg-[#050816]/30">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="bg-[#050816]/80 text-gray-400 uppercase font-black text-[9px] tracking-wider border-b border-white/5">
+                              <th className="p-4">Module Name</th>
+                              <th className="p-4 text-center">Read Access</th>
+                              <th className="p-4 text-center">Write Access</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/5">
+                            {[
+                              { key: "contacts", label: "Contact Form Requests" },
+                              { key: "chatLeads", label: "Chatbot Assistant Leads" },
+                              { key: "blogs", label: "Manage Blogs" },
+                              { key: "faqs", label: "Manage FAQs" },
+                              { key: "media", label: "Media Gallery" },
+                              { key: "settings", label: "Site Settings" },
+                            ].map((mod) => (
+                              <tr key={mod.key} className="hover:bg-white/[0.01]">
+                                <td className="p-4 font-bold text-slate-200">{mod.label}</td>
+                                <td className="p-4 text-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={adminForm.permissions[mod.key]?.read}
+                                    onChange={(e) => {
+                                      const updatedPerms = { ...adminForm.permissions };
+                                      updatedPerms[mod.key].read = e.target.checked;
+                                      setAdminForm({ ...adminForm, permissions: updatedPerms });
+                                    }}
+                                    className="w-4 h-4 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                                  />
+                                </td>
+                                <td className="p-4 text-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={adminForm.permissions[mod.key]?.write}
+                                    onChange={(e) => {
+                                      const updatedPerms = { ...adminForm.permissions };
+                                      updatedPerms[mod.key].write = e.target.checked;
+                                      setAdminForm({ ...adminForm, permissions: updatedPerms });
+                                    }}
+                                    className="w-4 h-4 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                      <button
+                        type="button"
+                        onClick={() => setShowAdminForm(false)}
+                        className="bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={adminSubmitLoading}
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer shadow-lg disabled:opacity-50"
+                      >
+                        {adminSubmitLoading ? "Saving..." : editingAdmin ? "Update Admin" : "Create Admin"}
+                      </button>
+                    </div>
+                  </form>
+                </motion.div>
+              ) : (
+                <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
+                  {admins.length === 0 ? (
+                    <p className="text-center text-gray-500 py-10 text-xs">No admin accounts found.</p>
+                  ) : (
+                    <table className="w-full border-collapse text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-white/5 bg-[#050816]/80 text-gray-400 uppercase tracking-wider font-bold text-[10px]">
+                          <th className="py-3 px-5">Admin Info</th>
+                          <th className="py-3 px-5">Role</th>
+                          <th className="py-3 px-5">Permissions Summary</th>
+                          <th className="py-3 px-5 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {admins.map((adm) => (
+                          <tr key={adm._id} className="hover:bg-white/[0.01]">
+                            <td className="py-3 px-5 space-y-0.5">
+                              <span className="font-extrabold text-white block text-sm">{adm.name}</span>
+                              <span className="text-gray-400 block">{adm.email}</span>
+                            </td>
+                            <td className="py-3 px-5">
+                              <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold text-[10px]">
+                                {adm.role}
+                              </span>
+                            </td>
+                            <td className="py-3 px-5 max-w-sm">
+                              <div className="flex flex-wrap gap-1">
+                                {Object.entries(adm.permissions || {}).map(([mod, action]) => {
+                                  if (!action.read && !action.write) return null;
+                                  return (
+                                    <span
+                                      key={mod}
+                                      className="bg-white/5 text-gray-300 border border-white/5 px-2 py-0.5 rounded-md text-[9px] font-bold"
+                                    >
+                                      {mod}: {action.read ? "R" : ""}{action.write ? "W" : ""}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            </td>
+                            <td className="py-3 px-5 text-center">
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button
+                                  onClick={() => handleEditAdmin(adm)}
+                                  className="text-indigo-400 hover:text-white p-2 hover:bg-indigo-500/20 rounded-xl transition-all cursor-pointer"
+                                  title="Edit Admin"
+                                >
+                                  <FiEdit2 size={14} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteAdmin(adm._id)}
+                                  className="text-rose-400 hover:text-white p-2 hover:bg-rose-500/20 rounded-xl transition-all cursor-pointer"
+                                  title="Delete Admin"
+                                >
+                                  <FiTrash2 size={14} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: No Access Alert */}
+          {activeTab === "no-access" && (
+            <div className="text-center py-20 space-y-4">
+              <span className="relative flex h-10 w-10 mx-auto justify-center">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-10 w-10 bg-red-500 flex items-center justify-center font-black">!</span>
+              </span>
+              <h2 className="text-xl font-bold text-white">Access Denied</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">
+                You do not have read permission for any modules in the Admin Control Suite. Please contact your Super Admin to request access permissions.
+              </p>
+            </div>
+          )}
         </section>
       </main>
       <Footer />
@@ -2218,8 +3363,12 @@ const AdminDashboard = () => {
             >
               <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#050816]/40">
                 <div>
-                  <h3 className="font-extrabold text-white text-base">{selectedChat.name}</h3>
-                  <span className="text-[10px] text-gray-500">Service: {selectedChat.selectedService || "General"}</span>
+                  <h3 className="font-extrabold text-white text-base">
+                    {selectedChat.name}
+                  </h3>
+                  <span className="text-[10px] text-gray-500">
+                    Service: {selectedChat.selectedService || "General"}
+                  </span>
                 </div>
                 <button
                   onClick={() => setSelectedChat(null)}
@@ -2231,18 +3380,28 @@ const AdminDashboard = () => {
 
               {/* Chat Messages */}
               <div className="p-5 overflow-y-auto space-y-4 flex-grow max-h-[50vh] bg-[#050816]/10">
-                {selectedChat.chatMessages && selectedChat.chatMessages.length > 0 ? (
+                {selectedChat.chatMessages &&
+                selectedChat.chatMessages.length > 0 ? (
                   selectedChat.chatMessages.map((m, idx) => {
                     const isBot = m.sender === "bot";
                     return (
-                      <div key={idx} className={`flex flex-col ${isBot ? "items-start" : "items-end"}`}>
-                        <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs ${
-                          isBot 
-                            ? "bg-[#0d1226]/80 text-gray-300 border border-white/5 rounded-tl-none" 
-                            : "bg-indigo-600 text-white rounded-tr-none shadow-md"
-                        }`}>
-                          <p className="whitespace-pre-wrap leading-relaxed">{m.text}</p>
-                          <span className={`text-[8px] mt-1 block text-right ${isBot ? "text-gray-500" : "text-indigo-200"}`}>
+                      <div
+                        key={idx}
+                        className={`flex flex-col ${isBot ? "items-start" : "items-end"}`}
+                      >
+                        <div
+                          className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs ${
+                            isBot
+                              ? "bg-[#0d1226]/80 text-gray-300 border border-white/5 rounded-tl-none"
+                              : "bg-indigo-600 text-white rounded-tr-none shadow-md"
+                          }`}
+                        >
+                          <p className="whitespace-pre-wrap leading-relaxed">
+                            {m.text}
+                          </p>
+                          <span
+                            className={`text-[8px] mt-1 block text-right ${isBot ? "text-gray-500" : "text-indigo-200"}`}
+                          >
                             {m.time}
                           </span>
                         </div>
@@ -2250,7 +3409,9 @@ const AdminDashboard = () => {
                     );
                   })
                 ) : (
-                  <p className="text-center text-gray-500 text-xs py-8">No messages in chat session log.</p>
+                  <p className="text-center text-gray-500 text-xs py-8">
+                    No messages in chat session log.
+                  </p>
                 )}
               </div>
 
@@ -2258,20 +3419,36 @@ const AdminDashboard = () => {
               <div className="p-5 border-t border-white/5 bg-[#050816]/40 space-y-2 text-[11px] text-gray-400">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-gray-500 block">Contact Info</span>
-                    {selectedChat.email && <span className="block">{selectedChat.email}</span>}
-                    {selectedChat.mobile && <span className="block">{selectedChat.mobile}</span>}
+                    <span className="text-[9px] uppercase font-bold text-gray-500 block">
+                      Contact Info
+                    </span>
+                    {selectedChat.email && (
+                      <span className="block">{selectedChat.email}</span>
+                    )}
+                    {selectedChat.mobile && (
+                      <span className="block">{selectedChat.mobile}</span>
+                    )}
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-gray-500 block">Business & Budget</span>
+                    <span className="text-[9px] uppercase font-bold text-gray-500 block">
+                      Business & Budget
+                    </span>
                     <span>{selectedChat.businessName || "-"}</span>
-                    {selectedChat.budgetRange && <span className="block">Budget: {selectedChat.budgetRange}</span>}
+                    {selectedChat.budgetRange && (
+                      <span className="block">
+                        Budget: {selectedChat.budgetRange}
+                      </span>
+                    )}
                   </div>
                 </div>
                 {selectedChat.projectDescription && (
                   <div className="border-t border-white/5 pt-2">
-                    <span className="text-[9px] uppercase font-bold text-gray-500 block">Project / Problem Details</span>
-                    <p className="leading-relaxed">{selectedChat.projectDescription}</p>
+                    <span className="text-[9px] uppercase font-bold text-gray-500 block">
+                      Project / Problem Details
+                    </span>
+                    <p className="leading-relaxed">
+                      {selectedChat.projectDescription}
+                    </p>
                   </div>
                 )}
               </div>
@@ -2292,8 +3469,12 @@ const AdminDashboard = () => {
             >
               <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#050816]/40">
                 <div>
-                  <h3 className="font-extrabold text-white text-base">Select Cover Image</h3>
-                  <p className="text-gray-500 text-[10px]">Choose an asset to set as cover. Click to select.</p>
+                  <h3 className="font-extrabold text-white text-base">
+                    Select Cover Image
+                  </h3>
+                  <p className="text-gray-500 text-[10px]">
+                    Choose an asset to set as cover. Click to select.
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowMediaPickerModal(false)}
@@ -2307,31 +3488,41 @@ const AdminDashboard = () => {
               <div className="p-5 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-3 flex-grow max-h-[60vh]">
                 {media.length === 0 ? (
                   <div className="col-span-full text-center py-10">
-                    <p className="text-gray-500 text-xs">No media assets in gallery. Please upload some assets under Media tab first.</p>
+                    <p className="text-gray-500 text-xs">
+                      No media assets in gallery. Please upload some assets
+                      under Media tab first.
+                    </p>
                   </div>
                 ) : (
-                  media.filter(m => m.resource_type === "image").map((m) => (
-                    <div
-                      key={m._id}
-                      onClick={() => {
-                        setBlogForm({ ...blogForm, image: m.secure_url });
-                        setShowMediaPickerModal(false);
-                      }}
-                      className="bg-[#050816] border border-white/5 rounded-xl overflow-hidden cursor-pointer hover:border-indigo-500 transition-all aspect-video relative group flex items-center justify-center bg-black/30"
-                    >
-                      <img src={m.secure_url} alt={m.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <span className="text-[10px] text-white font-extrabold bg-indigo-600 px-3 py-1 rounded-lg">Select Asset</span>
+                  media
+                    .filter((m) => m.resource_type === "image")
+                    .map((m) => (
+                      <div
+                        key={m._id}
+                        onClick={() => {
+                          setBlogForm({ ...blogForm, image: m.secure_url });
+                          setShowMediaPickerModal(false);
+                        }}
+                        className="bg-[#050816] border border-white/5 rounded-xl overflow-hidden cursor-pointer hover:border-indigo-500 transition-all aspect-video relative group flex items-center justify-center bg-black/30"
+                      >
+                        <img
+                          src={m.secure_url}
+                          alt={m.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                          <span className="text-[10px] text-white font-extrabold bg-indigo-600 px-3 py-1 rounded-lg">
+                            Select Asset
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))
                 )}
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };

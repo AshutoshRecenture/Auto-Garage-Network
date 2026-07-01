@@ -30,7 +30,7 @@ const LogIn = () => {
         throw new Error(data.message || "Failed to log in");
       }
 
-      if (data.role !== "admin") {
+      if (data.role !== "admin" && data.role !== "super_admin") {
         throw new Error("Access Denied: You do not have administrator privileges.");
       }
 
@@ -38,6 +38,8 @@ const LogIn = () => {
       localStorage.setItem("agn_token", data.token);
       localStorage.setItem("agn_user_role", data.role);
       localStorage.setItem("agn_user_name", data.name);
+      localStorage.setItem("agn_user_email", data.email);
+      localStorage.setItem("agn_user_permissions", JSON.stringify(data.permissions || {}));
       localStorage.setItem("agn_admin_authenticated", "true");
 
       alert(`Welcome back, ${data.name}!`);
@@ -53,7 +55,7 @@ const LogIn = () => {
   return (
     <div className="min-h-screen flex items-center justify-center font-sans bg-[#050816] text-white px-6 relative overflow-hidden">
       <SEOHeader title="Log In to Admin Suite" />
-      
+
       {/* Subtle glowing elements */}
       <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
@@ -65,7 +67,10 @@ const LogIn = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-[#0c1222]/85 border border-white/5 p-8 md:p-10 rounded-3xl shadow-2xl relative z-10"
       >
-        <a href="http://localhost:5173" className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-white mb-8 transition-colors">
+        <a
+          href="http://localhost:5173"
+          className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-white mb-8 transition-colors"
+        >
           <FiArrowLeft /> Back to Website
         </a>
 
@@ -74,7 +79,9 @@ const LogIn = () => {
             A
           </div>
           <h1 className="text-2xl font-black">Admin Sign In</h1>
-          <p className="text-gray-400 text-xs mt-1">Access the Standalone Admin Control Suite</p>
+          <p className="text-gray-400 text-xs mt-1">
+            Access the Standalone Admin Control Suite
+          </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
@@ -84,7 +91,12 @@ const LogIn = () => {
             </div>
           )}
           <div className="space-y-1">
-            <label htmlFor="login-email" className="text-[10px] uppercase font-bold text-slate-400">Email Address</label>
+            <label
+              htmlFor="login-email"
+              className="text-[10px] uppercase font-bold text-slate-400"
+            >
+              Email Address
+            </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
                 <FiMail />
@@ -103,7 +115,12 @@ const LogIn = () => {
 
           <div className="space-y-1">
             <div className="flex justify-between items-center">
-              <label htmlFor="login-password" className="text-[10px] uppercase font-bold text-slate-400">Password</label>
+              <label
+                htmlFor="login-password"
+                className="text-[10px] uppercase font-bold text-slate-400"
+              >
+                Password
+              </label>
             </div>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
