@@ -8,6 +8,8 @@ import {
   FaTwitter,
   FaLinkedinIn,
   FaYoutube,
+  FaTiktok,
+  FaGlobe,
 } from "react-icons/fa";
 import {
   FiMail,
@@ -66,7 +68,7 @@ const menuOptions = [
 ];
 
 const Footer = () => {
-  const { logoUrl } = useLogo();
+  const { logoUrl, salesPhone, supportPhone, email, supportEmail, address, googleMapUrl, socialLinks, disabledPages } = useLogo();
   // Chatbot State
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
@@ -1008,51 +1010,94 @@ const Footer = () => {
                 Follow Us
               </span>
               <div className="flex items-center space-x-2.5">
-                <a
-                  href="https://www.facebook.com/autogaragenetworkltd"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Visit our Facebook page"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1877F2] flex items-center justify-center text-white transition-all hover:scale-105"
-                >
-                  <FaFacebookF size={13} />
-                </a>
-                <a
-                  href="https://www.instagram.com/autogaragenetworkltd.uk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Visit our Instagram profile"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#E1306C] flex items-center justify-center text-white transition-all hover:scale-105"
-                >
-                  <FaInstagram size={13} />
-                </a>
-                <a
-                  href="https://x.com/autogaragent"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Visit our Twitter profile"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1DA1F2] flex items-center justify-center text-white transition-all hover:scale-105"
-                >
-                  <FaTwitter size={13} />
-                </a>
-                <a
-                  href="https://www.linkedin.com/company/auto-garage-network-ltd/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Visit our LinkedIn page"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#0A66C2] flex items-center justify-center text-white transition-all hover:scale-105"
-                >
-                  <FaLinkedinIn size={13} />
-                </a>
-                <a
-                  href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Visit our YouTube channel"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#FF0000] flex items-center justify-center text-white transition-all hover:scale-105"
-                >
-                  <FaYoutube size={13} />
-                </a>
+                {socialLinks && socialLinks.length > 0 ? (
+                  socialLinks.map((link) => {
+                    const plat = link.platform.toLowerCase();
+                    let icon = <FaGlobe size={13} />;
+                    let hoverBg = "hover:bg-[#6366f1]";
+                    
+                    if (plat.includes("facebook")) {
+                      icon = <FaFacebookF size={13} />;
+                      hoverBg = "hover:bg-[#1877F2]";
+                    } else if (plat.includes("instagram")) {
+                      icon = <FaInstagram size={13} />;
+                      hoverBg = "hover:bg-[#E1306C]";
+                    } else if (plat.includes("twitter") || plat.includes("x.com")) {
+                      icon = <FaTwitter size={13} />;
+                      hoverBg = "hover:bg-[#1DA1F2]";
+                    } else if (plat.includes("linkedin")) {
+                      icon = <FaLinkedinIn size={13} />;
+                      hoverBg = "hover:bg-[#0A66C2]";
+                    } else if (plat.includes("youtube")) {
+                      icon = <FaYoutube size={13} />;
+                      hoverBg = "hover:bg-[#FF0000]";
+                    } else if (plat.includes("tiktok")) {
+                      icon = <FaTiktok size={13} />;
+                      hoverBg = "hover:bg-black";
+                    }
+
+                    return (
+                      <a
+                        key={link._id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Visit our ${link.platform} profile`}
+                        className={`w-8 h-8 rounded-full bg-white/10 ${hoverBg} flex items-center justify-center text-white transition-all hover:scale-105`}
+                      >
+                        {icon}
+                      </a>
+                    );
+                  })
+                ) : (
+                  <>
+                    <a
+                      href="https://www.facebook.com/autogaragenetworkltd"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Visit our Facebook page"
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1877F2] flex items-center justify-center text-white transition-all hover:scale-105"
+                    >
+                      <FaFacebookF size={13} />
+                    </a>
+                    <a
+                      href="https://www.instagram.com/autogaragenetworkltd.uk"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Visit our Instagram profile"
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#E1306C] flex items-center justify-center text-white transition-all hover:scale-105"
+                    >
+                      <FaInstagram size={13} />
+                    </a>
+                    <a
+                      href="https://x.com/autogaragent"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Visit our Twitter profile"
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1DA1F2] flex items-center justify-center text-white transition-all hover:scale-105"
+                    >
+                      <FaTwitter size={13} />
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/company/auto-garage-network-ltd/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Visit our LinkedIn page"
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#0A66C2] flex items-center justify-center text-white transition-all hover:scale-105"
+                    >
+                      <FaLinkedinIn size={13} />
+                    </a>
+                    <a
+                      href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Visit our YouTube channel"
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#FF0000] flex items-center justify-center text-white transition-all hover:scale-105"
+                    >
+                      <FaYoutube size={13} />
+                    </a>
+                  </>
+                )}
               </div>
             </div>
 
@@ -1117,27 +1162,37 @@ const Footer = () => {
                       Home
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      to="/about-us"
-                      className="hover:text-white transition-colors"
-                    >
-                      About Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/contact-us"
-                      className="hover:text-white transition-colors"
-                    >
-                      Contact Us
-                    </Link>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white transition-colors">
-                      Career
-                    </a>
-                  </li>
+                  {(!disabledPages || !disabledPages.includes("about-us")) && (
+                    <li>
+                      <Link
+                        to="/about-us"
+                        className="hover:text-white transition-colors"
+                      >
+                        About Us
+                      </Link>
+                    </li>
+                  )}
+                  {(!disabledPages || !disabledPages.includes("contact-us")) && (
+                    <li>
+                      <Link
+                        to="/contact-us"
+                        className="hover:text-white transition-colors"
+                      >
+                        Contact Us
+                      </Link>
+                    </li>
+                  )}
+                  {(!disabledPages || !disabledPages.includes("careers")) && (
+                    <li>
+                      <Link
+                        to="/careers"
+                        className="hover:text-white transition-colors"
+                      >
+                        Careers
+                      </Link>
+                    </li>
+                  )}
+
                   <li>
                     <Link
                       to="/sitemap"
@@ -1146,22 +1201,26 @@ const Footer = () => {
                       Sitemap
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      to="/pricing"
-                      className="hover:text-white transition-colors"
-                    >
-                      Pricing
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/latest-work"
-                      className="hover:text-white transition-colors"
-                    >
-                      Latest Work
-                    </Link>
-                  </li>
+                  {(!disabledPages || !disabledPages.includes("pricing")) && (
+                    <li>
+                      <Link
+                        to="/pricing"
+                        className="hover:text-white transition-colors"
+                      >
+                        Pricing
+                      </Link>
+                    </li>
+                  )}
+                  {(!disabledPages || !disabledPages.includes("latest-work")) && (
+                    <li>
+                      <Link
+                        to="/latest-work"
+                        className="hover:text-white transition-colors"
+                      >
+                        Latest Work
+                      </Link>
+                    </li>
+                  )}
                   <li>
                     <Link
                       to="/privacy-policy"
@@ -1318,14 +1377,12 @@ const Footer = () => {
                       Address:
                     </span>
                     <a
-                      href="https://maps.app.goo.gl/vBwPZYJRoGCNC1M67"
+                      href={googleMapUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-300 hover:text-white transition-colors block"
+                      className="text-gray-300 hover:text-white transition-colors block whitespace-pre-line"
                     >
-                      The Chestnuts, 46 Middle Lane,
-                      <br />
-                      Nether Broughton, LE14 3HD
+                      {address}
                     </a>
                   </div>
                 </div>
@@ -1337,16 +1394,16 @@ const Footer = () => {
                       Sales Inquiry:
                     </span>
                     <a
-                      href="tel:07947906789"
+                      href={`tel:${salesPhone.replace(/\s+/g, "")}`}
                       className="text-white hover:text-indigo-400 block font-bold"
                     >
-                      07947 906789
+                      {salesPhone}
                     </a>
                     <a
-                      href="mailto:info@autogaragenetwork.com"
+                      href={`mailto:${email}`}
                       className="text-gray-400 hover:text-white block mt-0.5 break-all"
                     >
-                      info@autogaragenetwork.com
+                      {email}
                     </a>
                   </div>
                 </div>
@@ -1358,16 +1415,16 @@ const Footer = () => {
                       Customer Support:
                     </span>
                     <a
-                      href="tel:01702655556"
+                      href={`tel:${supportPhone.replace(/\s+/g, "")}`}
                       className="text-white hover:text-indigo-400 block font-bold"
                     >
-                      01702 655556
+                      {supportPhone}
                     </a>
                     <a
-                      href="mailto:jatindersingh@autogaragenetwork.com"
-                      className="text-gray-400 hover:text-white block mt-0.5 whitespace-nowrap"
+                      href={`mailto:${supportEmail}`}
+                      className="text-gray-400 hover:text-white block mt-0.5 break-all"
                     >
-                      jatindersingh@autogaragenetwork.com
+                      {supportEmail}
                     </a>
                   </div>
                 </div>

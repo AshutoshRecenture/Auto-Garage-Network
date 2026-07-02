@@ -1,12 +1,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FiCheck } from "react-icons/fi";
+import { useLogo } from "../utils/LogoContext.jsx";
 
 const PricingSection = () => {
+  const { priceEliteWorkshop, priceEliteProMax, priceEliteProMaxPlus } = useLogo();
+
   const plans = [
     {
       name: "Elite Workshop",
-      price: "135",
+      price: priceEliteWorkshop || "135",
       desc: "Perfect for small to medium independent garages.",
       features: [
         "Up to 3 Users",
@@ -19,7 +22,7 @@ const PricingSection = () => {
     },
     {
       name: "Elite ProMax",
-      price: "235",
+      price: priceEliteProMax || "235",
       desc: "Everything you need to scale your garage operations.",
       isPopular: true,
       features: [
@@ -34,7 +37,7 @@ const PricingSection = () => {
     },
     {
       name: "Elite ProMax Plus",
-      price: "375",
+      price: priceEliteProMaxPlus || "375",
       desc: "For large multi-site operations and franchises.",
       features: [
         "Unlimited Users",

@@ -46,6 +46,18 @@ const userSchema = new mongoose.Schema(
         read: { type: Boolean, default: false },
         write: { type: Boolean, default: false },
       },
+      socialMedia: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
+      vacancies: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
+      pages: {
+        read: { type: Boolean, default: false },
+        write: { type: Boolean, default: false },
+      },
     },
   },
   {

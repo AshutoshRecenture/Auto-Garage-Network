@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
+import { API_URL } from "../config";
+import NotFound from "./NotFound.jsx";
 import {
   FiCheck,
   FiX,
@@ -20,10 +22,44 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLogo } from "../utils/LogoContext.jsx";
 
 const Pricing = () => {
+  const {
+    priceEliteWorkshop,
+    setupEliteWorkshop,
+    priceEliteProMax,
+    setupEliteProMax,
+    priceEliteProMaxPlus,
+    setupEliteProMaxPlus,
+  } = useLogo();
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [dbPage, setDbPage] = useState(null);
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchPage = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/pages/slug/pricing`);
+        if (res.status === 403) {
+          setIsDisabled(true);
+        } else if (res.ok) {
+          const data = await res.json();
+          setDbPage(data);
+        }
+      } catch (err) {
+        console.error("Failed to load dynamic pricing page content:", err);
+      }
+    };
+    fetchPage();
+  }, []);
+
   const [activeTab, setActiveTab] = useState("gms"); // 'gms', 'websites', 'autodata'
   const [flippedCards, setFlippedCards] = useState({});
+
+  if (isDisabled) {
+    return <NotFound />;
+  }
 
   const toggleFlip = (index) => {
     setFlippedCards((prev) => ({
@@ -104,9 +140,9 @@ const Pricing = () => {
   const gmsPlans = [
     {
       name: "Elite Workshop",
-      price: "135",
+      price: priceEliteWorkshop || "135",
       desc: "Ideal for small to medium independent garages seeking core automation.",
-      setup: "£500",
+      setup: `£${setupEliteWorkshop || "500"}`,
       users: "Up to 3 Users",
       vrmLimit: "300/mo (Fair Use)",
       postcodeLimit: "200/mo (Fair Use)",
@@ -126,9 +162,9 @@ const Pricing = () => {
     },
     {
       name: "Elite ProMax",
-      price: "235",
+      price: priceEliteProMax || "235",
       desc: "Full catalogue integration and diagnostics data for scaling operations.",
-      setup: "£1000",
+      setup: `£${setupEliteProMax || "1000"}`,
       users: "Unlimited* Users",
       vrmLimit: "Unlimited* (Fair Use)",
       postcodeLimit: "300/mo (Fair Use)",
@@ -149,9 +185,9 @@ const Pricing = () => {
     },
     {
       name: "Elite ProMax Plus",
-      price: "375",
+      price: priceEliteProMaxPlus || "375",
       desc: "All-inclusive flagship plan for multi-site garages and top-tier workshops.",
-      setup: "£500",
+      setup: `£${setupEliteProMaxPlus || "500"}`,
       users: "Unlimited* Users",
       vrmLimit: "Unlimited* (Fair Use)",
       postcodeLimit: "Unlimited* (Fair Use)",
@@ -409,15 +445,23 @@ const Pricing = () => {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight select-none">
-            Transparent, Flexible{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500">
-              Pricing Packages
-            </span>
+            {dbPage && dbPage.bannerTitle ? (
+              dbPage.bannerTitle
+            ) : (
+              <>
+                Transparent, Flexible{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500">
+                  Pricing Packages
+                </span>
+              </>
+            )}
           </h1>
           <p className="text-gray-300 max-w-2xl mx-auto px-6 text-base md:text-lg leading-relaxed select-none">
-            Choose the specific software features your independent workshop
-            needs. Scale, downgrade, or bundle options for maximum efficiency
-            and savings.
+            {dbPage && dbPage.bannerSubtitle ? (
+              dbPage.bannerSubtitle
+            ) : (
+              "Choose the specific software features your independent workshop needs. Scale, downgrade, or bundle options for maximum efficiency and savings."
+            )}
           </p>
 
           {/* Tab Selection Navigation */}
@@ -859,6 +903,14 @@ const Pricing = () => {
             )}
           </AnimatePresence>
         </div>
+        {/* Dynamic HTML Content block if editable from backend */}
+        {dbPage && dbPage.content && (
+          <section className="py-12 px-6 md:px-12 border-t border-white/5 bg-white/[0.01]">
+            <div className="max-w-7xl mx-auto prose prose-invert prose-indigo">
+              <div dangerouslySetInnerHTML={{ __html: dbPage.content }} className="dynamic-html-content" />
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />

@@ -102,7 +102,8 @@ const updateContact = async (req, res) => {
       } = req.body || {};
 
       contact.name = name !== undefined ? name : contact.name;
-      contact.garageName = garageName !== undefined ? garageName : contact.garageName;
+      contact.garageName =
+        garageName !== undefined ? garageName : contact.garageName;
       contact.email = email !== undefined ? email : contact.email;
       contact.phone = phone !== undefined ? phone : contact.phone;
       contact.interestedIn = interestedIn || interest || contact.interestedIn;
@@ -125,4 +126,3 @@ module.exports = {
   deleteContact,
   updateContact,
 };
-

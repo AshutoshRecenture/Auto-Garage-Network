@@ -11,6 +11,18 @@ const getSettings = async (req, res) => {
       settings = await Settings.create({
         logoUrl: "https://www.autogaragenetwork.com/catalog/view/theme/avnv1/assets/img/logo-color.png",
         navbarLineColor: "indigo",
+        salesPhone: "07947 906789",
+        supportPhone: "01702 655556",
+        email: "info@autogaragenetwork.com",
+        supportEmail: "jatindersingh@autogaragenetwork.com",
+        address: "The Chestnuts, 46 Middle Lane, Nether Broughton, LE14 3HD",
+        googleMapUrl: "https://maps.app.goo.gl/vBwPZYJRoGCNC1M67",
+        priceEliteWorkshop: "135",
+        setupEliteWorkshop: "500",
+        priceEliteProMax: "235",
+        setupEliteProMax: "1000",
+        priceEliteProMaxPlus: "375",
+        setupEliteProMaxPlus: "500",
       });
     }
     res.json(settings);
@@ -24,7 +36,22 @@ const getSettings = async (req, res) => {
 // @access  Private/Admin
 const updateSettings = async (req, res) => {
   try {
-    const { logoUrl, navbarLineColor } = req.body || {};
+    const {
+      logoUrl,
+      navbarLineColor,
+      salesPhone,
+      supportPhone,
+      email,
+      supportEmail,
+      address,
+      googleMapUrl,
+      priceEliteWorkshop,
+      setupEliteWorkshop,
+      priceEliteProMax,
+      setupEliteProMax,
+      priceEliteProMaxPlus,
+      setupEliteProMaxPlus,
+    } = req.body || {};
 
     let settings = await Settings.findOne();
     if (!settings) {
@@ -33,6 +60,22 @@ const updateSettings = async (req, res) => {
 
     if (logoUrl !== undefined) settings.logoUrl = logoUrl;
     if (navbarLineColor !== undefined) settings.navbarLineColor = navbarLineColor;
+    if (salesPhone !== undefined) settings.salesPhone = salesPhone;
+    if (supportPhone !== undefined) settings.supportPhone = supportPhone;
+    if (email !== undefined) settings.email = email;
+    if (supportEmail !== undefined) settings.supportEmail = supportEmail;
+    if (address !== undefined) settings.address = address;
+    if (googleMapUrl !== undefined) settings.googleMapUrl = googleMapUrl;
+
+    // Only allow super admins to edit pricing and setup costs
+    if (req.user && req.user.role === "super_admin") {
+      if (priceEliteWorkshop !== undefined) settings.priceEliteWorkshop = priceEliteWorkshop;
+      if (setupEliteWorkshop !== undefined) settings.setupEliteWorkshop = setupEliteWorkshop;
+      if (priceEliteProMax !== undefined) settings.priceEliteProMax = priceEliteProMax;
+      if (setupEliteProMax !== undefined) settings.setupEliteProMax = setupEliteProMax;
+      if (priceEliteProMaxPlus !== undefined) settings.priceEliteProMaxPlus = priceEliteProMaxPlus;
+      if (setupEliteProMaxPlus !== undefined) settings.setupEliteProMaxPlus = setupEliteProMaxPlus;
+    }
 
     const updatedSettings = await settings.save();
     res.json(updatedSettings);

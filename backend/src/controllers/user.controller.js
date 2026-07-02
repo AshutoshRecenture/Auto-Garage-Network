@@ -5,7 +5,7 @@ const User = require("../models/User");
 // @access  Private/SuperAdmin
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find({ role: "admin" }).select("-password").sort({ createdAt: -1 });
+    const users = await User.find({ _id: { $ne: req.user._id } }).select("-password").sort({ createdAt: -1 });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -17,7 +17,7 @@ const getUsers = async (req, res) => {
 // @access  Private/SuperAdmin
 const createUser = async (req, res) => {
   try {
-    const { name, email, password, permissions } = req.body || {};
+    const { name, email, password, permissions, role } = req.body || {};
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Please fill all required fields" });
@@ -32,7 +32,7 @@ const createUser = async (req, res) => {
       name,
       email,
       password,
-      role: "admin",
+      role: role || "admin",
       permissions: permissions || {
         contacts: { read: false, write: false },
         chatLeads: { read: false, write: false },
@@ -40,6 +40,9 @@ const createUser = async (req, res) => {
         faqs: { read: false, write: false },
         media: { read: false, write: false },
         settings: { read: false, write: false },
+        socialMedia: { read: false, write: false },
+        vacancies: { read: false, write: false },
+        pages: { read: false, write: false },
       },
     });
 
@@ -66,10 +69,11 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: "Admin user not found" });
     }
 
-    const { name, email, password, permissions } = req.body || {};
+    const { name, email, password, permissions, role } = req.body || {};
 
     user.name = name !== undefined ? name : user.name;
     user.email = email !== undefined ? email : user.email;
+    user.role = role !== undefined ? role : user.role;
     
     if (password && password.trim() !== "") {
       user.password = password; // pre-save hook will automatically hash this

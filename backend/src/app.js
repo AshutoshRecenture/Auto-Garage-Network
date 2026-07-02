@@ -19,6 +19,9 @@ const chatLeadRoutes = require("./routes/chatLead.routes");
 const settingsRoutes = require("./routes/settings.routes");
 const faqRoutes = require("./routes/faq.routes");
 const userRoutes = require("./routes/user.routes");
+const socialMediaRoutes = require("./routes/socialMedia.routes");
+const pageContentRoutes = require("./routes/pageContent.routes");
+const vacancyRoutes = require("./routes/vacancy.routes");
 
 const path = require("path");
 
@@ -50,6 +53,9 @@ app.use("/api/chat-submissions", chatLeadRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/faqs", faqRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/social-media", socialMediaRoutes);
+app.use("/api/pages", pageContentRoutes);
+app.use("/api/vacancies", vacancyRoutes);
 
 // Fallback middlewares for error handling
 app.use(notFound);

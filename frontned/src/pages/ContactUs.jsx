@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { API_URL } from "../config";
+import NotFound from "./NotFound.jsx";
 import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
@@ -13,10 +14,21 @@ import {
   FaTwitter,
   FaLinkedinIn,
   FaYoutube,
+  FaGlobe,
 } from "react-icons/fa";
+import { useLogo } from "../utils/LogoContext.jsx";
 
 const ContactUs = () => {
+  const { salesPhone, supportPhone, email, address, socialLinks } = useLogo();
   const location = useLocation();
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [pageData, setPageData] = useState(null);
+
+  const activeSalesPhone = pageData && pageData.salesPhone ? pageData.salesPhone : salesPhone;
+  const activeSupportPhone = pageData && pageData.supportPhone ? pageData.supportPhone : supportPhone;
+  const activeEmail = pageData && pageData.email ? pageData.email : email;
+  const activeAddress = pageData && pageData.address ? pageData.address : address;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -34,10 +46,31 @@ const ContactUs = () => {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    const fetchPageData = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/pages/slug/contact-us`);
+        if (res.status === 403) {
+          setIsDisabled(true);
+        } else if (res.ok) {
+          const data = await res.json();
+          setPageData(data);
+        }
+      } catch (err) {
+        console.error("Error loading contact page settings:", err);
+      }
+    };
+    fetchPageData();
+  }, []);
+
   const [submitted, setSubmitted] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
   const [captchaToken, setCaptchaToken] = useState(null);
+
+  if (isDisabled) {
+    return <NotFound />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,23 +154,35 @@ const ContactUs = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#050816] text-white">
       <SEOHeader
-        title="Contact Our Sales & Support Teams"
-        description="Have questions? Contact Auto Garage Network. Reach our sales at 07947 906789 or customer support at 01702 655556. Located in Nether Broughton."
+        title={pageData?.bannerTitle || "Contact Our Sales & Support Teams"}
+        description={pageData?.bannerSubtitle || "Have questions? Contact Auto Garage Network. Reach our sales at 07947 906789 or customer support at 01702 655556. Located in Nether Broughton."}
         keywords="contact garage network, support phone number, Melton Mowbray software office"
         canonicalPath="/contact-us"
       />
       <Navbar />
       <main className="flex-grow pt-24 pb-16">
         {/* Banner */}
-        <section className="relative py-16 px-6 md:px-12 text-center overflow-hidden">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-indigo-600/10 blur-[130px] pointer-events-none" />
-          <h1 className="text-4xl md:text-5xl font-black mb-4">
-            Contact Our Team
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto px-4">
-            Book your free system demonstration or get in touch for custom
-            design quotes.
-          </p>
+        <section className="relative py-16 px-6 md:px-12 text-center overflow-hidden min-h-[250px] flex flex-col justify-center items-center">
+          {pageData?.bannerImage ? (
+            <div className="absolute inset-0 z-0">
+              <img
+                src={pageData.bannerImage}
+                alt="Contact Us Banner"
+                className="w-full h-full object-cover brightness-[0.3]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050816] via-[#050816]/40 to-transparent" />
+            </div>
+          ) : (
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#4f46e5]/10 blur-[130px] pointer-events-none" />
+          )}
+          <div className="relative z-10 space-y-4">
+            <h1 className="text-4xl md:text-5xl font-black mb-4">
+              {pageData?.bannerTitle || "Contact Our Team"}
+            </h1>
+            <p className="text-gray-400 max-w-xl mx-auto px-4">
+              {pageData?.bannerSubtitle || "Book your free system demonstration or get in touch for custom design quotes."}
+            </p>
+          </div>
         </section>
 
         {/* Contact Form and Details Grid */}
@@ -155,7 +200,7 @@ const ContactUs = () => {
 
               <div className="space-y-4 pt-4">
                 <a
-                  href="tel:07947906789"
+                  href={`tel:${activeSalesPhone.replace(/\s+/g, "")}`}
                   className="flex items-center gap-4 text-gray-300 hover:text-indigo-400 transition-colors group"
                 >
                   <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
@@ -165,12 +210,12 @@ const ContactUs = () => {
                     <span className="text-[10px] text-gray-500 font-bold block uppercase leading-none mb-1">
                       Sales Hotline
                     </span>
-                    <span className="text-sm font-bold">07947 906789</span>
+                    <span className="text-sm font-bold">{activeSalesPhone}</span>
                   </div>
                 </a>
 
                 <a
-                  href="tel:0172655556"
+                  href={`tel:${activeSupportPhone.replace(/\s+/g, "")}`}
                   className="flex items-center gap-4 text-gray-300 hover:text-indigo-400 transition-colors group"
                 >
                   <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
@@ -180,23 +225,24 @@ const ContactUs = () => {
                     <span className="text-[10px] text-gray-500 font-bold block uppercase leading-none mb-1">
                       Customer Support
                     </span>
-                    <span className="text-sm font-bold">01726 55556</span>
+                    <span className="text-sm font-bold">{activeSupportPhone}</span>
                   </div>
                 </a>
 
-                <div className="flex items-center gap-4 text-gray-300">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                <a
+                  href={`mailto:${activeEmail}`}
+                  className="flex items-center gap-4 text-gray-300 hover:text-indigo-400 transition-colors group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
                     <FiMail />
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-500 font-bold block uppercase leading-none mb-1">
                       Email Inquiry
                     </span>
-                    <span className="text-sm font-bold">
-                      info@autogaragenetwork.com
-                    </span>
+                    <span className="text-sm font-bold break-all">{activeEmail}</span>
                   </div>
-                </div>
+                </a>
 
                 <div className="flex items-center gap-4 text-gray-300">
                   <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
@@ -206,8 +252,8 @@ const ContactUs = () => {
                     <span className="text-[10px] text-gray-500 font-bold block uppercase leading-none mb-1">
                       Office Location
                     </span>
-                    <span className="text-sm font-bold">
-                      The Chestnuts, 46 Middle Lane, Nether Broughton, LE14 3HD
+                    <span className="text-sm font-bold whitespace-pre-line">
+                      {activeAddress}
                     </span>
                   </div>
                 </div>
@@ -220,51 +266,97 @@ const ContactUs = () => {
                 Follow Our Socials
               </span>
               <div className="flex items-center gap-3">
-                <a
-                  href="https://www.facebook.com/autogaragenetworkltd"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#1877F2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
-                  aria-label="Visit our Facebook page"
-                >
-                  <FaFacebookF size={14} />
-                </a>
-                <a
-                  href="https://www.instagram.com/autogaragenetworkltd.uk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#E1306C] flex items-center justify-center text-gray-300 hover:text-white transition-all"
-                  aria-label="Visit our Instagram profile"
-                >
-                  <FaInstagram size={14} />
-                </a>
-                <a
-                  href="https://x.com/autogaragent"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#1DA1F2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
-                  aria-label="Visit our Twitter profile"
-                >
-                  <FaTwitter size={14} />
-                </a>
-                <a
-                  href="https://www.linkedin.com/company/auto-garage-network-ltd/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#0A66C2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
-                  aria-label="Visit our LinkedIn page"
-                >
-                  <FaLinkedinIn size={14} />
-                </a>
-                <a
-                  href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#FF0000] flex items-center justify-center text-gray-300 hover:text-white transition-all"
-                  aria-label="Visit our YouTube channel"
-                >
-                  <FaYoutube size={14} />
-                </a>
+                {socialLinks && socialLinks.length > 0 ? (
+                  socialLinks.map((link) => {
+                    const plat = link.platform.toLowerCase();
+                    let icon = <FaGlobe size={14} />;
+                    let hoverBg = "hover:bg-indigo-600";
+
+                    if (plat.includes("facebook")) {
+                      icon = <FaFacebookF size={14} />;
+                      hoverBg = "hover:bg-[#1877F2]";
+                    } else if (plat.includes("instagram")) {
+                      icon = <FaInstagram size={14} />;
+                      hoverBg = "hover:bg-[#E1306C]";
+                    } else if (
+                      plat.includes("twitter") ||
+                      plat.includes("x.com")
+                    ) {
+                      icon = <FaTwitter size={14} />;
+                      hoverBg = "hover:bg-[#1DA1F2]";
+                    } else if (plat.includes("linkedin")) {
+                      icon = <FaLinkedinIn size={14} />;
+                      hoverBg = "hover:bg-[#0A66C2]";
+                    } else if (plat.includes("youtube")) {
+                      icon = <FaYoutube size={14} />;
+                      hoverBg = "hover:bg-[#FF0000]";
+                    } else if (plat.includes("tiktok")) {
+                      icon = <FaTiktok size={14} />;
+                      hoverBg = "hover:bg-black";
+                    }
+
+                    return (
+                      <a
+                        key={link._id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-8 h-8 rounded-lg bg-white/5 ${hoverBg} flex items-center justify-center text-gray-300 hover:text-white transition-all`}
+                        aria-label={`Visit our ${link.platform} page`}
+                      >
+                        {icon}
+                      </a>
+                    );
+                  })
+                ) : (
+                  <>
+                    <a
+                      href="https://www.facebook.com/autogaragenetworkltd"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#1877F2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                      aria-label="Visit our Facebook page"
+                    >
+                      <FaFacebookF size={14} />
+                    </a>
+                    <a
+                      href="https://www.instagram.com/autogaragenetworkltd.uk"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#E1306C] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                      aria-label="Visit our Instagram profile"
+                    >
+                      <FaInstagram size={14} />
+                    </a>
+                    <a
+                      href="https://x.com/autogaragent"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#1DA1F2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                      aria-label="Visit our Twitter profile"
+                    >
+                      <FaTwitter size={14} />
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/company/auto-garage-network-ltd/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#0A66C2] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                      aria-label="Visit our LinkedIn page"
+                    >
+                      <FaLinkedinIn size={14} />
+                    </a>
+                    <a
+                      href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-lg bg-white/5 hover:bg-[#FF0000] flex items-center justify-center text-gray-300 hover:text-white transition-all"
+                      aria-label="Visit our YouTube channel"
+                    >
+                      <FaYoutube size={14} />
+                    </a>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -392,9 +484,9 @@ const ContactUs = () => {
                   </div>
                 </div>
 
-                <ReCaptcha 
-                  onVerify={(token) => setCaptchaToken(token)} 
-                  onExpired={() => setCaptchaToken(null)} 
+                <ReCaptcha
+                  onVerify={(token) => setCaptchaToken(token)}
+                  onExpired={() => setCaptchaToken(null)}
                 />
 
                 <button

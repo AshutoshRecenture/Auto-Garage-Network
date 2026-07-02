@@ -42,7 +42,7 @@ const NumberCounter = ({ target, format }) => {
   );
 };
 
-const HeroSection = () => {
+const HeroSection = ({ title, subtitle }) => {
   const containerVariant = {
     hidden: {},
     visible: {
@@ -306,11 +306,17 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]"
           >
-            Run Your Garage <br className="hidden md:block" />
-            Smarter with{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-              AGN
-            </span>
+            {title ? (
+              title
+            ) : (
+              <>
+                Run Your Garage <br className="hidden md:block" />
+                Smarter with{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
+                  AGN
+                </span>
+              </>
+            )}
           </motion.h1>
 
           <motion.p
@@ -319,9 +325,11 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-gray-400 max-w-xl leading-relaxed"
           >
-            The premium software choice for modern Workshops, MOT Centres & Tyre
-            Specialists. Automate tasks, stream operations, and scale your
-            revenue.
+            {subtitle ? (
+              subtitle
+            ) : (
+              "The premium software choice for modern Workshops, MOT Centres & Tyre Specialists. Automate tasks, stream operations, and scale your revenue."
+            )}
           </motion.p>
 
           <motion.div

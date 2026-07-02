@@ -22,6 +22,8 @@ import {
   FaTwitter,
   FaLinkedinIn,
   FaYoutube,
+  FaTiktok,
+  FaGlobe,
 } from "react-icons/fa";
 
 // Elegant icon-only theme toggle
@@ -57,7 +59,7 @@ const ThemeToggle = ({ theme, toggleTheme }) => {
 };
 
 const Navbar = () => {
-  const { logoUrl, navbarLineColor } = useLogo();
+  const { logoUrl, navbarLineColor, salesPhone, supportPhone, socialLinks, disabledPages } = useLogo();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -184,6 +186,27 @@ const Navbar = () => {
     { name: "Contact Us", href: "/contact-us" },
   ];
 
+  const filteredNavLinks = (navLinks || [])
+    .filter((link) => {
+      let slug = "";
+      if (link.href === "/") slug = "home";
+      else if (link.href.startsWith("/p/")) slug = link.href.slice(3);
+      else slug = link.href.replace("/", "");
+      return !disabledPages || !disabledPages.includes(slug);
+    })
+    .map((link) => {
+      if (link.dropdown) {
+        return {
+          ...link,
+          dropdown: link.dropdown.filter((subItem) => {
+            const subSlug = subItem.href.replace("/", "");
+            return !disabledPages || !disabledPages.includes(subSlug);
+          }),
+        };
+      }
+      return link;
+    });
+
   return (
     <>
       {/* Top Bar with social icons and contacts */}
@@ -195,55 +218,98 @@ const Navbar = () => {
         }`}>
           {/* Social Icons */}
           <div className="flex items-center space-x-3 sm:space-x-4">
-            <a
-              href="https://www.facebook.com/autogaragenetworkltd"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit our Facebook page"
-              className="text-[#1877F2] hover:text-[#1877F2]/80 transition-colors duration-300"
-            >
-              <FaFacebookF size={15} />
-            </a>
+            {socialLinks && socialLinks.length > 0 ? (
+              socialLinks.map((link) => {
+                const plat = link.platform.toLowerCase();
+                let icon = <FaGlobe size={15} />;
+                let colorClass = "text-indigo-400 hover:text-white";
+                
+                if (plat.includes("facebook")) {
+                  icon = <FaFacebookF size={15} />;
+                  colorClass = "text-[#1877F2] hover:text-[#1877F2]/80";
+                } else if (plat.includes("instagram")) {
+                  icon = <FaInstagram size={15} />;
+                  colorClass = "text-[#E1306C] hover:text-[#E1306C]/80";
+                } else if (plat.includes("twitter") || plat.includes("x.com")) {
+                  icon = <FaTwitter size={15} />;
+                  colorClass = "text-[#1DA1F2] hover:text-[#1DA1F2]/80";
+                } else if (plat.includes("linkedin")) {
+                  icon = <FaLinkedinIn size={15} />;
+                  colorClass = "text-[#0A66C2] hover:text-[#0A66C2]/80";
+                } else if (plat.includes("youtube")) {
+                  icon = <FaYoutube size={15} />;
+                  colorClass = "text-[#FF0000] hover:text-[#FF0000]/80";
+                } else if (plat.includes("tiktok")) {
+                  icon = <FaTiktok size={15} />;
+                  colorClass = "text-indigo-500 hover:text-indigo-400";
+                }
 
-            <a
-              href="https://www.instagram.com/autogaragenetworkltd.uk"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit our Instagram profile"
-              className="text-[#E1306C] hover:text-[#E1306C]/80 transition-colors duration-300"
-            >
-              <FaInstagram size={15} />
-            </a>
+                return (
+                  <a
+                    key={link._id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit our ${link.platform} page`}
+                    className={`${colorClass} transition-colors duration-300`}
+                  >
+                    {icon}
+                  </a>
+                );
+              })
+            ) : (
+              <>
+                <a
+                  href="https://www.facebook.com/autogaragenetworkltd"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit our Facebook page"
+                  className="text-[#1877F2] hover:text-[#1877F2]/80 transition-colors duration-300"
+                >
+                  <FaFacebookF size={15} />
+                </a>
 
-            <a
-              href="https://x.com/autogaragent"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit our Twitter profile"
-              className="text-[#1DA1F2] hover:text-[#1DA1F2]/80 transition-colors duration-300"
-            >
-              <FaTwitter size={15} />
-            </a>
+                <a
+                  href="https://www.instagram.com/autogaragenetworkltd.uk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit our Instagram profile"
+                  className="text-[#E1306C] hover:text-[#E1306C]/80 transition-colors duration-300"
+                >
+                  <FaInstagram size={15} />
+                </a>
 
-            <a
-              href="https://www.linkedin.com/company/auto-garage-network-ltd/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit our LinkedIn page"
-              className="text-[#0A66C2] hover:text-[#0A66C2]/80 transition-colors duration-300"
-            >
-              <FaLinkedinIn size={15} />
-            </a>
+                <a
+                  href="https://x.com/autogaragent"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit our Twitter profile"
+                  className="text-[#1DA1F2] hover:text-[#1DA1F2]/80 transition-colors duration-300"
+                >
+                  <FaTwitter size={15} />
+                </a>
 
-            <a
-              href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit our YouTube channel"
-              className="text-[#FF0000] hover:text-[#FF0000]/80 transition-colors duration-300"
-            >
-              <FaYoutube size={15} />
-            </a>
+                <a
+                  href="https://www.linkedin.com/company/auto-garage-network-ltd/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit our LinkedIn page"
+                  className="text-[#0A66C2] hover:text-[#0A66C2]/80 transition-colors duration-300"
+                >
+                  <FaLinkedinIn size={15} />
+                </a>
+
+                <a
+                  href="https://www.youtube.com/channel/UCT8JroOu-4_KT74be6tGUoQ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit our YouTube channel"
+                  className="text-[#FF0000] hover:text-[#FF0000]/80 transition-colors duration-300"
+                >
+                  <FaYoutube size={15} />
+                </a>
+              </>
+            )}
           </div>
 
           {/* Contact Numbers */}
@@ -253,37 +319,37 @@ const Navbar = () => {
             {/* Mobile Numbers */}
             <div className="flex sm:hidden flex-col items-end justify-center gap-1 text-[9px] leading-tight">
               <a
-                href="tel:07947906789"
+                href={`tel:${salesPhone.replace(/\s+/g, "")}`}
                 className="hover:text-white transition-colors duration-300 flex items-center"
               >
                 <FiPhone size={9} className="mr-1 text-indigo-400" />
-                <span>Sales: 07947906789</span>
+                <span>Sales: {salesPhone}</span>
               </a>
 
               <a
-                href="tel:0172655556"
+                href={`tel:${supportPhone.replace(/\s+/g, "")}`}
                 className="hover:text-white transition-colors duration-300 flex items-center"
               >
                 <FiPhone size={9} className="mr-1 text-indigo-400" />
-                <span>Services: 0172655556</span>
+                <span>Services: {supportPhone}</span>
               </a>
             </div>
 
             {/* Desktop Numbers */}
             <a
-              href="tel:07947906789"
+              href={`tel:${salesPhone.replace(/\s+/g, "")}`}
               className="hidden sm:flex items-center hover:text-white transition-colors duration-300"
             >
               <FiPhone className="mr-2 text-indigo-400 text-base" />
-              <span>Sales: 07947906789</span>
+              <span>Sales: {salesPhone}</span>
             </a>
 
             <a
-              href="tel:0172655556"
+              href={`tel:${supportPhone.replace(/\s+/g, "")}`}
               className="hidden sm:flex items-center hover:text-white transition-colors duration-300"
             >
               <FiPhone className="mr-2 text-indigo-400 text-base" />
-              <span>Services: 0172655556</span>
+              <span>Services: {supportPhone}</span>
             </a>
           </div>
         </div>
@@ -348,7 +414,7 @@ const Navbar = () => {
               className="hidden lg:flex items-center justify-center flex-grow mx-2 xl:mx-6 gap-0.5 xl:gap-1"
               onMouseLeave={() => setHoveredLink(null)}
             >
-              {navLinks.map((link) => {
+              {filteredNavLinks.map((link) => {
                 const isActive =
                   activeLink === link.href ||
                   (link.dropdown &&
@@ -608,7 +674,7 @@ const Navbar = () => {
                         >
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3">
                             {(
-                              navLinks.find((link) => link.type === "dropdown")
+                              filteredNavLinks.find((link) => link.type === "dropdown")
                                 ?.dropdown || []
                             ).map((subItem) => {
                               const SubIcon = subItem.icon;
@@ -648,7 +714,7 @@ const Navbar = () => {
 
                   {/* Navigation List Links */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0.5">
-                    {navLinks
+                    {filteredNavLinks
                       .filter((link) => link.type !== "dropdown")
                       .map((link) => {
                         const isActive = activeLink === link.href;

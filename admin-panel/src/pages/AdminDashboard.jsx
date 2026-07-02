@@ -19,6 +19,7 @@ import {
   FiPlus,
   FiEdit2,
   FiEye,
+  FiEyeOff,
   FiImage,
   FiVideo,
   FiCopy,
@@ -31,6 +32,9 @@ import {
   FiMessageSquare,
   FiChevronRight,
   FiHelpCircle,
+  FiFileText,
+  FiShare2,
+  FiBriefcase,
 } from "react-icons/fi";
 import SEOHeader from "../components/SEOHeader.jsx";
 
@@ -93,10 +97,63 @@ const AdminDashboard = () => {
     order: 0,
   });
 
+  // Pages state
+  const [dbPages, setDbPages] = useState([]);
+  const [pageSearch, setPageSearch] = useState("");
+  const [pageSubmitLoading, setPageSubmitLoading] = useState(false);
+  const [showPageForm, setShowPageForm] = useState(false);
+  const [editingPage, setEditingPage] = useState(null);
+  const [pageForm, setPageForm] = useState({
+    title: "",
+    slug: "",
+    bannerTitle: "",
+    bannerSubtitle: "",
+    bannerImage: "",
+    content: "",
+    aboutImgUrl: "",
+    aboutVideoUrl: "",
+    salesPhone: "",
+    supportPhone: "",
+    email: "",
+    supportEmail: "",
+    address: "",
+    googleMapUrl: "",
+    priceEliteWorkshop: "",
+    setupEliteWorkshop: "",
+    priceEliteProMax: "",
+    setupEliteProMax: "",
+    priceEliteProMaxPlus: "",
+    setupEliteProMaxPlus: "",
+  });
+
+  // Social Links state
+  const [socialMediaList, setSocialMediaList] = useState([]);
+  const [socialSearch, setSocialSearch] = useState("");
+  const [socialSubmitLoading, setSocialSubmitLoading] = useState(false);
+  const [showSocialForm, setShowSocialForm] = useState(false);
+  const [editingSocial, setEditingSocial] = useState(null);
+  const [socialForm, setSocialForm] = useState({
+    platform: "Facebook",
+    url: "",
+    name: "",
+  });
+
   // Settings state
   const [settingsForm, setSettingsForm] = useState({
     logoUrl: "",
     navbarLineColor: "indigo",
+    salesPhone: "",
+    supportPhone: "",
+    email: "",
+    supportEmail: "",
+    address: "",
+    googleMapUrl: "",
+    priceEliteWorkshop: "",
+    setupEliteWorkshop: "",
+    priceEliteProMax: "",
+    setupEliteProMax: "",
+    priceEliteProMaxPlus: "",
+    setupEliteProMaxPlus: "",
   });
   const [settingsSaveLoading, setSettingsSaveLoading] = useState(false);
 
@@ -109,6 +166,7 @@ const AdminDashboard = () => {
     name: "",
     email: "",
     password: "",
+    role: "admin",
     permissions: {
       contacts: { read: false, write: false },
       chatLeads: { read: false, write: false },
@@ -116,6 +174,8 @@ const AdminDashboard = () => {
       faqs: { read: false, write: false },
       media: { read: false, write: false },
       settings: { read: false, write: false },
+      socialMedia: { read: false, write: false },
+      pages: { read: false, write: false },
     },
   });
 
@@ -184,6 +244,8 @@ const AdminDashboard = () => {
     if (tabName === "faqs") return canRead("faqs");
     if (tabName === "media") return canRead("media");
     if (tabName === "settings") return canRead("settings");
+    if (tabName === "pages") return canRead("pages");
+    if (tabName === "social-links") return canRead("socialMedia");
     if (tabName === "admins") return false; // admins only for super_admin
     return false;
   };
@@ -199,7 +261,7 @@ const AdminDashboard = () => {
       setIsAuthenticated(true);
       setAdminName(name || "Administrator");
       setAdminRole(role);
-      
+
       loadAllData(token, role);
       setCheckingAuth(false);
 
@@ -268,10 +330,14 @@ const AdminDashboard = () => {
   const loadAllData = async (token, role) => {
     // Only poll leads/contacts if we actually have read permissions
     const activeRole = role || localStorage.getItem("agn_user_role");
-    if (activeRole === "super_admin" || canRead("contacts") || canRead("chatLeads")) {
+    if (
+      activeRole === "super_admin" ||
+      canRead("contacts") ||
+      canRead("chatLeads")
+    ) {
       await pollNewData(token);
     }
-    
+
     if (activeRole === "super_admin" || canRead("blogs")) {
       fetchBlogs();
     }
@@ -283,6 +349,12 @@ const AdminDashboard = () => {
     }
     if (activeRole === "super_admin" || canRead("faqs")) {
       fetchFaqs(token);
+    }
+    if (activeRole === "super_admin" || canRead("pages")) {
+      fetchPages();
+    }
+    if (activeRole === "super_admin" || canRead("socialMedia")) {
+      fetchSocialLinks();
     }
     if (activeRole === "super_admin") {
       fetchAdmins();
@@ -325,13 +397,18 @@ const AdminDashboard = () => {
       });
 
       if (res.ok) {
-        alert(editingAdmin ? "Admin user updated successfully!" : "Admin user created successfully!");
+        alert(
+          editingAdmin
+            ? "Admin user updated successfully!"
+            : "Admin user created successfully!",
+        );
         setShowAdminForm(false);
         setEditingAdmin(null);
         setAdminForm({
           name: "",
           email: "",
           password: "",
+          role: "admin",
           permissions: {
             contacts: { read: false, write: false },
             chatLeads: { read: false, write: false },
@@ -339,6 +416,8 @@ const AdminDashboard = () => {
             faqs: { read: false, write: false },
             media: { read: false, write: false },
             settings: { read: false, write: false },
+            socialMedia: { read: false, write: false },
+            pages: { read: false, write: false },
           },
         });
         fetchAdmins();
@@ -360,6 +439,7 @@ const AdminDashboard = () => {
       name: adm.name || "",
       email: adm.email || "",
       password: "", // blank password field for edits
+      role: adm.role || "admin",
       permissions: adm.permissions || {
         contacts: { read: false, write: false },
         chatLeads: { read: false, write: false },
@@ -367,13 +447,16 @@ const AdminDashboard = () => {
         faqs: { read: false, write: false },
         media: { read: false, write: false },
         settings: { read: false, write: false },
+        socialMedia: { read: false, write: false },
+        pages: { read: false, write: false },
       },
     });
     setShowAdminForm(true);
   };
 
   const handleDeleteAdmin = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this admin account?")) return;
+    if (!window.confirm("Are you sure you want to delete this admin account?"))
+      return;
     try {
       const token = localStorage.getItem("agn_token");
       const res = await fetch(`${API_URL}/api/users/${id}`, {
@@ -388,6 +471,274 @@ const AdminDashboard = () => {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  // --- Pages CRUD APIs ---
+  const fetchPages = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/pages`);
+      if (res.ok) {
+        const data = await res.json();
+        setDbPages(data || []);
+      }
+    } catch (e) {
+      console.error("Error fetching pages:", e);
+    }
+  };
+
+  const handlePageFormSubmit = async (e) => {
+    e.preventDefault();
+    setPageSubmitLoading(true);
+    try {
+      const token = localStorage.getItem("agn_token");
+      const url = editingPage
+        ? `${API_URL}/api/pages/${editingPage._id}`
+        : `${API_URL}/api/pages`;
+      const method = editingPage ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(pageForm),
+      });
+
+      if (res.ok) {
+        alert(
+          editingPage
+            ? "Page updated successfully!"
+            : "Page created successfully!",
+        );
+        setShowPageForm(false);
+        setEditingPage(null);
+        setPageForm({
+          title: "",
+          slug: "",
+          bannerTitle: "",
+          bannerSubtitle: "",
+          bannerImage: "",
+          content: "",
+          aboutImgUrl: "",
+          aboutVideoUrl: "",
+          salesPhone: "",
+          supportPhone: "",
+          email: "",
+          supportEmail: "",
+          address: "",
+          googleMapUrl: "",
+          priceEliteWorkshop: "",
+          setupEliteWorkshop: "",
+          priceEliteProMax: "",
+          setupEliteProMax: "",
+          priceEliteProMaxPlus: "",
+          setupEliteProMaxPlus: "",
+        });
+        fetchPages();
+      } else {
+        const errData = await res.json();
+        alert(errData.message || "Failed to save page.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving page.");
+    } finally {
+      setPageSubmitLoading(false);
+    }
+  };
+
+  const handleEditPage = (page) => {
+    setEditingPage(page);
+    setPageForm({
+      title: page.title || "",
+      slug: page.slug || "",
+      bannerTitle: page.bannerTitle || "",
+      bannerSubtitle: page.bannerSubtitle || "",
+      bannerImage: page.bannerImage || "",
+      content: page.content || "",
+      aboutImgUrl: page.aboutImgUrl || "",
+      aboutVideoUrl: page.aboutVideoUrl || "",
+      salesPhone: page.salesPhone || settingsForm.salesPhone || "",
+      supportPhone: page.supportPhone || settingsForm.supportPhone || "",
+      email: page.email || settingsForm.email || "",
+      supportEmail: page.supportEmail || settingsForm.supportEmail || "",
+      address: page.address || settingsForm.address || "",
+      googleMapUrl: page.googleMapUrl || settingsForm.googleMapUrl || "",
+      priceEliteWorkshop:
+        page.priceEliteWorkshop || settingsForm.priceEliteWorkshop || "",
+      setupEliteWorkshop:
+        page.setupEliteWorkshop || settingsForm.setupEliteWorkshop || "",
+      priceEliteProMax:
+        page.priceEliteProMax || settingsForm.priceEliteProMax || "",
+      setupEliteProMax:
+        page.setupEliteProMax || settingsForm.setupEliteProMax || "",
+      priceEliteProMaxPlus:
+        page.priceEliteProMaxPlus || settingsForm.priceEliteProMaxPlus || "",
+      setupEliteProMaxPlus:
+        page.setupEliteProMaxPlus || settingsForm.setupEliteProMaxPlus || "",
+    });
+    setShowPageForm(true);
+  };
+
+  const handleDeletePage = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this page?")) return;
+    try {
+      const token = localStorage.getItem("agn_token");
+      const res = await fetch(`${API_URL}/api/pages/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setDbPages(dbPages.filter((p) => p._id !== id));
+        alert("Page deleted successfully.");
+      } else {
+        alert("Failed to delete page.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleTogglePageStatus = async (page) => {
+    try {
+      const token = localStorage.getItem("agn_token");
+      const res = await fetch(`${API_URL}/api/pages/${page._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          isActive: page.isActive === false ? true : false,
+        }),
+      });
+      if (res.ok) {
+        fetchPages();
+      } else {
+        const errData = await res.json();
+        alert(errData.message || "Failed to update page status.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error toggling page status.");
+    }
+  };
+
+  // --- Social Links CRUD APIs ---
+  const fetchSocialLinks = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/social-media`);
+      if (res.ok) {
+        const data = await res.json();
+        setSocialMediaList(data || []);
+      }
+    } catch (e) {
+      console.error("Error fetching social media:", e);
+    }
+  };
+
+  const handleSocialFormSubmit = async (e) => {
+    e.preventDefault();
+    setSocialSubmitLoading(true);
+    try {
+      const token = localStorage.getItem("agn_token");
+      const url = editingSocial
+        ? `${API_URL}/api/social-media/${editingSocial._id}`
+        : `${API_URL}/api/social-media`;
+      const method = editingSocial ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(socialForm),
+      });
+
+      if (res.ok) {
+        alert(
+          editingSocial
+            ? "Social link updated successfully!"
+            : "Social link created successfully!",
+        );
+        setShowSocialForm(false);
+        setEditingSocial(null);
+        setSocialForm({
+          platform: "Facebook",
+          url: "",
+          name: "",
+        });
+        fetchSocialLinks();
+        refreshSettings();
+      } else {
+        const errData = await res.json();
+        alert(errData.message || "Failed to save social link.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving social link.");
+    } finally {
+      setSocialSubmitLoading(false);
+    }
+  };
+
+  const handleEditSocial = (social) => {
+    setEditingSocial(social);
+    setSocialForm({
+      platform: social.platform || "Facebook",
+      url: social.url || "",
+      name: social.name || "",
+    });
+    setShowSocialForm(true);
+  };
+
+  const handleDeleteSocial = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this social link?"))
+      return;
+    try {
+      const token = localStorage.getItem("agn_token");
+      const res = await fetch(`${API_URL}/api/social-media/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setSocialMediaList(socialMediaList.filter((s) => s._id !== id));
+        alert("Social link deleted successfully.");
+        refreshSettings();
+      } else {
+        alert("Failed to delete social link.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleToggleSocialStatus = async (social) => {
+    try {
+      const token = localStorage.getItem("agn_token");
+      const res = await fetch(`${API_URL}/api/social-media/${social._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          isActive: social.isActive === false ? true : false,
+        }),
+      });
+      if (res.ok) {
+        fetchSocialLinks();
+        refreshSettings();
+      } else {
+        const errData = await res.json();
+        alert(errData.message || "Failed to update social link status.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error toggling social link status.");
     }
   };
 
@@ -418,7 +769,7 @@ const AdminDashboard = () => {
             id: c._id,
             type: "contact",
             title: "New Contact Form Request",
-            message: `${c.name} has submitted a contact request for "${c.interestedIn || 'General Inquiry'}".`,
+            message: `${c.name} has submitted a contact request for "${c.interestedIn || "General Inquiry"}".`,
             time: new Date(),
           });
         }
@@ -435,7 +786,7 @@ const AdminDashboard = () => {
             id: ch._id,
             type: "chat",
             title: "New Chatbot Lead",
-            message: `${ch.name} left contact details via Chatbot Assistant for "${ch.selectedService || 'General Inquiry'}".`,
+            message: `${ch.name} left contact details via Chatbot Assistant for "${ch.selectedService || "General Inquiry"}".`,
             time: new Date(),
           });
         }
@@ -445,7 +796,7 @@ const AdminDashboard = () => {
     if (hasNew) {
       localStorage.setItem("agn_seen_lead_ids", JSON.stringify(updatedSeenIds));
     }
-    
+
     if (initialized !== "true") {
       localStorage.setItem("agn_notif_initialized", "true");
     }
@@ -530,6 +881,18 @@ const AdminDashboard = () => {
         setSettingsForm({
           logoUrl: data.logoUrl || "/logo-color.png",
           navbarLineColor: data.navbarLineColor || "indigo",
+          salesPhone: data.salesPhone || "",
+          supportPhone: data.supportPhone || "",
+          email: data.email || "",
+          supportEmail: data.supportEmail || "",
+          address: data.address || "",
+          googleMapUrl: data.googleMapUrl || "",
+          priceEliteWorkshop: data.priceEliteWorkshop || "",
+          setupEliteWorkshop: data.setupEliteWorkshop || "",
+          priceEliteProMax: data.priceEliteProMax || "",
+          setupEliteProMax: data.setupEliteProMax || "",
+          priceEliteProMaxPlus: data.priceEliteProMaxPlus || "",
+          setupEliteProMaxPlus: data.setupEliteProMaxPlus || "",
         });
       }
     } catch (e) {
@@ -1278,9 +1641,9 @@ const AdminDashboard = () => {
   const filteredBlogs = blogs.filter((b) => {
     const query = blogSearch.toLowerCase();
     return (
-      b.title.toLowerCase().includes(query) ||
-      b.category.toLowerCase().includes(query) ||
-      b.excerpt.toLowerCase().includes(query)
+      (b.title || "").toLowerCase().includes(query) ||
+      (b.category || "").toLowerCase().includes(query) ||
+      (b.excerpt || "").toLowerCase().includes(query)
     );
   });
 
@@ -1311,10 +1674,10 @@ const AdminDashboard = () => {
         description="Administrative panel for Auto Garage Network."
         canonicalPath="/admin"
       />
-      <Navbar 
-        role={adminRole} 
-        notifications={notifications} 
-        setNotifications={setNotifications} 
+      <Navbar
+        role={adminRole}
+        notifications={notifications}
+        setNotifications={setNotifications}
       />
 
       {/* Main panel layout */}
@@ -1330,7 +1693,8 @@ const AdminDashboard = () => {
                 {adminName}
               </h2>
               <p className="text-gray-500 text-xs truncate">
-                {localStorage.getItem("agn_user_email") || "admin@autogaragenetwork.com"}
+                {localStorage.getItem("agn_user_email") ||
+                  "admin@autogaragenetwork.com"}
               </p>
             </div>
 
@@ -1422,6 +1786,40 @@ const AdminDashboard = () => {
                 </button>
               )}
 
+              {canRead("pages") && (
+                <button
+                  onClick={() => {
+                    navigate("/pages");
+                    setShowPageForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "pages"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiFileText size={16} />
+                  <span>Manage Pages</span>
+                </button>
+              )}
+
+              {canRead("socialMedia") && (
+                <button
+                  onClick={() => {
+                    navigate("/social-links");
+                    setShowSocialForm(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "social-links"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FiShare2 size={16} />
+                  <span>Social Links</span>
+                </button>
+              )}
+
               {canRead("settings") && (
                 <button
                   onClick={() => {
@@ -1470,8 +1868,6 @@ const AdminDashboard = () => {
         {/* Dashboard Panels */}
         <section className="flex-grow min-w-0 bg-[#0c1222] border border-white/10 p-6 md:p-8 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
-
-
 
           {/* TAB 1: Contact Form Requests */}
           {activeTab === "contact-leads" && (
@@ -3143,14 +3539,865 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {/* TAB: Manage Pages */}
+          {activeTab === "pages" && canRead("pages") && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white">
+                    Manage Pages
+                  </h1>
+                  <p className="text-gray-400 text-xs">
+                    Create and edit page banners, metadata, and HTML contents.
+                  </p>
+                </div>
+                {!showPageForm && canWrite("pages") && (
+                  <button
+                    onClick={() => {
+                      setEditingPage(null);
+                      setPageForm({
+                        title: "",
+                        slug: "",
+                        bannerTitle: "",
+                        bannerSubtitle: "",
+                        bannerImage: "",
+                        content: "",
+                        aboutImgUrl: "",
+                        aboutVideoUrl: "",
+                        salesPhone: "",
+                        supportPhone: "",
+                        email: "",
+                        supportEmail: "",
+                        address: "",
+                        googleMapUrl: "",
+                        priceEliteWorkshop: "",
+                        setupEliteWorkshop: "",
+                        priceEliteProMax: "",
+                        setupEliteProMax: "",
+                        priceEliteProMaxPlus: "",
+                        setupEliteProMaxPlus: "",
+                      });
+                      setShowPageForm(true);
+                    }}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer shadow-md"
+                  >
+                    <FiPlus />
+                    <span>Create New Page</span>
+                  </button>
+                )}
+              </div>
+
+              {showPageForm ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-[#050816]/70 border border-white/10 p-6 rounded-3xl space-y-6 text-left"
+                >
+                  <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                    <h3 className="text-sm uppercase font-black tracking-widest text-indigo-400">
+                      {editingPage ? "Edit Page Content" : "Create New Page"}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowPageForm(false)}
+                      className="text-gray-400 hover:text-white cursor-pointer"
+                    >
+                      <FiX size={18} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handlePageFormSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Page Title
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={pageForm.title}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            // Auto slugify if not editing
+                            const slugified = val
+                              .toLowerCase()
+                              .replace(/[^a-z0-9-_ ]/g, "")
+                              .replace(/\s+/g, "-");
+                            setPageForm({
+                              ...pageForm,
+                              title: val,
+                              slug: editingPage ? pageForm.slug : slugified,
+                            });
+                          }}
+                          placeholder="e.g. Terms of Service"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Page Slug (URL Path)
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={pageForm.slug}
+                          onChange={(e) =>
+                            setPageForm({ ...pageForm, slug: e.target.value })
+                          }
+                          placeholder="e.g. terms-of-service"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Hero Banner Title
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.bannerTitle}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              bannerTitle: e.target.value,
+                            })
+                          }
+                          placeholder="Leave blank to use default page title"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Hero Banner Subtitle
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.bannerSubtitle}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              bannerSubtitle: e.target.value,
+                            })
+                          }
+                          placeholder="Short introductory text under title"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1 md:col-span-2">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Hero Banner Image URL
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.bannerImage}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              bannerImage: e.target.value,
+                            })
+                          }
+                          placeholder="Paste image URL here, or browse Media Gallery"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          About Section Image URL
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.aboutImgUrl}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              aboutImgUrl: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. /about-img-add.jpg"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          About Section Video URL
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.aboutVideoUrl}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              aboutVideoUrl: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. Founder video mp4 link"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+                    </div>
+
+                    {pageForm.slug === "contact-us" && (
+                      <div className="border-t border-white/5 pt-4 mt-4 space-y-4">
+                        <h4 className="text-xs uppercase font-black text-indigo-400 tracking-wider">
+                          Contact Us Page Settings (Auto-syncs Site Settings)
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Sales Hotline Phone
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.salesPhone}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  salesPhone: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 07947 906789"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Support Phone
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.supportPhone}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  supportPhone: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 01702 655556"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Primary Email
+                            </label>
+                            <input
+                              type="email"
+                              value={pageForm.email}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  email: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. info@autogaragenetwork.com"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Support Email
+                            </label>
+                            <input
+                              type="email"
+                              value={pageForm.supportEmail}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  supportEmail: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. support@autogaragenetwork.com"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1 md:col-span-2">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Office Location Address
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.address}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  address: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. Full street address..."
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1 md:col-span-2">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Google Map Link URL
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.googleMapUrl}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  googleMapUrl: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. Google Maps share URL"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {pageForm.slug === "pricing" && (
+                      <div className="border-t border-white/5 pt-4 mt-4 space-y-4">
+                        <h4 className="text-xs uppercase font-black text-indigo-400 tracking-wider">
+                          Pricing Plans Settings (Auto-syncs Package Pricing)
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Elite Workshop - Monthly Fee (£)
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.priceEliteWorkshop}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  priceEliteWorkshop: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 135"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Elite Workshop - Setup Fee (£)
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.setupEliteWorkshop}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  setupEliteWorkshop: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 500"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Elite Pro Max - Monthly Fee (£)
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.priceEliteProMax}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  priceEliteProMax: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 235"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Elite Pro Max - Setup Fee (£)
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.setupEliteProMax}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  setupEliteProMax: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 1000"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Elite Pro Max Plus - Monthly Fee (£)
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.priceEliteProMaxPlus}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  priceEliteProMaxPlus: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 375"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-400">
+                              Elite Pro Max Plus - Setup Fee (£)
+                            </label>
+                            <input
+                              type="text"
+                              value={pageForm.setupEliteProMaxPlus}
+                              onChange={(e) =>
+                                setPageForm({
+                                  ...pageForm,
+                                  setupEliteProMaxPlus: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. 1500"
+                              className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase font-bold text-slate-400">
+                        HTML Body Content
+                      </label>
+                      <textarea
+                        rows={10}
+                        value={pageForm.content}
+                        onChange={(e) =>
+                          setPageForm({ ...pageForm, content: e.target.value })
+                        }
+                        placeholder="Write dynamic page body in HTML format. e.g. <h2>Our Terms</h2><p>Content goes here...</p>"
+                        className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white font-mono"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                      <button
+                        type="button"
+                        onClick={() => setShowPageForm(false)}
+                        className="bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={pageSubmitLoading}
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer shadow-lg disabled:opacity-50"
+                      >
+                        {pageSubmitLoading
+                          ? "Saving..."
+                          : editingPage
+                            ? "Update Page"
+                            : "Create Page"}
+                      </button>
+                    </div>
+                  </form>
+                </motion.div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center bg-[#050816]/40 p-4 rounded-2xl border border-white/5">
+                    <div className="relative max-w-md w-full">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <FiSearch size={14} />
+                      </span>
+                      <input
+                        type="text"
+                        value={pageSearch}
+                        onChange={(e) => setPageSearch(e.target.value)}
+                        placeholder="Search dynamic pages..."
+                        className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl pl-9 pr-4 py-2 text-xs text-white outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
+                    {dbPages.length === 0 ? (
+                      <p className="text-center text-gray-500 py-10 text-xs">
+                        No dynamic pages found.
+                      </p>
+                    ) : (
+                      <table className="w-full border-collapse text-left text-xs">
+                        <thead>
+                          <tr className="border-b border-white/5 bg-[#050816]/80 text-gray-400 uppercase tracking-wider font-bold text-[10px]">
+                            <th className="py-3 px-5">Page Details</th>
+                            <th className="py-3 px-5">Slug</th>
+                            <th className="py-3 px-5">Banner Title & Image</th>
+                            {canWrite("pages") && (
+                              <th className="py-3 px-5 text-center">Actions</th>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {dbPages
+                            .filter(
+                              (p) =>
+                                (p.title || "")
+                                  .toLowerCase()
+                                  .includes((pageSearch || "").toLowerCase()) ||
+                                (p.slug || "")
+                                  .toLowerCase()
+                                  .includes((pageSearch || "").toLowerCase()),
+                            )
+                            .map((page) => (
+                              <tr
+                                key={page._id}
+                                className="hover:bg-white/[0.01]"
+                              >
+                                <td className="py-3 px-5 space-y-0.5">
+                                  <span className="font-extrabold text-white block text-sm">
+                                    {page.title}
+                                  </span>
+                                </td>
+                                <td className="py-3 px-5 text-indigo-400 font-mono">
+                                  /p/{page.slug}
+                                </td>
+                                <td className="py-3 px-5 space-y-1">
+                                  <div className="text-gray-200 font-semibold">
+                                    {page.bannerTitle || "N/A"}
+                                  </div>
+                                  {page.bannerImage && (
+                                    <img
+                                      src={page.bannerImage}
+                                      className="h-6 w-12 object-cover rounded border border-white/10"
+                                      alt="Banner"
+                                    />
+                                  )}
+                                </td>
+                                {canWrite("pages") && (
+                                  <td className="py-3 px-5 text-center">
+                                    <div className="flex items-center justify-center gap-1.5">
+                                      {adminRole === "super_admin" && (
+                                        <button
+                                          onClick={() => handleTogglePageStatus(page)}
+                                          className={`p-2 rounded-xl transition-all cursor-pointer ${
+                                            page.isActive !== false
+                                              ? "text-emerald-400 hover:text-white hover:bg-emerald-500/20"
+                                              : "text-gray-400 hover:text-white hover:bg-gray-500/20"
+                                          }`}
+                                          title={page.isActive !== false ? "Disable Page (Hide from Website)" : "Enable Page (Show on Website)"}
+                                        >
+                                          {page.isActive !== false ? (
+                                            <FiEye size={14} />
+                                          ) : (
+                                            <FiEyeOff size={14} />
+                                          )}
+                                        </button>
+                                      )}
+                                      <button
+                                        onClick={() => handleEditPage(page)}
+                                        className="text-indigo-400 hover:text-white p-2 hover:bg-indigo-500/20 rounded-xl transition-all cursor-pointer"
+                                        title="Edit Page"
+                                      >
+                                        <FiEdit2 size={14} />
+                                      </button>
+                                      <button
+                                        onClick={() =>
+                                          handleDeletePage(page._id)
+                                        }
+                                        className="text-rose-400 hover:text-white p-2 hover:bg-rose-500/20 rounded-xl transition-all cursor-pointer"
+                                        title="Delete Page"
+                                      >
+                                        <FiTrash2 size={14} />
+                                      </button>
+                                    </div>
+                                  </td>
+                                )}
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: Social Media Links */}
+          {activeTab === "social-links" && canRead("socialMedia") && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-black text-white">
+                    Social Media Links
+                  </h1>
+                  <p className="text-gray-400 text-xs">
+                    Manage active social accounts rendered in Navbar and Footer.
+                  </p>
+                </div>
+                {!showSocialForm && canWrite("socialMedia") && (
+                  <button
+                    onClick={() => {
+                      setEditingSocial(null);
+                      setSocialForm({
+                        platform: "Facebook",
+                        url: "",
+                        name: "",
+                      });
+                      setShowSocialForm(true);
+                    }}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer shadow-md"
+                  >
+                    <FiPlus />
+                    <span>Add Social Link</span>
+                  </button>
+                )}
+              </div>
+
+              {showSocialForm ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-[#050816]/70 border border-white/10 p-6 rounded-3xl space-y-6 text-left"
+                >
+                  <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                    <h3 className="text-sm uppercase font-black tracking-widest text-indigo-400">
+                      {editingSocial
+                        ? "Edit Social Link"
+                        : "Add New Social Link"}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowSocialForm(false)}
+                      className="text-gray-400 hover:text-white cursor-pointer"
+                    >
+                      <FiX size={18} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSocialFormSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Platform
+                        </label>
+                        <select
+                          value={socialForm.platform}
+                          onChange={(e) =>
+                            setSocialForm({
+                              ...socialForm,
+                              platform: e.target.value,
+                            })
+                          }
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        >
+                          <option value="Facebook">Facebook</option>
+                          <option value="Instagram">Instagram</option>
+                          <option value="Twitter">Twitter / X</option>
+                          <option value="LinkedIn">LinkedIn</option>
+                          <option value="YouTube">YouTube</option>
+                          <option value="TikTok">TikTok</option>
+                          <option value="Custom">Custom</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Link Name / Title
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={socialForm.name}
+                          onChange={(e) =>
+                            setSocialForm({
+                              ...socialForm,
+                              name: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. AGN Facebook Page"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Profile URL
+                        </label>
+                        <input
+                          type="url"
+                          required
+                          value={socialForm.url}
+                          onChange={(e) =>
+                            setSocialForm({
+                              ...socialForm,
+                              url: e.target.value,
+                            })
+                          }
+                          placeholder="https://facebook.com/example"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                      <button
+                        type="button"
+                        onClick={() => setShowSocialForm(false)}
+                        className="bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={socialSubmitLoading}
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer shadow-lg disabled:opacity-50"
+                      >
+                        {socialSubmitLoading
+                          ? "Saving..."
+                          : editingSocial
+                            ? "Update Link"
+                            : "Save Link"}
+                      </button>
+                    </div>
+                  </form>
+                </motion.div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center bg-[#050816]/40 p-4 rounded-2xl border border-white/5">
+                    <div className="relative max-w-md w-full">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <FiSearch size={14} />
+                      </span>
+                      <input
+                        type="text"
+                        value={socialSearch}
+                        onChange={(e) => setSocialSearch(e.target.value)}
+                        placeholder="Search social links..."
+                        className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl pl-9 pr-4 py-2 text-xs text-white outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
+                    {socialMediaList.length === 0 ? (
+                      <p className="text-center text-gray-500 py-10 text-xs">
+                        No social media links found.
+                      </p>
+                    ) : (
+                      <table className="w-full border-collapse text-left text-xs">
+                        <thead>
+                          <tr className="border-b border-white/5 bg-[#050816]/80 text-gray-400 uppercase tracking-wider font-bold text-[10px]">
+                            <th className="py-3 px-5">Platform</th>
+                            <th className="py-3 px-5">Name</th>
+                            <th className="py-3 px-5">URL Address</th>
+                            {canWrite("socialMedia") && (
+                              <th className="py-3 px-5 text-center">Actions</th>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {socialMediaList
+                            .filter(
+                              (s) =>
+                                (s.name || "")
+                                  .toLowerCase()
+                                  .includes((socialSearch || "").toLowerCase()) ||
+                                (s.platform || "")
+                                  .toLowerCase()
+                                  .includes((socialSearch || "").toLowerCase()),
+                            )
+                            .map((social) => (
+                              <tr
+                                key={social._id}
+                                className="hover:bg-white/[0.01]"
+                              >
+                                <td className="py-3 px-5">
+                                  <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-bold text-[10px]">
+                                    {social.platform}
+                                  </span>
+                                </td>
+                                <td className="py-3 px-5 text-white font-extrabold">
+                                  {social.name}
+                                </td>
+                                <td className="py-3 px-5 text-gray-400 font-semibold truncate max-w-xs">
+                                  <a
+                                    href={social.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:underline hover:text-white"
+                                  >
+                                    {social.url}
+                                  </a>
+                                </td>
+                                {canWrite("socialMedia") && (
+                                  <td className="py-3 px-5 text-center">
+                                    <div className="flex items-center justify-center gap-1.5">
+                                      {adminRole === "super_admin" && (
+                                        <button
+                                          onClick={() => handleToggleSocialStatus(social)}
+                                          className={`p-2 rounded-xl transition-all cursor-pointer ${
+                                            social.isActive !== false
+                                              ? "text-emerald-400 hover:text-white hover:bg-emerald-500/20"
+                                              : "text-gray-400 hover:text-white hover:bg-gray-500/20"
+                                          }`}
+                                          title={social.isActive !== false ? "Disable Link (Hide from Website)" : "Enable Link (Show on Website)"}
+                                        >
+                                          {social.isActive !== false ? (
+                                            <FiEye size={14} />
+                                          ) : (
+                                            <FiEyeOff size={14} />
+                                          )}
+                                        </button>
+                                      )}
+                                      <button
+                                        onClick={() => handleEditSocial(social)}
+                                        className="text-indigo-400 hover:text-white p-2 hover:bg-indigo-500/20 rounded-xl transition-all cursor-pointer"
+                                        title="Edit Link"
+                                      >
+                                        <FiEdit2 size={14} />
+                                      </button>
+                                      <button
+                                        onClick={() =>
+                                          handleDeleteSocial(social._id)
+                                        }
+                                        className="text-rose-400 hover:text-white p-2 hover:bg-rose-500/20 rounded-xl transition-all cursor-pointer"
+                                        title="Delete Link"
+                                      >
+                                        <FiTrash2 size={14} />
+                                      </button>
+                                    </div>
+                                  </td>
+                                )}
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* TAB: Manage Admins (Super Admin Only) */}
           {activeTab === "admins" && adminRole === "super_admin" && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-black text-white">Manage Admins</h1>
+                  <h1 className="text-2xl font-black text-white">
+                    Manage Admins
+                  </h1>
                   <p className="text-gray-400 text-xs">
-                    Create, update, and configure custom permissions for administrator accounts.
+                    Create, update, and configure custom permissions for
+                    administrator accounts.
                   </p>
                 </div>
                 {!showAdminForm && (
@@ -3161,6 +4408,7 @@ const AdminDashboard = () => {
                         name: "",
                         email: "",
                         password: "",
+                        role: "admin",
                         permissions: {
                           contacts: { read: false, write: false },
                           chatLeads: { read: false, write: false },
@@ -3168,6 +4416,8 @@ const AdminDashboard = () => {
                           faqs: { read: false, write: false },
                           media: { read: false, write: false },
                           settings: { read: false, write: false },
+                          socialMedia: { read: false, write: false },
+                          pages: { read: false, write: false },
                         },
                       });
                       setShowAdminForm(true);
@@ -3188,7 +4438,9 @@ const AdminDashboard = () => {
                 >
                   <div className="flex justify-between items-center border-b border-white/5 pb-4">
                     <h3 className="text-sm uppercase font-black tracking-widest text-indigo-400">
-                      {editingAdmin ? "Edit Admin Permissions & Details" : "Create New Admin User"}
+                      {editingAdmin
+                        ? "Edit Admin Permissions & Details"
+                        : "Create New Admin User"}
                     </h3>
                     <button
                       onClick={() => setShowAdminForm(false)}
@@ -3199,41 +4451,80 @@ const AdminDashboard = () => {
                   </div>
 
                   <form onSubmit={handleAdminFormSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Name</label>
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Name
+                        </label>
                         <input
                           type="text"
                           required
                           value={adminForm.name}
-                          onChange={(e) => setAdminForm({ ...adminForm, name: e.target.value })}
-                          placeholder="e.g. Ranjeet Sinha"
-                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] uppercase font-bold text-slate-400">Email Address</label>
-                        <input
-                          type="email"
-                          required
-                          value={adminForm.email}
-                          onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
-                          placeholder="e.g. ranjeet@example.com"
+                          onChange={(e) =>
+                            setAdminForm({ ...adminForm, name: e.target.value })
+                          }
+                          placeholder="Enter Admin Name"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[10px] uppercase font-bold text-slate-400">
-                          Password {editingAdmin && <span className="text-[9px] text-gray-500">(Leave blank to keep same)</span>}
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={adminForm.email}
+                          onChange={(e) =>
+                            setAdminForm({
+                              ...adminForm,
+                              email: e.target.value,
+                            })
+                          }
+                          placeholder="Enter Admin Email Address"
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Password{" "}
+                          {editingAdmin && (
+                            <span className="text-[9px] text-gray-500">
+                              (Leave blank to keep same)
+                            </span>
+                          )}
                         </label>
                         <input
                           type="password"
                           required={!editingAdmin}
                           value={adminForm.password}
-                          onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
+                          onChange={(e) =>
+                            setAdminForm({
+                              ...adminForm,
+                              password: e.target.value,
+                            })
+                          }
                           placeholder="••••••••"
                           className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
                         />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] uppercase font-bold text-slate-400">
+                          Type of Admin
+                        </label>
+                        <select
+                          value={adminForm.role || "admin"}
+                          onChange={(e) =>
+                            setAdminForm({
+                              ...adminForm,
+                              role: e.target.value,
+                            })
+                          }
+                          className="w-full bg-[#050816] border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs text-white"
+                        >
+                          <option value="admin">Normal Admin</option>
+                          <option value="super_admin">Super Admin</option>
+                        </select>
                       </div>
                     </div>
 
@@ -3252,37 +4543,83 @@ const AdminDashboard = () => {
                           </thead>
                           <tbody className="divide-y divide-white/5">
                             {[
-                              { key: "contacts", label: "Contact Form Requests" },
-                              { key: "chatLeads", label: "Chatbot Assistant Leads" },
+                              {
+                                key: "contacts",
+                                label: "Contact Form Requests",
+                              },
+                              {
+                                key: "chatLeads",
+                                label: "Chatbot Assistant Leads",
+                              },
                               { key: "blogs", label: "Manage Blogs" },
                               { key: "faqs", label: "Manage FAQs" },
                               { key: "media", label: "Media Gallery" },
                               { key: "settings", label: "Site Settings" },
+                              {
+                                key: "socialMedia",
+                                label: "Social Links",
+                              },
+                              { key: "pages", label: "Manage Pages" },
                             ].map((mod) => (
-                              <tr key={mod.key} className="hover:bg-white/[0.01]">
-                                <td className="p-4 font-bold text-slate-200">{mod.label}</td>
+                              <tr
+                                key={mod.key}
+                                className="hover:bg-white/[0.01]"
+                              >
+                                <td className="p-4 font-bold text-slate-200">
+                                  {mod.label}
+                                </td>
                                 <td className="p-4 text-center">
                                   <input
                                     type="checkbox"
-                                    checked={adminForm.permissions[mod.key]?.read}
+                                    checked={
+                                      adminForm.permissions?.[mod.key]?.read ||
+                                      false
+                                    }
                                     onChange={(e) => {
-                                      const updatedPerms = { ...adminForm.permissions };
-                                      updatedPerms[mod.key].read = e.target.checked;
-                                      setAdminForm({ ...adminForm, permissions: updatedPerms });
+                                      const updatedPerms = {
+                                        ...adminForm.permissions,
+                                      };
+                                      if (!updatedPerms[mod.key]) {
+                                        updatedPerms[mod.key] = {
+                                          read: false,
+                                          write: false,
+                                        };
+                                      }
+                                      updatedPerms[mod.key].read =
+                                        e.target.checked;
+                                      setAdminForm({
+                                        ...adminForm,
+                                        permissions: updatedPerms,
+                                      });
                                     }}
-                                    className="w-4 h-4 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                                    className="w-5 h-5 cursor-pointer accent-indigo-600 border border-gray-300 rounded bg-white text-indigo-600 no-invert"
                                   />
                                 </td>
                                 <td className="p-4 text-center">
                                   <input
                                     type="checkbox"
-                                    checked={adminForm.permissions[mod.key]?.write}
+                                    checked={
+                                      adminForm.permissions?.[mod.key]?.write ||
+                                      false
+                                    }
                                     onChange={(e) => {
-                                      const updatedPerms = { ...adminForm.permissions };
-                                      updatedPerms[mod.key].write = e.target.checked;
-                                      setAdminForm({ ...adminForm, permissions: updatedPerms });
+                                      const updatedPerms = {
+                                        ...adminForm.permissions,
+                                      };
+                                      if (!updatedPerms[mod.key]) {
+                                        updatedPerms[mod.key] = {
+                                          read: false,
+                                          write: false,
+                                        };
+                                      }
+                                      updatedPerms[mod.key].write =
+                                        e.target.checked;
+                                      setAdminForm({
+                                        ...adminForm,
+                                        permissions: updatedPerms,
+                                      });
                                     }}
-                                    className="w-4 h-4 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                                    className="w-5 h-5 cursor-pointer accent-indigo-600 border border-gray-300 rounded bg-white text-indigo-600 no-invert"
                                   />
                                 </td>
                               </tr>
@@ -3305,7 +4642,11 @@ const AdminDashboard = () => {
                         disabled={adminSubmitLoading}
                         className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer shadow-lg disabled:opacity-50"
                       >
-                        {adminSubmitLoading ? "Saving..." : editingAdmin ? "Update Admin" : "Create Admin"}
+                        {adminSubmitLoading
+                          ? "Saving..."
+                          : editingAdmin
+                            ? "Update Admin"
+                            : "Create Admin"}
                       </button>
                     </div>
                   </form>
@@ -3313,7 +4654,9 @@ const AdminDashboard = () => {
               ) : (
                 <div className="overflow-x-auto bg-[#050816]/30 border border-white/5 rounded-2xl">
                   {admins.length === 0 ? (
-                    <p className="text-center text-gray-500 py-10 text-xs">No admin accounts found.</p>
+                    <p className="text-center text-gray-500 py-10 text-xs">
+                      No admin accounts found.
+                    </p>
                   ) : (
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
@@ -3328,8 +4671,12 @@ const AdminDashboard = () => {
                         {admins.map((adm) => (
                           <tr key={adm._id} className="hover:bg-white/[0.01]">
                             <td className="py-3 px-5 space-y-0.5">
-                              <span className="font-extrabold text-white block text-sm">{adm.name}</span>
-                              <span className="text-gray-400 block">{adm.email}</span>
+                              <span className="font-extrabold text-white block text-sm">
+                                {adm.name}
+                              </span>
+                              <span className="text-gray-400 block">
+                                {adm.email}
+                              </span>
                             </td>
                             <td className="py-3 px-5">
                               <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold text-[10px]">
@@ -3338,17 +4685,21 @@ const AdminDashboard = () => {
                             </td>
                             <td className="py-3 px-5 max-w-sm">
                               <div className="flex flex-wrap gap-1">
-                                {Object.entries(adm.permissions || {}).map(([mod, action]) => {
-                                  if (!action.read && !action.write) return null;
-                                  return (
-                                    <span
-                                      key={mod}
-                                      className="bg-white/5 text-gray-300 border border-white/5 px-2 py-0.5 rounded-md text-[9px] font-bold"
-                                    >
-                                      {mod}: {action.read ? "R" : ""}{action.write ? "W" : ""}
-                                    </span>
-                                  );
-                                })}
+                                {Object.entries(adm.permissions || {}).map(
+                                  ([mod, action]) => {
+                                    if (!action.read && !action.write)
+                                      return null;
+                                    return (
+                                      <span
+                                        key={mod}
+                                        className="bg-white/5 text-gray-300 border border-white/5 px-2 py-0.5 rounded-md text-[9px] font-bold"
+                                      >
+                                        {mod}: {action.read ? "R" : ""}
+                                        {action.write ? "W" : ""}
+                                      </span>
+                                    );
+                                  },
+                                )}
                               </div>
                             </td>
                             <td className="py-3 px-5 text-center">
@@ -3384,11 +4735,15 @@ const AdminDashboard = () => {
             <div className="text-center py-20 space-y-4">
               <span className="relative flex h-10 w-10 mx-auto justify-center">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-10 w-10 bg-red-500 flex items-center justify-center font-black">!</span>
+                <span className="relative inline-flex rounded-full h-10 w-10 bg-red-500 flex items-center justify-center font-black">
+                  !
+                </span>
               </span>
               <h2 className="text-xl font-bold text-white">Access Denied</h2>
               <p className="text-gray-400 text-sm max-w-md mx-auto">
-                You do not have read permission for any modules in the Admin Control Suite. Please contact your Super Admin to request access permissions.
+                You do not have read permission for any modules in the Admin
+                Control Suite. Please contact your Super Admin to request access
+                permissions.
               </p>
             </div>
           )}

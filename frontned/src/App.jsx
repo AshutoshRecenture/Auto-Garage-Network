@@ -29,11 +29,13 @@ const Features = lazy(() => import("./pages/Features.jsx"));
 const LatestWork = lazy(() => import("./pages/LatestWork.jsx"));
 const Blog = lazy(() => import("./pages/Blog.jsx"));
 const ContactUs = lazy(() => import("./pages/ContactUs.jsx"));
+const Careers = lazy(() => import("./pages/Careers.jsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.jsx"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService.jsx"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy.jsx"));
 const Sitemap = lazy(() => import("./pages/Sitemap.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
+const DynamicPage = lazy(() => import("./pages/DynamicPage.jsx"));
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -138,6 +140,14 @@ const AnimatedRoutes = () => {
           }
         />
         <Route
+          path="/careers"
+          element={
+            <PageTransition>
+              <Careers />
+            </PageTransition>
+          }
+        />
+        <Route
           path="/privacy-policy"
           element={
             <PageTransition>
@@ -166,6 +176,15 @@ const AnimatedRoutes = () => {
           element={
             <PageTransition>
               <Sitemap />
+            </PageTransition>
+          }
+        />
+
+        <Route
+          path="/p/:slug"
+          element={
+            <PageTransition>
+              <DynamicPage />
             </PageTransition>
           }
         />

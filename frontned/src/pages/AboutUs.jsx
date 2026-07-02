@@ -4,8 +4,11 @@ import SEOHeader from "../components/SEOHeader.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import { getCloudinaryUrl, useBackendOnline } from "../utils/cloudinary.js";
+import { API_URL } from "../config";
+import NotFound from "./NotFound.jsx";
 
-const founderVideo = "https://res.cloudinary.com/n4okswsd/video/upload/v1782237688/Agn_01_1_1.mp4";
+const founderVideo =
+  "https://res.cloudinary.com/n4okswsd/video/upload/v1782237688/Agn_01_1_1.mp4";
 import {
   FiUsers,
   FiCpu,
@@ -107,9 +110,33 @@ const AboutUs = () => {
   const videoPoster = getCloudinaryUrl("video-img-01.png");
   const featureImg3 = getCloudinaryUrl("feature-img3.jpg");
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [dbPage, setDbPage] = useState(null);
+
+  const activeImg = dbPage && dbPage.aboutImgUrl ? dbPage.aboutImgUrl : aboutImg;
+  const activeVideo = dbPage && dbPage.aboutVideoUrl ? dbPage.aboutVideoUrl : founderVideo;
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchPage = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/pages/slug/about-us`);
+        if (res.status === 403) {
+          setIsDisabled(true);
+        } else if (res.ok) {
+          const data = await res.json();
+          setDbPage(data);
+        }
+      } catch (err) {
+        console.error("Failed to load dynamic about-us page:", err);
+      }
+    };
+    fetchPage();
   }, []);
+
+  if (isDisabled) {
+    return <NotFound />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#050816] text-white">
@@ -138,11 +165,22 @@ const AboutUs = () => {
               transition={{ duration: 0.8 }}
             >
               <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 leading-tight">
-                Transforming UK Garages through{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-400 to-cyan-400">
-                  Digital Innovation
-                </span>
+                {dbPage && dbPage.bannerTitle ? (
+                  dbPage.bannerTitle
+                ) : (
+                  <>
+                    Transforming UK Garages through{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-400 to-cyan-400">
+                      Digital Innovation
+                    </span>
+                  </>
+                )}
               </h1>
+              {dbPage && dbPage.bannerSubtitle && (
+                <p className="text-gray-400 text-sm max-w-2xl mx-auto mt-3">
+                  {dbPage.bannerSubtitle}
+                </p>
+              )}
             </motion.div>
           </div>
         </section>
@@ -233,7 +271,7 @@ const AboutUs = () => {
                 className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/5 bg-[#0c1222] w-full"
               >
                 <img
-                  src={aboutImg}
+                  src={activeImg}
                   alt="Auto Garage Network team collaboration"
                   className="w-full h-auto object-cover rounded-3xl min-h-[300px] lg:min-h-[380px] max-h-[350px] lg:max-h-[420px]"
                 />
@@ -334,7 +372,7 @@ const AboutUs = () => {
                     </div>
                   ) : (
                     <video
-                      src={founderVideo}
+                      src={activeVideo}
                       poster={videoPoster}
                       controls
                       autoPlay
@@ -561,6 +599,17 @@ const AboutUs = () => {
             </div>
           </div>
         </section>
+        {/* Dynamic HTML Content block if editable from backend */}
+        {dbPage && dbPage.content && (
+          <section className="py-12 px-6 md:px-12 border-t border-white/5 bg-white/[0.01]">
+            <div className="max-w-7xl mx-auto prose prose-invert prose-indigo">
+              <div
+                dangerouslySetInnerHTML={{ __html: dbPage.content }}
+                className="dynamic-html-content"
+              />
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />
